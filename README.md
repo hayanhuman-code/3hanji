@@ -2,9 +2,15 @@
 
 한국 삼국시대를 배경으로 한 턴제 그랜드 스트래티지의 **M1 웹 프로토타입**.
 
+### ▶ [브라우저에서 바로 플레이](https://hayanhuman-code.github.io/3hanji/)
+
+설치 없이 열린다. `main` 에 푸시할 때마다 GitHub Actions 가 자동으로 다시 배포한다.
+
 [기획서](docs/game-design.md)와 [시스템 구성 상세계획](docs/system-plan.md)을 구현한 것으로,
 상세계획 §6 의 **Phase 0 ~ Phase 3(= M1 프로토타입 완성)** 과 Phase 4 항목 일부가 들어 있다.
 "이길 수 있고 질 수 있는 게임"까지 와 있다.
+
+직접 돌려 보려면:
 
 ```bash
 npm install

@@ -132,9 +132,12 @@ export function officerName(id: OfficerId): string {
   return officerIndex.get(id)?.name ?? id;
 }
 
+/** 무주공산 — 어느 세력도 갖지 않은 거점. 지 위에서 채도 없이 가라앉는 색. */
+export const NEUTRAL_COLOR = '#8a7e6c';
+
 export function factionColor(id: FactionId | null): string {
-  if (!id) return '#7a7a7a';
-  return factionIndex.get(id)?.color ?? '#7a7a7a';
+  if (!id) return NEUTRAL_COLOR;
+  return factionIndex.get(id)?.color ?? NEUTRAL_COLOR;
 }
 
 /** 특정 세력이 징병할 수 있는 병종 목록 */

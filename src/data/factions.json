@@ -2,7 +2,7 @@
   {
     "id": "goguryeo",
     "name": "고구려",
-    "color": "#2F6F4E",
+    "color": "#26485C",
     "traits": [
       "conquest_state",
       "heavy_cavalry",
@@ -25,7 +25,7 @@
   {
     "id": "baekje",
     "name": "백제",
-    "color": "#8C3B3B",
+    "color": "#73315A",
     "traits": [
       "maritime_trade",
       "dual_diplomacy",
@@ -48,7 +48,7 @@
   {
     "id": "silla",
     "name": "신라",
-    "color": "#C9A227",
+    "color": "#A8862B",
     "traits": [
       "hwarang",
       "diplomacy_flex",
@@ -71,7 +71,7 @@
   {
     "id": "gaya",
     "name": "가야",
-    "color": "#4A6FA5",
+    "color": "#4A6B5A",
     "traits": [
       "iron_monopoly",
       "confederacy"

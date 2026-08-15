@@ -43,11 +43,23 @@ const ROLE_LABEL: Record<string, string> = {
   artisan: '장인',
 };
 
-const DEV_LABEL: Record<DevKey, string> = {
-  agri: '농업',
-  commerce: '상업',
-  wall: '성곽',
-  barracks: '병영',
+/**
+ * 개발 항목 — 한자 한 글자 + 한글 (문서 §7 "한자 1글자를 쓴다").
+ * 한자만 두지 않는 이유는 GameScreen 의 Res 와 같다 — 기호만으로 전달하지 않는다.
+ */
+const DEV_LABEL: Record<DevKey, [mark: string, name: string]> = {
+  agri: ['農', '농업'],
+  commerce: ['商', '상업'],
+  wall: ['郭', '성곽'],
+  barracks: ['營', '병영'],
+};
+
+/** 거점 지형 */
+const TERRAIN_LABEL: Record<string, [string, string]> = {
+  plain: ['平', '평야'],
+  mountain: ['山', '산악'],
+  river: ['河', '강안'],
+  coast: ['海', '연안'],
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -86,7 +98,7 @@ function OfficerChip({
     <div
       className={`officer-chip${officer.acted ? ' acted' : ''}`}
       style={{
-        borderColor: selected ? 'var(--ochre)' : undefined,
+        borderColor: selected ? 'var(--jinsa)' : undefined,
         cursor: onClick ? 'pointer' : 'default',
       }}
       onClick={onClick}
@@ -165,12 +177,12 @@ export function CastlePanel({ state, onMarch }: { state: GameState; onMarch: () 
         <div className="castle-head">
           <h2>{def.name}</h2>
           <span className="tag">{typeLabel}</span>
-          <span className="tag" style={{ borderColor: factionColor(castle.owner) }}>
+          <span className="faction-badge" style={{ background: factionColor(castle.owner) }}>
             {factionName(castle.owner)}
           </span>
         </div>
         <div className="faint" style={{ fontSize: 12 }}>
-          {def.region} · {{ plain: '평야', mountain: '산악', river: '강안', coast: '연안' }[def.terrain]}
+          {def.region} · {TERRAIN_LABEL[def.terrain]?.[0]} {TERRAIN_LABEL[def.terrain]?.[1]}
           {def.special === 'siege_defense_bonus' && ' · 농성에 유리한 지세'}
           {def.special === 'iron_mine' && ' · 철 산지'}
           {def.special === 'trade_hub' && ' · 교역 요충'}
@@ -179,15 +191,17 @@ export function CastlePanel({ state, onMarch }: { state: GameState; onMarch: () 
       </div>
 
       {castle.besiegedBy && (
-        <div className="tag" style={{ borderColor: 'var(--vermilion)', color: 'var(--paper)' }}>
+        <div className="tag" style={{ borderColor: 'var(--jinsa)', color: 'var(--jinsa)' }}>
           {factionName(castle.besiegedBy)}에게 포위된 지 {castle.siegeTurns}계절
         </div>
       )}
 
       <div>
         {(['agri', 'commerce', 'wall', 'barracks'] as DevKey[]).map((k) => (
-          <div className="dev-row" key={k}>
-            <span className="muted">{DEV_LABEL[k]}</span>
+          <div className="dev-row" key={k} title={DEV_LABEL[k][1]}>
+            <span className="muted">
+              <i className="mark">{DEV_LABEL[k][0]}</i> {DEV_LABEL[k][1]}
+            </span>
             <Bar value={castle.dev[k]} max={def.maxDev[k]} cap={castle.dev[k] >= def.maxDev[k]} />
             <span className="num faint">
               {Math.round(castle.dev[k])} / {def.maxDev[k]}
@@ -563,9 +577,9 @@ export function DiplomacyPanel({ state }: { state: GameState }) {
                 style={{
                   borderColor:
                     rel.status === 'war'
-                      ? 'var(--vermilion)'
+                      ? 'var(--jinsa)'
                       : rel.status === 'alliance'
-                        ? 'var(--jade)'
+                        ? 'var(--su)'
                         : undefined,
                 }}
               >
@@ -677,7 +691,7 @@ export function InstitutionPanel({ state }: { state: GameState }) {
             <div className="row between">
               <h3 style={{ fontSize: 15 }}>{def.name}</h3>
               {owned ? (
-                <span className="tag" style={{ borderColor: 'var(--jade)' }}>
+                <span className="tag" style={{ borderColor: 'var(--su)' }}>
                   반포함
                 </span>
               ) : (

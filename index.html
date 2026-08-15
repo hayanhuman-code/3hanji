@@ -4,8 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>삼한지(三韓志): 천하삼분</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%231a1511'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23c8952f' font-family='serif'%3E%E4%B8%89%3C/text%3E%3C/svg%3E" />
+
+    <!--
+      명조 계열은 협상 대상이 아니다 (docs/design-tokens.md §2.1).
+      고딕으로 떨어지는 순간 고지도 성격이 사라진다.
+      숫자는 모노 — 자원 수치가 매 턴 바뀌는데 폭이 흔들리면 화면이 떤다.
+      CDN 이 막히더라도 CSS 폴백이 전부 명조라 고딕으로 내려가지 않는다.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;900&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
+
+    <!-- 지(紙) 바탕에 먹(墨)으로 쓴 三 -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23DDD0B2'/%3E%3Crect x='1.5' y='1.5' width='29' height='29' fill='none' stroke='%23241F1A' stroke-width='2'/%3E%3Ctext x='16' y='24' font-size='21' text-anchor='middle' fill='%23241F1A' font-family='serif'%3E%E4%B8%89%3C/text%3E%3C/svg%3E"
+    />
     <meta name="description" content="한국 삼국시대 배경 턴제 그랜드 스트래티지 프로토타입" />
+    <meta name="theme-color" content="#DDD0B2" />
   </head>
   <body>
     <div id="root"></div>

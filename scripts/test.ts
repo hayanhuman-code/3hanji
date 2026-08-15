@@ -16,6 +16,9 @@ import { deserialize, serialize } from '../src/core/save';
 import { beginNextTurn, completeEvent, resolveTurn } from '../src/core/turn';
 import { findPath } from '../src/core/util';
 import { castleDef, CASTLES } from '../src/core/data';
+import { T, contrast, textOn } from '../src/ui/tokens';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { BattleSetup } from '../src/core/battle/battleState';
 
 let passed = 0;
@@ -428,6 +431,94 @@ test('로드한 상태에서 이어서 돌려도 같은 결과가 나온다', ()
     JSON.stringify(direct.castles),
     '저장을 거치면 결과가 달라집니다'
   );
+});
+
+/* ================================================================== *
+ * 디자인 토큰
+ *
+ * 팔레트가 CSS 와 TS 두 벌로 있다 — Canvas 는 CSS 변수를 읽지 못하기 때문이다.
+ * 두 벌이 갈라지면 전투 화면만 옛 색으로 남는 식의 조용한 어긋남이 생기므로
+ * 여기서 대조한다. 대비비도 매번 다시 잰다 (docs/design-tokens.md §1.3).
+ * ================================================================== */
+
+section('디자인 토큰');
+
+/** tokens.css 와 tokens.ts 의 이름 대응 */
+const TOKEN_PAIRS: Array<[string, string]> = [
+  ['--ji', T.ji],
+  ['--ji-deep', T.jiDeep],
+  ['--ji-edge', T.jiEdge],
+  ['--hae', T.hae],
+  ['--meok', T.meok],
+  ['--meok-mid', T.meokMid],
+  ['--meok-cap', T.meokCap],
+  ['--meok-thin', T.meokThin],
+  ['--jinsa', T.jinsa],
+  ['--su', T.su],
+  ['--su-ice', T.suIce],
+  ['--on-dark', T.onDark],
+];
+
+test('tokens.css 와 tokens.ts 의 값이 같다', () => {
+  const css = readFileSync(resolve(import.meta.dirname, '../src/ui/tokens.css'), 'utf8');
+  for (const [name, tsValue] of TOKEN_PAIRS) {
+    const m = css.match(new RegExp(`\\${name}\\s*:\\s*(#[0-9a-fA-F]{6})`));
+    assert(m, `tokens.css 에 ${name} 이 없습니다`);
+    assertEqual(
+      m![1].toLowerCase(),
+      tsValue.toLowerCase(),
+      `${name} 이 두 파일에서 다릅니다`
+    );
+  }
+});
+
+test('본문·보조·캡션이 지 배경 위에서 AA 를 통과한다', () => {
+  // docs/design-tokens.md §1.3 의 표를 그대로 다시 잰다.
+  assert(contrast(T.meok, T.ji) >= 7, `먹 본문 대비 부족: ${contrast(T.meok, T.ji).toFixed(2)}`);
+  assert(contrast(T.meokMid, T.ji) >= 4.5, `담묵 대비 부족: ${contrast(T.meokMid, T.ji).toFixed(2)}`);
+  assert(contrast(T.meokCap, T.ji) >= 4.5, `캡션 대비 부족: ${contrast(T.meokCap, T.ji).toFixed(2)}`);
+  // 반전 버튼 — 지 글자를 먹 바탕에 얹는 경우
+  assert(contrast(T.ji, T.meok) >= 7, '반전 버튼 대비 부족');
+});
+
+test('--meok-thin 은 테두리 전용이다 (텍스트로 쓰면 안 되는 값)', () => {
+  // 이 값이 실수로 밝아져 "텍스트에 써도 되겠네"가 되는 것을 막는다.
+  // 문서가 테두리 전용으로 못 박은 근거가 바로 이 대비 부족이다.
+  assert(
+    contrast(T.meokThin, T.ji) < 4.5,
+    'meok-thin 의 대비가 4.5 를 넘습니다 — 문서의 "테두리 전용" 규정과 어긋납니다'
+  );
+});
+
+test('세력 배지 글자색이 대비 4.5:1 을 넘는다', () => {
+  for (const [name, color] of [
+    ['고구려', T.goguryeo],
+    ['백제', T.baekje],
+    ['신라', T.silla],
+    ['가야', T.gaya],
+  ] as const) {
+    const fg = textOn(color);
+    const c = contrast(fg, color);
+    assert(c >= 4.5, `${name} 배지 대비 부족: ${c.toFixed(2)} (글자 ${fg})`);
+  }
+  // 문서 §1.2 가 명시한 예외 — 신라 금색만 먹색 글자를 쓴다.
+  assertEqual(textOn(T.silla), T.meok, '신라 배지는 먹색 글자여야 합니다');
+  assertEqual(textOn(T.goguryeo), T.onDark, '고구려 배지는 밝은 글자여야 합니다');
+});
+
+test('세력색이 factions.json 과 일치한다', () => {
+  const factions = JSON.parse(
+    readFileSync(resolve(import.meta.dirname, '../src/data/factions.json'), 'utf8')
+  ) as Array<{ id: string; color: string }>;
+  const expect: Record<string, string> = {
+    goguryeo: T.goguryeo,
+    baekje: T.baekje,
+    silla: T.silla,
+    gaya: T.gaya,
+  };
+  for (const f of factions) {
+    assertEqual(f.color.toLowerCase(), expect[f.id]?.toLowerCase(), `${f.id} 색이 토큰과 다릅니다`);
+  }
 });
 
 /* ================================================================== *

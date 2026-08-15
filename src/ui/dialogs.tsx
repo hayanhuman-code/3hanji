@@ -127,7 +127,7 @@ export function MarchDialog({
                       key={o.id}
                       className="btn small"
                       style={{
-                        borderColor: escorts.includes(o.id) ? 'var(--ochre)' : undefined,
+                        borderColor: escorts.includes(o.id) ? 'var(--jinsa)' : undefined,
                       }}
                       onClick={() =>
                         setEscorts((prev) =>
@@ -196,14 +196,14 @@ export function MarchDialog({
             <div className="row">
               <button
                 className="btn small"
-                style={{ borderColor: mode === 'assault' ? 'var(--ochre)' : undefined }}
+                style={{ borderColor: mode === 'assault' ? 'var(--jinsa)' : undefined }}
                 onClick={() => setMode('assault')}
               >
                 강공 — 성벽을 두드린다
               </button>
               <button
                 className="btn small"
-                style={{ borderColor: mode === 'encircle' ? 'var(--ochre)' : undefined }}
+                style={{ borderColor: mode === 'encircle' ? 'var(--jinsa)' : undefined }}
                 onClick={() => setMode('encircle')}
               >
                 포위 — 병량을 말린다
@@ -216,7 +216,7 @@ export function MarchDialog({
             </p>
           </div>
 
-          {error && <div className="tag" style={{ borderColor: 'var(--vermilion)' }}>{error}</div>}
+          {error && <div className="tag" style={{ borderColor: 'var(--jinsa)' }}>{error}</div>}
         </div>
         <div className="modal-foot">
           <button className="btn ghost" onClick={onClose}>

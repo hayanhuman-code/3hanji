@@ -7,6 +7,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { factionColor, factionName, unitDef } from '../core/data';
+import { T, textOn } from './tokens';
 import {
   attackableUnits,
   attackableWalls,
@@ -18,16 +19,37 @@ import type { HexTerrain } from '../core/types';
 import { fmt } from '../core/util';
 import { useGame } from './store';
 
+/**
+ * 헥스 지형색 — 지(紙) 팔레트 안에서 **명도로만** 가른다.
+ * 밝을수록 트인 땅, 어두울수록 막힌 땅. 성벽·성문·본성은 먹 계열로 올려
+ * 지형과 인공물이 한눈에 갈리게 했다.
+ *
+ * 색만으로 정보를 전달하지 않는다(문서 §7) — 칸에 지형 이름을 함께 쓰고
+ * 범례에도 이름을 단다.
+ */
 const TERRAIN_COLOR: Record<HexTerrain, string> = {
-  plain: '#41402f',
-  forest: '#2c4029',
-  hill: '#544733',
-  mountain: '#665640',
-  river: '#28414f',
-  mudflat: '#464034',
-  wall: '#8d8a86',
-  gate: '#a8813f',
-  keep: '#c8a25a',
+  plain: T.ji,
+  hill: T.jiDeep,
+  forest: '#a9a684',
+  mudflat: '#b7b3a2',
+  mountain: '#94886d',
+  river: T.su,
+  wall: T.meokMid,
+  gate: T.jinsa,
+  keep: T.meok,
+};
+
+/**
+ * 지형 기호 — 명도만으로는 숲·구릉·산악이 갈리지 않는다.
+ * 문서 §0 원칙 ②("형태가 정보를 담는다. 색은 보조다")에 따라
+ * 칸마다 한자 한 글자를 옅게 찍는다. 범례에도 이름이 함께 있다.
+ */
+const TERRAIN_MARK: Partial<Record<HexTerrain, string>> = {
+  hill: '丘',
+  forest: '林',
+  mountain: '山',
+  river: '川',
+  mudflat: '洲',
 };
 
 const TERRAIN_LABEL: Record<HexTerrain, string> = {
@@ -124,35 +146,45 @@ export function BattleScreen() {
       ctx.fillStyle = TERRAIN_COLOR[hx.terrain];
       // 무너진 성벽은 흙빛으로 바랜다.
       if ((hx.terrain === 'wall' || hx.terrain === 'gate') && (hx.wallHp ?? 0) <= 0) {
-        ctx.fillStyle = '#3b342a';
+        ctx.fillStyle = T.jiEdge; // 무너진 성벽 — 흙으로 돌아간 자리
       }
       ctx.fill();
 
       const key = `${hx.q},${hx.r}`;
       if (reachKeys?.has(key)) {
-        ctx.fillStyle = 'rgba(200,149,47,0.22)';
+        ctx.fillStyle = 'rgba(168,50,50,0.16)'; // 이동 가능 (--jinsa)
         ctx.fill();
       }
       if (wallKeys.has(key)) {
-        ctx.fillStyle = 'rgba(176,67,47,0.3)';
+        ctx.fillStyle = 'rgba(168,50,50,0.34)'; // 공격 가능 (--jinsa)
         ctx.fill();
       }
 
+      // 지형 기호 — 색이 아니라 형태로 갈리게 한다
+      const mark = TERRAIN_MARK[hx.terrain];
+      if (mark) {
+        ctx.fillStyle = hx.terrain === 'river' ? 'rgba(221,208,178,0.5)' : 'rgba(36,31,26,0.34)';
+        ctx.font = `${Math.max(9, size * 0.42)}px 'Noto Serif KR', 'Batang', serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(mark, cx, cy);
+      }
+
       const isWall = hx.terrain === 'wall' || hx.terrain === 'gate';
-      ctx.strokeStyle = isWall ? 'rgba(232,220,196,0.55)' : 'rgba(20,16,13,0.75)';
+      ctx.strokeStyle = isWall ? 'rgba(221,208,178,0.7)' : 'rgba(36,31,26,0.5)';
       ctx.lineWidth = isWall ? 2 : 1;
       ctx.stroke();
 
       if (hx.terrain === 'gate' && (hx.wallHp ?? 0) > 0) {
-        ctx.fillStyle = '#2a2018';
-        ctx.font = `${Math.max(8, size * 0.3)}px sans-serif`;
+        ctx.fillStyle = T.onDark;
+        ctx.font = `${Math.max(8, size * 0.3)}px 'Noto Serif KR', 'Batang', serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('성문', cx, cy);
       }
       if (hx.terrain === 'keep') {
-        ctx.fillStyle = '#2a2018';
-        ctx.font = `${Math.max(8, size * 0.3)}px sans-serif`;
+        ctx.fillStyle = T.onDark;
+        ctx.font = `${Math.max(8, size * 0.3)}px 'Noto Serif KR', 'Batang', serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('천수', cx, cy);
@@ -161,9 +193,9 @@ export function BattleScreen() {
       // 성벽 내구도
       if ((hx.terrain === 'wall' || hx.terrain === 'gate') && (hx.wallHp ?? 0) > 0) {
         const ratio = (hx.wallHp ?? 0) / Math.max(1, hx.maxWallHp ?? 1);
-        ctx.fillStyle = '#14100d';
+        ctx.fillStyle = T.meok;
         ctx.fillRect(cx - size * 0.5, cy + size * 0.55, size, 3.5);
-        ctx.fillStyle = ratio > 0.4 ? '#c8952f' : '#b0432f';
+        ctx.fillStyle = ratio > 0.4 ? T.jiDeep : T.jinsa;
         ctx.fillRect(cx - size * 0.5, cy + size * 0.55, size * ratio, 3.5);
       }
     }
@@ -181,22 +213,22 @@ export function BattleScreen() {
       ctx.fillStyle = factionColor(faction);
       ctx.fill();
       ctx.lineWidth = u.id === selectedId ? 3 : targetIds.has(u.id) ? 2.5 : 1.5;
-      ctx.strokeStyle =
-        u.id === selectedId ? '#e8dcc4' : targetIds.has(u.id) ? '#b0432f' : 'rgba(20,16,13,0.9)';
+      // 고른 부대는 진사, 칠 수 있는 적은 수(水). 굵기도 함께 달라 색만으로 갈리지 않는다.
+      ctx.strokeStyle = u.id === selectedId ? T.jinsa : targetIds.has(u.id) ? T.su : T.meok;
       ctx.stroke();
 
-      ctx.fillStyle = '#f2ead8';
-      ctx.font = `${Math.max(9, size * 0.36)}px sans-serif`;
+      ctx.fillStyle = textOn(factionColor(faction));
+      ctx.font = `${Math.max(9, size * 0.36)}px 'Noto Serif KR', 'Batang', serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(def.name.slice(0, 2), cx, cy - size * 0.12);
-      ctx.font = `${Math.max(8, size * 0.3)}px sans-serif`;
+      ctx.font = `${Math.max(8, size * 0.3)}px 'Noto Serif KR', 'Batang', serif`;
       ctx.fillText(String(Math.round(u.count / 100) / 10) + '천', cx, cy + size * 0.26);
 
       // 사기 막대
-      ctx.fillStyle = '#14100d';
+      ctx.fillStyle = T.meok;
       ctx.fillRect(cx - size * 0.5, cy - size * 0.78, size, 3.5);
-      ctx.fillStyle = u.morale > 45 ? '#6f9e5a' : u.morale > 20 ? '#c8952f' : '#b34b3c';
+      ctx.fillStyle = u.morale > 45 ? '#3f6b34' : u.morale > 20 ? T.jiDeep : T.jinsa;
       ctx.fillRect(cx - size * 0.5, cy - size * 0.78, size * (u.morale / 100), 3.5);
     }
 
@@ -207,7 +239,7 @@ export function BattleScreen() {
       ctx.beginPath();
       corners.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
       ctx.closePath();
-      ctx.strokeStyle = 'rgba(232,220,196,0.6)';
+      ctx.strokeStyle = T.jinsa;
       ctx.lineWidth = 1.6;
       ctx.stroke();
     }
@@ -276,7 +308,7 @@ export function BattleScreen() {
               height: 10,
               background: factionColor(battle.attackerFaction),
               display: 'inline-block',
-              borderRadius: 2,
+              border: '1px solid #241F1A',
             }}
           />
           {factionName(battle.attackerFaction)} {fmt(sideTroops(battle, 'attacker'))}
@@ -287,7 +319,7 @@ export function BattleScreen() {
               height: 10,
               background: factionColor(battle.defenderFaction),
               display: 'inline-block',
-              borderRadius: 2,
+              border: '1px solid #241F1A',
             }}
           />
           {factionName(battle.defenderFaction)} {fmt(sideTroops(battle, 'defender'))}

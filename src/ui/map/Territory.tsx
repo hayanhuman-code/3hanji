@@ -12,7 +12,11 @@ import { memo, useId } from 'react';
 import { CASTLES, MAP, factionColor } from '../../core/data';
 import type { GameState } from '../../core/types';
 
-/** 등급이 높을수록 넓게 물든다 */
+/**
+ * 등급이 높을수록 넓게 물든다.
+ * 옅게 까는 이유: 지(紙) 바탕 위에서 진하면 얼룩처럼 보인다.
+ * 이것은 장식이 아니라 "어디까지가 누구 땅인가"를 말하는 정보다 (문서 §0 원칙 ③).
+ */
 const RADIUS: Record<string, number> = { capital: 125, major: 96, port: 78, fort: 76 };
 
 export const Territory = memo(function Territory({ state }: { state: GameState }) {
@@ -28,10 +32,10 @@ export const Territory = memo(function Territory({ state }: { state: GameState }
           <path d={MAP.islets} />
         </clipPath>
         <filter id={blurId}>
-          <feGaussianBlur stdDeviation="30" />
+          <feGaussianBlur stdDeviation="26" />
         </filter>
       </defs>
-      <g clipPath={`url(#${clipId})`} filter={`url(#${blurId})`} opacity="0.3" pointerEvents="none">
+      <g clipPath={`url(#${clipId})`} filter={`url(#${blurId})`} opacity="0.2" pointerEvents="none">
         {CASTLES.map((def) => {
           const owner = state.castles[def.id]?.owner;
           if (!owner) return null;

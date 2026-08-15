@@ -1,5 +1,13 @@
 /**
- * GameScreen.tsx — 전략 화면 전체 조립 (상단 바 + 전략맵 + 사이드 패널 + 로그)
+ * GameScreen.tsx — 전략 화면 조립.
+ *
+ * 문서 §4 의 창(窓) 시스템: 지도가 화면 전체를 쓰고, UI 는 그 위에 떠 있는 창으로 얹는다.
+ * 사이드바로 지도를 자르지 않는다.
+ *
+ *   상단 고정 바 — 국력 (연·계절, 자원, 턴 종료)
+ *   우상 창      — 거점·인물·외교·제도·연대기 (탭)
+ *   좌하 창      — 사초(史草) 로그
+ *   좌상·우하    — 줌·범례 (StrategyMap 이 그린다)
  */
 
 import { useCallback, useMemo, useState } from 'react';
@@ -15,6 +23,7 @@ import {
   OfficerPanel,
 } from './panels';
 import { StrategyMap } from './StrategyMap';
+import { Window } from './Window';
 import { useGame, type SidePanel } from './store';
 import { fmt, fmtTroops } from '../core/util';
 
@@ -25,6 +34,22 @@ const TABS: Array<{ id: SidePanel; label: string }> = [
   { id: 'institutions', label: '제도' },
   { id: 'chronicle', label: '연대기' },
 ];
+
+/**
+ * 자원 표기 — 한자 한 글자 + 한글 (문서 §7 "한자 1글자를 쓴다").
+ *
+ * 한자만 남기지 않는 이유: 읽는 사람이 한자를 모를 수 있다. 문서가 금하는 것은
+ * "색·기호만으로 정보를 전달하는 것"이므로 한글 라벨을 함께 남긴다.
+ */
+function Res({ mark, label, value }: { mark: string; label: string; value: string | number }) {
+  return (
+    <span className="res-item" title={label}>
+      <i className="mark">{mark}</i>
+      <b>{label}</b>
+      <em>{value}</em>
+    </span>
+  );
+}
 
 export function GameScreen() {
   const state = useGame((s) => s.state);
@@ -45,6 +70,8 @@ export function GameScreen() {
 
   const [marchFrom, setMarchFrom] = useState<string | null>(null);
   const [marchTarget, setMarchTarget] = useState('');
+  const [openPanel, setOpenPanel] = useState(true);
+  const [openLog, setOpenLog] = useState(true);
 
   // 출진 중이면 도달 가능한 거점을 지도에 밝힌다. 76 거점 판에서
   // 목적지를 드롭다운 이름으로만 고르게 하는 것은 무리다.
@@ -61,6 +88,7 @@ export function GameScreen() {
         return;
       }
       select(id);
+      setOpenPanel(true);
     },
     [marchTargets, select]
   );
@@ -75,47 +103,37 @@ export function GameScreen() {
 
   return (
     <div className="game">
+      {/* 국력 — 늘 상단에 있고 닫을 수 없다 (문서 §4) */}
       <div className="topbar">
         <span className="date">
           {state.year}년 {['봄', '여름', '가을', '겨울'][state.season]}
         </span>
-        <span className="faction-name" style={{ color: factionColor(state.playerFaction) }}>
+        <span className="faction-badge" style={{ background: factionColor(state.playerFaction) }}>
           {factionName(state.playerFaction)}
         </span>
-        <div className="res num">
-          <span>
-            <b>곡물</b>
-            {fmt(r.grain)}
-          </span>
-          <span>
-            <b>재화</b>
-            {fmt(r.gold)}
-          </span>
-          <span>
-            <b>철</b>
-            {fmt(r.iron)}
-          </span>
-          <span>
-            <b>명분</b>
-            {Math.round(r.cause)}
-          </span>
-          <span>
-            <b>거점</b>
-            {factionCastles(state, state.playerFaction).length}
-          </span>
-          <span>
-            <b>병력</b>
-            {fmtTroops(factionTroops(state, state.playerFaction))}
-          </span>
-          <span>
-            <b>지지</b>
-            {Math.round(me.councilSupport)}
-          </span>
+
+        <div className="res">
+          <Res mark="穀" label="곡물" value={fmt(r.grain)} />
+          <Res mark="財" label="재화" value={fmt(r.gold)} />
+          <Res mark="鐵" label="철" value={fmt(r.iron)} />
+          <Res mark="義" label="명분" value={Math.round(r.cause)} />
+          <Res mark="城" label="거점" value={factionCastles(state, state.playerFaction).length} />
+          <Res mark="兵" label="병력" value={fmtTroops(factionTroops(state, state.playerFaction))} />
+          <Res mark="議" label="지지" value={Math.round(me.councilSupport)} />
         </div>
+
         <div className="spacer" />
-        <span className="faint" style={{ fontSize: 12 }}>
-          대기 인물 {pending}
-        </span>
+
+        <span className="cap">대기 인물 {pending}</span>
+        <button
+          className={`btn small${openPanel ? ' on' : ''}`}
+          onClick={() => setOpenPanel((v) => !v)}
+        >
+          거점창
+        </button>
+        <button className={`btn small${openLog ? ' on' : ''}`} onClick={() => setOpenLog((v) => !v)}>
+          사초
+        </button>
         <button
           className="btn small"
           onClick={() => {
@@ -140,47 +158,71 @@ export function GameScreen() {
         </button>
       </div>
 
-      <div className="body">
-        <div className="map-wrap">
-          <StrategyMap
-            state={state}
-            selected={selected}
-            onSelect={onMapSelect}
-            marchTargets={marchTargets}
-          />
-        </div>
+      {/* 지도는 화면 전체를 쓴다 */}
+      <div className="map-wrap">
+        <StrategyMap
+          state={state}
+          selected={selected}
+          onSelect={onMapSelect}
+          marchTargets={marchTargets}
+        />
+      </div>
 
-        <div className="side">
-          <div className="tabs">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                className={panel === t.id ? 'on' : ''}
-                onClick={() => setPanel(t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <div className="side-body">
-            {panel === 'castle' && (
-              <CastlePanel
-                state={state}
-                onMarch={() => {
-                  if (!selected) return;
-                  setMarchTarget('');
-                  setMarchFrom(selected);
-                }}
-              />
-            )}
-            {panel === 'officers' && <OfficerPanel state={state} />}
-            {panel === 'diplomacy' && <DiplomacyPanel state={state} />}
-            {panel === 'institutions' && <InstitutionPanel state={state} />}
-            {panel === 'chronicle' && <ChroniclePanel state={state} />}
-          </div>
+      {openPanel && (
+        <Window
+          id="panel"
+          title={TABS.find((t) => t.id === panel)?.label ?? '거점'}
+          x={-12}
+          y={62}
+          width={382}
+          maxHeight={Math.round(window.innerHeight * 0.6)}
+          onClose={() => setOpenPanel(false)}
+          head={
+            <div className="tabs">
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  className={panel === t.id ? 'on' : ''}
+                  onClick={() => setPanel(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          }
+        >
+          {panel === 'castle' && (
+            <CastlePanel
+              state={state}
+              onMarch={() => {
+                if (!selected) return;
+                setMarchTarget('');
+                setMarchFrom(selected);
+              }}
+            />
+          )}
+          {panel === 'officers' && <OfficerPanel state={state} />}
+          {panel === 'diplomacy' && <DiplomacyPanel state={state} />}
+          {panel === 'institutions' && <InstitutionPanel state={state} />}
+          {panel === 'chronicle' && <ChroniclePanel state={state} />}
+        </Window>
+      )}
+
+      {openLog && (
+        <Window
+          id="log"
+          title="사초 史草"
+          x={12}
+          y={-236}
+          width={420}
+          maxHeight={190}
+          onClose={() => setOpenLog(false)}
+        >
           <div className="log">
             {state.log
-              .filter((l) => l.faction === null || l.faction === state.playerFaction || l.kind === 'battle')
+              .filter(
+                (l) => l.faction === null || l.faction === state.playerFaction || l.kind === 'battle'
+              )
               .slice(-80)
               .reverse()
               .map((l, i) => (
@@ -193,8 +235,8 @@ export function GameScreen() {
                 </div>
               ))}
           </div>
-        </div>
-      </div>
+        </Window>
+      )}
 
       {marchFrom && (
         <MarchDialog

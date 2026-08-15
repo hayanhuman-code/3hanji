@@ -19,12 +19,30 @@ const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH 
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
 const errors = [];
-page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+const fontIssues = [];
+// 웹폰트는 외부 CDN 이라 샌드박스·사내망에서 끊길 수 있다. 그 경우 명조 폴백으로
+// 떨어지도록 설계되어 있으므로(문서 §2.1) 실패로 치지 않고 따로 센다.
+const isFontCdn = (t) => /fonts\.(googleapis|gstatic)\.com/.test(t);
+page.on('console', (m) => {
+  if (m.type() !== 'error') return;
+  (isFontCdn(m.location()?.url ?? '') ? fontIssues : errors).push(m.text());
+});
+page.on('requestfailed', (r) => { if (isFontCdn(r.url())) fontIssues.push(r.url()); });
 page.on('pageerror', (e) => errors.push('PAGEERROR: ' + e.message));
 
 await page.goto(URL, { waitUntil: 'networkidle' });
 await page.screenshot({ path: `${OUT}/01-title.png` });
 console.log('title:', await page.locator('.title-main').innerText());
+
+// 명조가 실제로 잡혔는지. 고딕으로 떨어지면 고지도 성격이 사라진다 (문서 §2.1).
+const fonts = await page.evaluate(() => ({
+  serif: document.fonts.check("16px 'Noto Serif KR'"),
+  mono: document.fonts.check("16px 'JetBrains Mono'"),
+  body: getComputedStyle(document.body).fontFamily,
+}));
+console.log('서체:', fonts.serif ? 'Noto Serif KR ✓' : 'Noto Serif KR ✗(폴백)',
+            '/', fonts.mono ? 'JetBrains Mono ✓' : 'JetBrains Mono ✗(폴백)');
+if (!/serif/i.test(fonts.body)) throw new Error('본문이 명조 계열이 아닙니다: ' + fonts.body);
 
 // 신라로 시작
 await page.getByRole('button', { name: /신라/ }).first().click();
@@ -76,7 +94,7 @@ await page.waitForTimeout(200);
 // 거점 클릭 → 개발 명령
 await page.locator('[data-castle-id="geumseong"]').click({ force: true });
 await page.waitForTimeout(250);
-const picked = await page.locator('.side-body h2').first().innerText();
+const picked = await page.locator('.win-bd h2').first().innerText();
 if (!/금성/.test(picked)) throw new Error('거점 선택이 패널에 반영되지 않았습니다: ' + picked);
 const devBtn = page.getByRole('button', { name: '농업 개발' });
 if (await devBtn.count()) { await devBtn.first().click(); await page.waitForTimeout(150); }
@@ -96,6 +114,34 @@ if (await marchBtn.count()) {
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: '취소' }).click();
   await page.waitForTimeout(150);
+}
+
+/* ---------------- 창(窓) ---------------- */
+{
+  const win = page.locator('.win').first();
+  const head = win.locator('.win-hd');
+  const before = await win.boundingBox();
+  const hb = await head.boundingBox();
+  await page.mouse.move(hb.x + hb.width / 2, hb.y + hb.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(hb.x + hb.width / 2 - 120, hb.y + hb.height / 2 + 70, { steps: 10 });
+  await page.mouse.up();
+  await page.waitForTimeout(200);
+  const after = await win.boundingBox();
+  if (Math.abs(after.x - before.x) < 40) throw new Error('창을 끌었는데 움직이지 않았습니다');
+  console.log('창 이동:', Math.round(before.x), '→', Math.round(after.x));
+  await page.screenshot({ path: `${OUT}/03c-window.png` });
+
+  // 닫고 다시 열기
+  const n0 = await page.locator('.win').count();
+  await page.locator('.win-hd .win-x').first().click();
+  await page.waitForTimeout(150);
+  if (await page.locator('.win').count() !== n0 - 1) throw new Error('창이 닫히지 않았습니다');
+  await page.getByRole('button', { name: '사초', exact: true }).click();
+  await page.waitForTimeout(150);
+  await page.getByRole('button', { name: '거점창', exact: true }).click();
+  await page.waitForTimeout(200);
+  if (await page.locator('.win').count() === 0) throw new Error('창을 다시 열지 못했습니다');
 }
 
 // 각 탭
@@ -155,6 +201,13 @@ await page.waitForTimeout(400);
 await page.screenshot({ path: `${OUT}/13-sandbox-turn2.png` });
 console.log('전투 진행:', (await page.locator('.battle-head .tag').first().innerText()));
 
+// 문서 §7 — 이모지·현대적 아이콘 금지
+const emoji = await page.evaluate(() =>
+  (document.body.innerText.match(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/gu) ?? []).join('')
+);
+if (emoji) throw new Error('화면에 이모지가 있습니다: ' + emoji);
+
 await browser.close();
+if (fontIssues.length) console.log(`(웹폰트 요청 ${fontIssues.length}건 실패 — 폴백으로 동작. 배포망에서는 정상)`);
 if (errors.length) { console.error('콘솔 오류:\n' + errors.join('\n')); process.exit(1); }
 console.log('브라우저 스모크 통과 — 콘솔 오류 없음');

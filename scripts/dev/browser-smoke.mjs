@@ -182,6 +182,14 @@ await page.screenshot({ path: `${OUT}/10-later.png` });
 const date = await page.locator('.topbar .date').innerText().catch(() => '(전투 중)');
 console.log('진행 후 시점:', date);
 
+// 겨울이면 원해 항로가 닫혀 있어야 한다 (탐라·우산국·덕물도 방면)
+if (/겨울/.test(date)) {
+  const closed = await page.locator('.map-searoad.closed').count();
+  console.log('겨울 폐쇄 항로:', closed);
+  if (closed === 0) throw new Error('겨울인데 닫힌 항로가 하나도 없습니다');
+  await page.screenshot({ path: `${OUT}/10b-winter.png` });
+}
+
 // 전투 시뮬레이터 단독 실행
 await page.goto(URL, { waitUntil: 'networkidle' });
 await page.getByRole('button', { name: /전투 시뮬레이터/ }).click();

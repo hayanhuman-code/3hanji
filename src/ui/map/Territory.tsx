@@ -19,7 +19,13 @@ import type { GameState } from '../../core/types';
  */
 const RADIUS: Record<string, number> = { capital: 125, major: 96, port: 78, fort: 76 };
 
-export const Territory = memo(function Territory({ state }: { state: GameState }) {
+/** `ownerKey` 는 memo 가 볼 값이다 — Routes.tsx 의 주석 참조. */
+export const Territory = memo(function Territory({
+  state,
+}: {
+  state: GameState;
+  ownerKey: string;
+}) {
   const uid = useId().replace(/:/g, '');
   const clipId = `mapLand-${uid}`;
   const blurId = `mapBlur-${uid}`;

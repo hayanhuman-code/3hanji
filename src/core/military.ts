@@ -6,7 +6,7 @@
  */
 
 import { castleDef, castleName, factionName, officerDef, officerName, unitDef } from './data';
-import { B, fieldUpkeep, hasSkill, stackPower } from './formulas';
+import { B, fieldUpkeep, hasSkill, stackPower, winterSeas } from './formulas';
 import { RngCursor } from './rng';
 import {
   addChronicle,
@@ -30,6 +30,7 @@ import type {
   GameState,
   MarchCommand,
   PendingBattle,
+  Season,
   UnitStack,
 } from './types';
 import { clamp, findPath, sum } from './util';
@@ -66,33 +67,113 @@ export function validateMarch(state: GameState, cmd: MarchCommand): string | nul
     return `${factionName(to.owner)}와(과) 전쟁 상태가 아닙니다. 먼저 선전포고가 필요합니다.`;
   }
 
-  const path = findMarchPath(state, cmd.faction, cmd.from, cmd.target);
-  if (!path) return '길이 이어지지 않습니다.';
+  const path = findMarchPath(state, cmd.faction, cmd.from, cmd.target, cmd.units);
+  if (!path) {
+    // 수로가 막혀 못 가는 것인지, 아예 길이 없는 것인지 구분해 준다.
+    const anyPath = findMarchPath(state, cmd.faction, cmd.from, cmd.target, [
+      { unitType: 'navy', count: 1 },
+    ]);
+    if (anyPath) return '수군 없이는 적이 지키는 항로를 건널 수 없습니다.';
+    return winterSeas(state.season)
+      ? '길이 이어지지 않습니다. (겨울에는 먼바다 항로가 닫힙니다)'
+      : '길이 이어지지 않습니다.';
+  }
 
   const f = state.factions[cmd.faction];
   if (f.resources.grain < cmd.grain) return '창고의 곡물이 부족합니다.';
   return null;
 }
 
+/* ------------------------------------------------------------------ *
+ * 통행 판정 — 육로와 수로
+ *
+ * 지도의 길은 육로 128개와 수로 13개로 나뉜다(CastleDef.routes).
+ * 육로에는 제한이 없다. 수로에만 규칙이 붙는다.
+ * ------------------------------------------------------------------ */
+
+/**
+ * 원해(遠海) 항로가 닿는 곳. 연안 항해와 달리 먼 바다는 겨울 풍랑에 막힌다.
+ *
+ * 이 목록이 규칙과 그림의 단일 출처다 — 지도(`ui/map/Routes.tsx`)도 여기서 가져간다.
+ * 따로 두면 "화면에는 닫혔다고 그려지는데 실제로는 지나가진다"가 된다.
+ */
+export const OPEN_SEA_PORTS: ReadonlySet<CastleId> = new Set([
+  'tamna', // 탐라 — 남해 먼바다
+  'usanguk', // 우산국 — 동해 먼바다
+  'deokmul', // 덕물도 — 서해 횡단
+]);
+
+/** 두 거점을 잇는 길이 수로인가 */
+export function isSeaRoute(a: CastleId, b: CastleId): boolean {
+  return castleDef(a).routes.sea.includes(b);
+}
+
+/** 겨울에 닫히는 항로인가 (진격이든 후퇴든 보급이든 못 지난다) */
+export function seaClosed(a: CastleId, b: CastleId, season: Season): boolean {
+  if (!winterSeas(season)) return false;
+  if (!isSeaRoute(a, b)) return false;
+  return OPEN_SEA_PORTS.has(a) || OPEN_SEA_PORTS.has(b);
+}
+
+/** 부대에 수군이 섞여 있는가 — 적이 지키는 항구로 배를 댈 수 있는 조건 */
+export function hasNavy(units: readonly UnitStack[] | undefined): boolean {
+  return !!units?.some((u) => u.count > 0 && unitDef(u.unitType).class === 'navy');
+}
+
+/** 그 거점을 지날 수 있는가 (적이 쥐고 있지 않은가) */
+function friendlyEnough(state: GameState, faction: FactionId, id: CastleId): boolean {
+  const c = state.castles[id];
+  if (!c) return false;
+  return !c.owner || c.owner === faction || !atWar(state, faction, c.owner);
+}
+
+/**
+ * from → to 간선을 지날 수 있는가.
+ *
+ * 육로는 언제나 통행 가능하다. 수로는:
+ *
+ *   ① 겨울이고 원해 항로면        → 불가
+ *   ② 양 끝이 모두 적의 것이 아니면 → 가능  ← "수로 확보"
+ *   ③ 그 밖(적이 한쪽을 쥠)        → 부대에 수군이 있을 때만 (상륙 강행)
+ *
+ * ②가 핵심이다. 양 끝을 쥐고 있으면 배를 대어 실어 나를 수 있으므로
+ * **보병만 있어도 건넌다.** 수군 병종이 백제 전용 하나뿐이라
+ * "수군이 있어야 수로를 쓴다"로 하면 나머지 세 나라가 바다를 영영 못 쓴다.
+ */
+export function canPass(
+  state: GameState,
+  faction: FactionId,
+  from: CastleId,
+  to: CastleId,
+  units?: readonly UnitStack[]
+): boolean {
+  if (!isSeaRoute(from, to)) return true;
+  if (seaClosed(from, to, state.season)) return false;
+  if (friendlyEnough(state, faction, from) && friendlyEnough(state, faction, to)) return true;
+  return hasNavy(units);
+}
+
 /**
  * 행군 경로. 중간 거점은 아군·중립·적 어디든 지날 수 있지만
  * 적 거점을 지나면 그 자리에서 전투가 벌어진다(멈춤 판정은 이동 단계에서).
+ *
+ * 간선 종류(육로/수로)는 `findPath` 의 `passable`(노드 판정)로는 볼 수 없다.
+ * 대신 이웃 목록을 돌려주는 함수가 출발 노드를 알고 있으므로 거기서 걸러 낸다 —
+ * `findPath` 자체는 고치지 않는다.
  */
 export function findMarchPath(
   state: GameState,
   faction: FactionId,
   from: CastleId,
-  to: CastleId
+  to: CastleId,
+  units?: readonly UnitStack[]
 ): CastleId[] | null {
   return findPath(
     from,
     to,
-    (id) => castleDef(id).neighbors,
+    (id) => castleDef(id).neighbors.filter((nb) => canPass(state, faction, id, nb, units)),
     // 적 거점은 통과 노드로 쓰지 않는다 (거기서 멈추게 되므로).
-    (id) => {
-      const c = state.castles[id];
-      return !c.owner || c.owner === faction || !atWar(state, faction, c.owner);
-    }
+    (id) => friendlyEnough(state, faction, id)
   );
 }
 
@@ -100,7 +181,7 @@ export function applyMarch(state: GameState, cmd: MarchCommand): string | null {
   if (validateMarch(state, cmd)) return null;
   const from = state.castles[cmd.from];
   const f = state.factions[cmd.faction];
-  const path = findMarchPath(state, cmd.faction, cmd.from, cmd.target)!;
+  const path = findMarchPath(state, cmd.faction, cmd.from, cmd.target, cmd.units)!;
 
   // 주둔군에서 병력을 뗀다.
   for (const stack of cmd.units) {
@@ -166,6 +247,21 @@ export function resolveMovement(state: GameState, rng: RngCursor): void {
     let steps = marchSpeed(state, army);
     while (steps > 0 && army.path.length > 0) {
       const next = army.path[0];
+
+      // 계절이 바뀌어 앞길이 막혔을 수 있다. 그러면 그 자리에 멈춘다 —
+      // 경로는 그대로 두므로 봄이 오면 다시 움직인다.
+      if (!canPass(state, army.faction, army.location, next, army.units)) {
+        addLog(
+          state,
+          army.faction,
+          'military',
+          seaClosed(army.location, next, state.season)
+            ? `${officerName(army.commander)}의 군이 ${castleName(army.location)}에 발이 묶였다. 겨울 바다가 험해 배를 띄우지 못했다.`
+            : `${officerName(army.commander)}의 군이 ${castleName(next)}로 가는 뱃길을 잃었다.`
+        );
+        break;
+      }
+
       const castle = state.castles[next];
       const hostileCastle = castle.owner && atWar(state, army.faction, castle.owner);
       const hostileArmy = Object.values(state.armies).some(
@@ -228,14 +324,17 @@ export function resolveMovement(state: GameState, rng: RngCursor): void {
           disbandArmy(state, army, army.location);
         } else {
           // 적지도 아군 땅도 아닌 곳에 발이 묶였다면 가까운 아군 성으로 돌아간다.
-          const home = nearestFriendlyCastle(state, army.faction, army.location);
-          if (!home) disbandArmy(state, army, null);
-          else if (home === army.location) disbandArmy(state, army, home);
-          else {
-            const back = findMarchPath(state, army.faction, army.location, home);
+          // 돌아갈 길이 막혔으면(겨울 바다) 그 자리에서 기다린다 — 해산하지 않는다.
+          const home = nearestFriendlyCastle(state, army.faction, army.location, army.units);
+          if (!home) {
+            army.path = [];
+            army.target = army.location;
+          } else if (home === army.location) {
+            disbandArmy(state, army, home);
+          } else {
+            const back = findMarchPath(state, army.faction, army.location, home, army.units);
             army.path = back ?? [];
             army.target = home;
-            if (army.path.length === 0) disbandArmy(state, army, null);
           }
         }
       }
@@ -254,7 +353,11 @@ function resupply(state: GameState, army: Army): void {
   const here = state.castles[army.location];
   const connected =
     here?.owner === army.faction ||
-    castleDef(army.location).neighbors.some((n) => state.castles[n]?.owner === army.faction);
+    castleDef(army.location).neighbors.some(
+      (n) =>
+        state.castles[n]?.owner === army.faction &&
+        canPass(state, army.faction, army.location, n, army.units)
+    );
   if (!connected) return;
 
   const take = Math.min(need - army.grain, f.resources.grain);
@@ -691,6 +794,7 @@ export function disbandArmy(state: GameState, army: Army, castleId: CastleId | n
       castle.officers.push(oid);
     } else {
       // 갈 곳이 없으면 가장 가까운 아군 거점으로 돌아간다.
+      // (부대는 이미 풀렸으므로 수군 없이 갈 수 있는 길만 본다.)
       const home = nearestFriendlyCastle(state, army.faction, army.location);
       o.location = home;
       if (home) state.castles[home].officers.push(oid);
@@ -706,8 +810,26 @@ export function disbandArmy(state: GameState, army: Army, castleId: CastleId | n
 
 /** 패주 — 가장 가까운 아군 거점으로 물러난다. */
 export function retreatArmy(state: GameState, army: Army): void {
-  const home = nearestFriendlyCastle(state, army.faction, army.location);
+  const home = nearestFriendlyCastle(state, army.faction, army.location, army.units);
   if (!home) {
+    // 돌아갈 길이 **막힌 것**과 돌아갈 곳이 **없는 것**은 다르다.
+    // 겨울 바다에 갇힌 군대를 전멸시켜서는 안 된다 — 그 자리에서 버틴다.
+    const strandedBySea = castleDef(army.location).routes.sea.some(
+      (nb) =>
+        state.castles[nb]?.owner === army.faction && seaClosed(army.location, nb, state.season)
+    );
+    if (strandedBySea) {
+      army.path = [];
+      army.target = army.location;
+      army.morale = clamp(army.morale - 25, 0, 100);
+      addLog(
+        state,
+        army.faction,
+        'military',
+        `${officerName(army.commander)}의 군이 물러날 뱃길이 막혀 ${castleName(army.location)}에 남았다.`
+      );
+      return;
+    }
     disbandArmy(state, army, null);
     return;
   }
@@ -718,10 +840,17 @@ export function retreatArmy(state: GameState, army: Army): void {
   disbandArmy(state, army, home);
 }
 
+/**
+ * 물러날 수 있는 가장 가까운 아군 거점.
+ *
+ * 통행 규칙을 그대로 탄다 — **후퇴도 막힌 항로는 못 지난다.**
+ * 겨울 탐라에 있는 군대는 바다가 열릴 때까지 돌아올 길이 없다.
+ */
 export function nearestFriendlyCastle(
   state: GameState,
   faction: FactionId,
-  from: CastleId
+  from: CastleId,
+  units?: readonly UnitStack[]
 ): CastleId | null {
   if (state.castles[from]?.owner === faction) return from;
   const seen = new Set([from]);
@@ -730,6 +859,7 @@ export function nearestFriendlyCastle(
     const cur = queue.shift()!;
     for (const nb of castleDef(cur).neighbors) {
       if (seen.has(nb)) continue;
+      if (!canPass(state, faction, cur, nb, units)) continue;
       seen.add(nb);
       if (state.castles[nb]?.owner === faction) return nb;
       queue.push(nb);

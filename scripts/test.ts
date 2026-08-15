@@ -16,6 +16,14 @@ import { deserialize, serialize } from '../src/core/save';
 import { beginNextTurn, completeEvent, resolveTurn } from '../src/core/turn';
 import { findPath } from '../src/core/util';
 import { castleDef, CASTLES } from '../src/core/data';
+import {
+  canPass,
+  findMarchPath,
+  nearestFriendlyCastle,
+  retreatArmy,
+  seaClosed,
+} from '../src/core/military';
+import { atWar } from '../src/core/state';
 import { T, contrast, textOn } from '../src/ui/tokens';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -146,6 +154,27 @@ test('모든 거점 사이에 길이 있다', () => {
       const path = findPath(from.id, to.id, (id) => castleDef(id).neighbors);
       assert(path !== null, `${from.id} → ${to.id} 경로 없음`);
     }
+  }
+});
+
+test('바다로만 닿는 거점은 탐라·우산국·덕물도뿐이다', () => {
+  // 이 셋은 육로가 없어 겨울에 고립된다. 그 사실이 의도된 것임을 못 박아 둔다 —
+  // 여기에 하나가 더 늘면 겨울마다 갇히는 곳이 늘었다는 뜻이므로 눈에 띄어야 한다.
+  const seaOnly = CASTLES.filter((c) => c.routes.land.length === 0).map((c) => c.id);
+  assertEqual(
+    seaOnly.sort().join(','),
+    'deokmul,tamna,usanguk',
+    '바다로만 닿는 거점 목록이 달라졌습니다'
+  );
+});
+
+test('육로만으로도 본토는 하나로 이어진다', () => {
+  // 수로를 다 걷어내도 반도와 요동이 갈라지면 안 된다.
+  const land = CASTLES.filter((c) => c.routes.land.length > 0);
+  for (const to of land) {
+    if (to.id === land[0].id) continue;
+    const path = findPath(land[0].id, to.id, (id) => castleDef(id).routes.land);
+    assert(path !== null, `육로만으로 ${land[0].id} → ${to.id} 가 끊깁니다`);
   }
 });
 
@@ -430,6 +459,114 @@ test('로드한 상태에서 이어서 돌려도 같은 결과가 나온다', ()
     JSON.stringify(reloaded.castles),
     JSON.stringify(direct.castles),
     '저장을 거치면 결과가 달라집니다'
+  );
+});
+
+/* ================================================================== *
+ * 수로 통행과 겨울
+ *
+ * 규칙(docs 없음, CHANGELOG 0.4.0 참조):
+ *   · 육로는 제한 없음
+ *   · 수로는 양 끝을 확보하면 육군도 건넌다
+ *   · 적이 한쪽을 쥐면 수군이 있어야 강행할 수 있다
+ *   · 겨울에는 원해 항로가 닫힌다 — 진격도 후퇴도 보급도 안 된다
+ * ================================================================== */
+
+section('수로 통행과 겨울');
+
+/** 계절만 바꾼 판을 만든다 */
+function seaGame(season: 0 | 1 | 2 | 3) {
+  const g = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 4242 });
+  g.season = season;
+  return g;
+}
+
+test('양 끝을 쥐고 있으면 보병만으로도 수로를 건넌다', () => {
+  const g = seaGame(0);
+  // 642년 시나리오에서 탐라는 백제, 침미다례도 백제다.
+  assertEqual(g.castles['tamna'].owner, 'baekje', '탐라 주인이 바뀌었습니다');
+  const infantryOnly = [{ unitType: 'infantry', count: 3000 }];
+  const path = findMarchPath(g, 'baekje', 'chimmi', 'tamna', infantryOnly);
+  assert(path !== null, '확보된 수로를 보병이 못 건넜습니다');
+});
+
+test('겨울에는 그 수로가 닫힌다 — 양 끝을 다 쥐고 있어도', () => {
+  const g = seaGame(3);
+  const infantryOnly = [{ unitType: 'infantry', count: 3000 }];
+  assert(seaClosed('chimmi', 'tamna', 3), '탐라 항로가 원해로 잡히지 않았습니다');
+  const path = findMarchPath(g, 'baekje', 'chimmi', 'tamna', infantryOnly);
+  assertEqual(path, null, '겨울에 원해 항로가 열려 있습니다');
+});
+
+test('적이 지키는 항로는 수군이 있어야 건넌다', () => {
+  const g = seaGame(0);
+  // 덕물도(신라)와 기벌포(백제)는 전쟁 중이라 서로 적이다.
+  assert(g.castles['deokmul'].owner === 'silla', '덕물도 주인이 바뀌었습니다');
+  assert(g.castles['gibeolpo'].owner === 'baekje', '기벌포 주인이 바뀌었습니다');
+  assert(atWar(g, 'baekje', 'silla'), '642년은 백제-신라가 전쟁 중이어야 합니다');
+
+  const infantry = [{ unitType: 'infantry', count: 3000 }];
+  const withNavy = [
+    { unitType: 'infantry', count: 3000 },
+    { unitType: 'navy', count: 1000 },
+  ];
+  assert(
+    !canPass(g, 'baekje', 'gibeolpo', 'deokmul', infantry),
+    '수군 없이 적의 항로를 건넜습니다'
+  );
+  assert(
+    canPass(g, 'baekje', 'gibeolpo', 'deokmul', withNavy),
+    '수군이 있는데도 상륙을 못 했습니다'
+  );
+});
+
+test('겨울에는 수군이 있어도 원해 항로를 못 건넌다', () => {
+  const g = seaGame(3);
+  const withNavy = [{ unitType: 'navy', count: 2000 }];
+  assert(
+    !canPass(g, 'baekje', 'gibeolpo', 'deokmul', withNavy),
+    '겨울 원해 항로가 수군에게 열려 있습니다'
+  );
+});
+
+test('겨울 섬에 갇힌 부대는 후퇴도 못 하지만 해산되지도 않는다', () => {
+  const g = seaGame(3);
+  // 탐라에 백제군을 하나 세운다.
+  const army = {
+    id: 'armyTest',
+    faction: 'baekje',
+    commander: 'gyebaek',
+    officers: ['gyebaek'],
+    units: [{ unitType: 'infantry', count: 3000 }],
+    location: 'tamna',
+    path: [],
+    target: 'tamna',
+    grain: 5000,
+    morale: 60,
+    training: 60,
+    siegeMode: 'assault' as const,
+  };
+  g.armies[army.id] = army;
+  // 탐라를 중립으로 만들어 "물러날 아군 성"이 바다 건너에만 있게 한다.
+  g.castles['tamna'].owner = null;
+
+  assertEqual(
+    nearestFriendlyCastle(g, 'baekje', 'tamna', army.units),
+    null,
+    '겨울 바다를 건너 후퇴할 길이 열려 있습니다'
+  );
+  retreatArmy(g, army);
+  assert(g.armies['armyTest'] !== undefined, '갇힌 부대가 해산되었습니다');
+  assertEqual(g.armies['armyTest'].location, 'tamna', '갇힌 부대가 옮겨졌습니다');
+});
+
+test('봄이 오면 같은 길이 다시 열린다', () => {
+  const g = seaGame(0);
+  const infantry = [{ unitType: 'infantry', count: 3000 }];
+  g.castles['tamna'].owner = 'baekje';
+  assert(
+    canPass(g, 'baekje', 'chimmi', 'tamna', infantry),
+    '봄인데도 항로가 닫혀 있습니다'
   );
 });
 

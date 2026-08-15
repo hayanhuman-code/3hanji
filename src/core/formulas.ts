@@ -250,8 +250,17 @@ export function hasSkill(def: CommanderLike | undefined, skill: string): boolean
  * 계절
  * ================================================================== */
 
-/** 겨울에는 압록강이 얼어 도하 페널티가 사라진다. */
+/** 겨울에는 압록·대동·한강이 얼어 도하 페널티가 사라진다. */
 export function riversFrozen(season: Season): boolean {
+  return season === 3;
+}
+
+/**
+ * 같은 겨울이 바다에는 반대로 작용한다 — 먼 바다는 풍랑에 막힌다.
+ * 강이 열리고 바다가 닫히는 이 맞바꿈이 겨울 전역의 성격이다.
+ * 어느 항로가 원해인지는 `military.ts` 의 `OPEN_SEA_PORTS` 가 정한다.
+ */
+export function winterSeas(season: Season): boolean {
   return season === 3;
 }
 

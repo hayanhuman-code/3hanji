@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react';
 import { castleDef, castleName, factionName, officerDef, unitDef } from '../core/data';
 import { B } from '../core/formulas';
-import { findMarchPath, validateMarch } from '../core/military';
+import { findMarchPath, isSeaRoute, validateMarch } from '../core/military';
 import { availableOfficersAt } from '../core/state';
 import { victoryLabel } from '../core/victory';
 import type { EventDef, GameState, MarchCommand, TurnReport, UnitStack } from '../core/types';
@@ -21,12 +21,15 @@ import { useGame } from './store';
  * 대화상자 안에 가둬 두지 않는다.
  */
 export function reachableFrom(state: GameState, faction: string, from: string) {
+  // 그 거점에 있는 병력 전부를 데려간다고 보고 잰다 — 수군이 있으면
+  // 적이 지키는 항로도 후보에 든다. 실제 편성은 아래 슬라이더가 정한다.
+  const units = state.castles[from]?.composition;
   return Object.values(state.castles)
     .filter((c) => c.id !== from)
-    .filter((c) => !!findMarchPath(state, faction, from, c.id))
+    .filter((c) => !!findMarchPath(state, faction, from, c.id, units))
     .sort((a, b) => {
-      const pa = findMarchPath(state, faction, from, a.id)?.length ?? 99;
-      const pb = findMarchPath(state, faction, from, b.id)?.length ?? 99;
+      const pa = findMarchPath(state, faction, from, a.id, units)?.length ?? 99;
+      const pb = findMarchPath(state, faction, from, b.id, units)?.length ?? 99;
       return pa - pb;
     });
 }
@@ -87,7 +90,7 @@ export function MarchDialog({
     siegeMode: mode,
   };
   const error = target ? validateMarch(state, cmd) : '목적지를 고르십시오.';
-  const path = target ? findMarchPath(state, faction, from, target) : null;
+  const path = target ? findMarchPath(state, faction, from, target, units) : null;
 
   return (
     <div className="march-panel">
@@ -163,9 +166,24 @@ export function MarchDialog({
               })}
             </select>
             <div className="faint" style={{ fontSize: 11.5, marginTop: 4 }}>
-              {path && path.length > 0
-                ? `경로: ${castleName(from)} → ${path.map(castleName).join(' → ')} (${path.length}계절)`
-                : '지도에서 밝게 표시된 거점을 눌러도 됩니다.'}
+              {path && path.length > 0 ? (
+                <>
+                  경로: {castleName(from)}
+                  {path.map((id, i) => {
+                    const prev = i === 0 ? from : path[i - 1];
+                    // 뱃길 구간은 표시해 준다 — 겨울에 닫히는 길인지 알아야 한다.
+                    return (
+                      <span key={id}>
+                        {isSeaRoute(prev, id) ? ' ⇢배로⇢ ' : ' → '}
+                        {castleName(id)}
+                      </span>
+                    );
+                  })}{' '}
+                  ({path.length}계절)
+                </>
+              ) : (
+                '지도에서 밝게 표시된 거점을 눌러도 됩니다.'
+              )}
             </div>
           </div>
 

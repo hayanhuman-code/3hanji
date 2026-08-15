@@ -43,6 +43,14 @@ interface Props {
 
 export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) {
   const api = useMapView(CONTENT);
+
+  /**
+   * 코어는 GameState 를 **제자리에서** 고친다(README §계획과 달라진 점 1).
+   * 그래서 `state` 의 객체 정체성은 영원히 그대로고, `memo(Routes)` 같은 얕은 비교는
+   * 첫 렌더 뒤로 아무것도 통과시키지 않는다 — 길 색과 영향권이 1턴에서 굳는다.
+   * 실제로 의존하는 값을 서명으로 만들어 함께 내려보낸다.
+   */
+  const ownerKey = CASTLES.map((c) => state.castles[c.id]?.owner ?? '-').join('|');
   const { centerOn, ensureVisible, zoomCenter, fit, zoom } = api;
 
   // 첫 진입에는 내 도성으로 데려간다. 76 거점 전체를 보여 줘 봐야 어디가
@@ -69,8 +77,8 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
     <>
       <MapStage api={api} onSelect={onSelect}>
         <Terrain season={state.season} />
-        <Territory state={state} />
-        <Routes state={state} />
+        <Territory state={state} ownerKey={ownerKey} />
+        <Routes state={state} ownerKey={ownerKey} season={state.season} />
         <ArmyMarkers state={state} />
         <CastleMarkers api={api} state={state} selected={selected} marchTargets={marchTargets} />
       </MapStage>

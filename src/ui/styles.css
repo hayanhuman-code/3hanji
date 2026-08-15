@@ -608,6 +608,11 @@ select.btn {
   stroke-dasharray: 1.5 8;
   opacity: 0.4;
 }
+/* 적이 한쪽을 쥔 항로 — 수군이 있어야 건넌다 */
+.map-searoad.contested {
+  opacity: 0.3;
+  stroke-dasharray: 1 6;
+}
 
 /* --- 부대 --- */
 .map-march {

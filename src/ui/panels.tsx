@@ -20,6 +20,7 @@ import { CHINA_ID, CHINA_NAME } from '../core/diplomacy';
 import { B, SKILLS, conscriptCost, loyaltyFactor, maxTroops } from '../core/formulas';
 
 import { stockCap, validateCommand } from '../core/domestic';
+import { OPEN_SEA_PORTS, seaClosed } from '../core/military';
 import { foresightHints } from '../core/events';
 import {
   armyTroops,
@@ -188,6 +189,22 @@ export function CastlePanel({ state, onMarch }: { state: GameState; onMarch: () 
           {def.special === 'trade_hub' && ' · 교역 요충'}
           {def.special === 'granary' && ' · 곡창'}
         </div>
+        {def.routes.sea.length > 0 && (
+          <div className="faint" style={{ fontSize: 11.5 }}>
+            뱃길{' '}
+            {def.routes.sea.map((id, i) => (
+              <span key={id}>
+                {i > 0 && ' · '}
+                {castleName(id)}
+                {seaClosed(def.id, id, state.season) ? (
+                  <b style={{ color: 'var(--jinsa)' }}> (겨울 폐쇄)</b>
+                ) : OPEN_SEA_PORTS.has(id) || OPEN_SEA_PORTS.has(def.id) ? (
+                  <span> (원해)</span>
+                ) : null}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {castle.besiegedBy && (

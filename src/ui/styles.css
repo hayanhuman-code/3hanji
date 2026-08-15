@@ -319,7 +319,29 @@ hr.sep {
   }
 }
 
+/* ------------------------------------------------------------------ *
+ * 전략맵
+ *
+ * 지도 색은 전부 여기 변수로만 둔다. 컴포넌트에 색을 박아 넣으면
+ * 팔레트를 갈아엎을 때 스무 군데를 찾아다녀야 한다.
+ * ------------------------------------------------------------------ */
+
 .map-wrap {
+  --map-land: #241d15;
+  --map-coast: #4a3d2e;
+  --map-lake: #141c20;
+  --map-river: #33454c;
+  --map-river-ice: #6a7d80;
+  --map-range: #4a3f31;
+  --map-road-bed: #2a2119;
+  --map-road: #4a3d2e;
+  --map-searoad: #3d5a63;
+  --map-closed: #8a3a2c;
+  --map-label: #e8dcc4;
+  --map-label-halo: #100d0a;
+  --map-label-dim: #b8a888;
+  --map-target: #7fb89c;
+
   position: relative;
   min-height: 0;
   background:
@@ -327,10 +349,279 @@ hr.sep {
     #100d0a;
   overflow: hidden;
 }
-.map-wrap svg {
+
+/* 조작면. touch-action 이 없으면 모바일에서 페이지 스크롤과 팬이 싸운다. */
+.map-stage {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+.map-stage.dragging {
+  cursor: grabbing;
+}
+.map-svg {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* --- 지형 --- *
+ * 모든 stroke 에 non-scaling-stroke 를 건다. 없으면 6배로 당겼을 때
+ * 해안선이 굵은 덩어리로 뭉개진다. */
+.map-land,
+.map-lake,
+.map-river,
+.map-range,
+.map-road-bed,
+.map-road,
+.map-searoad,
+.map-march,
+.node .gl,
+.node .besieged {
+  vector-effect: non-scaling-stroke;
+}
+
+.map-land {
+  fill: var(--map-land);
+  stroke: var(--map-coast);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.map-lake {
+  fill: var(--map-lake);
+  stroke: var(--map-river);
+  stroke-width: 0.8;
+}
+.map-river {
+  fill: none;
+  stroke: var(--map-river);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+.map-river.frozen {
+  stroke: var(--map-river-ice);
+  stroke-dasharray: 4 3;
+}
+/* 산맥은 열린 폴리라인이다 — 채우면 시커먼 덩어리가 된다. */
+.map-range {
+  fill: none;
+  stroke: var(--map-range);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.8;
+}
+.map-sea-label {
+  font-family: var(--font);
+  font-size: 26px;
+  fill: var(--map-searoad);
+  opacity: 0.42;
+  letter-spacing: 0.42em;
+}
+
+/* --- 길 --- */
+.map-road-bed {
+  stroke: var(--map-road-bed);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.map-road {
+  stroke: var(--map-road);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 3.5;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+.map-road.owned {
+  opacity: 0.55;
+  stroke-dasharray: none;
+  stroke-width: 1.8;
+}
+.map-searoad {
+  stroke: var(--map-searoad);
+  stroke-width: 1.5;
+  stroke-dasharray: 1.5 5;
+  stroke-linecap: round;
+  opacity: 0.72;
+}
+.map-searoad.closed {
+  stroke: var(--map-closed);
+  stroke-dasharray: 1.5 8;
+  opacity: 0.4;
+}
+
+/* --- 부대 --- */
+.map-march {
+  stroke-width: 2.5;
+  stroke-dasharray: 7 5;
+  opacity: 0.85;
+}
+.map-army {
+  stroke: #14100d;
+  stroke-width: 1.2;
+}
+.map-army-label {
+  font-size: 15px;
+  fill: var(--map-label-dim);
+  stroke: var(--map-label-halo);
+  stroke-width: 3;
+  paint-order: stroke;
+}
+
+/* --- 거점 --- */
+.node {
+  cursor: pointer;
+}
+.node .hit {
+  fill: transparent;
+}
+.node .gl {
+  stroke: #14100d;
+  stroke-width: 1.4;
+}
+.node:hover .gl {
+  stroke: var(--map-label);
+  stroke-width: 2.2;
+}
+.node.sel .gl {
+  stroke: var(--ochre);
+  stroke-width: 2.6;
+}
+.node.target .gl {
+  stroke: var(--map-target);
+  stroke-width: 2.4;
+}
+.node.dim {
+  opacity: 0.35;
+}
+.node .besieged {
+  fill: none;
+  stroke: var(--vermilion);
+  stroke-width: 1.8;
+  stroke-dasharray: 3 3;
+}
+/* 지명은 세로쓰기 + 외곽선. 어떤 배경 위에서도 읽혀야 한다. */
+.lbl {
+  font-family: var(--font);
+  font-size: 11px;
+  fill: var(--map-label);
+  paint-order: stroke;
+  stroke: var(--map-label-halo);
+  stroke-width: 2.8;
+  stroke-linejoin: round;
+}
+.lbl.cap {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.trp {
+  font-size: 10px;
+  fill: var(--map-label-dim);
+  paint-order: stroke;
+  stroke: var(--map-label-halo);
+  stroke-width: 2.4;
+}
+
+/* --- 화면에 고정되는 것들 --- */
+.map-hud {
+  position: absolute;
+  z-index: 3;
+  background: rgba(16, 13, 10, 0.82);
+  border: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--paper-dim);
+}
+.map-hud.zoom {
+  left: 10px;
+  top: 10px;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.map-hud.zoom button {
+  height: 30px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.map-hud.zoom button:last-child {
+  border-bottom: none;
+  font-size: 11px;
+}
+.map-hud.zoom button:hover {
+  background: var(--paper);
+  color: #14100d;
+}
+.map-hud.zoom .lv {
+  padding: 4px 0;
+  text-align: center;
+  font-size: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.map-hud.when {
+  right: 10px;
+  top: 10px;
+  padding: 6px 12px;
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--paper);
+}
+.map-hud.when em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--map-label-dim);
+}
+.map-hud.legend {
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+}
+.map-hud.legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-right: 1px solid var(--line);
+}
+.map-hud.legend span:last-child {
+  border-right: none;
+}
+.map-hud.legend i {
+  width: 10px;
+  height: 10px;
+  flex: none;
+}
+.map-hud.legend em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--paper-dim);
+}
+.map-hud.march-hint {
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-color: var(--ochre);
+  color: var(--paper);
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  /* 지도가 화면의 55% 뿐이다. 범례까지 얹으면 볼 것이 없다. */
+  .map-hud.legend {
+    display: none;
+  }
 }
 
 .side {
@@ -473,6 +764,37 @@ table.grid td.n {
   place-items: center;
   z-index: 40;
   padding: 20px;
+}
+
+/*
+ * 출진 편성은 화면을 덮지 않는다. 목적지를 지도에서 직접 찍어야 하므로
+ * 지도 옆에 떠 있고, 뒤쪽 지도는 그대로 눌린다.
+ */
+.march-panel {
+  position: fixed;
+  top: 56px;
+  bottom: 12px;
+  left: 12px;
+  width: 372px;
+  z-index: 30;
+  display: flex;
+  pointer-events: none;
+}
+.march-panel > .modal {
+  pointer-events: auto;
+  width: 100%;
+  max-height: 100%;
+  border-color: var(--ochre);
+}
+@media (max-width: 1100px) {
+  /* 사이드 패널이 아래로 내려가는 폭에서는 지도 위에 겹쳐 띄운다. */
+  .march-panel {
+    right: 10px;
+    left: 10px;
+    width: auto;
+    bottom: auto;
+    max-height: 52%;
+  }
 }
 .modal {
   background: var(--panel);

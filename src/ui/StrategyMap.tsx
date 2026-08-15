@@ -1,248 +1,115 @@
 /**
  * StrategyMap.tsx — 전략맵 (기획서 §9 / 시스템 상세계획 §4 ①)
  *
- * SVG 로 그린다. 거점 노드 + 인접선(이동 그래프) + 세력 색 + 계절 표현.
- * 실제 위성 지형 대신 프로토타입에서는 지역 윤곽을 단순화한 배경을 쓴다.
+ * 실제 경위도를 투영한 지도 위에 거점 76개를 놓는다. 조작(확대·이동·핀치)은
+ * MapStage 가, 변환은 useMapView 가 맡고, 여기서는 레이어를 쌓고
+ * 화면에 고정되어야 하는 것(줌 위젯·계절·범례)을 HTML 로 얹는다.
+ *
+ * 층 순서는 아래에서 위로: 땅 → 영향권 → 길 → 부대 → 거점.
  */
 
-import { CASTLES, MAP, ROUTES, castleDef, factionColor, factionName, officerName } from '../core/data';
-import { armyTroops } from '../core/state';
+import { useEffect, useRef } from 'react';
+import { CASTLES, castleDef, factionColor, factionName } from '../core/data';
 import { riversFrozen } from '../core/formulas';
 import type { GameState } from '../core/types';
-import { fmtTroops } from '../core/util';
+import { ArmyMarkers } from './map/ArmyMarkers';
+import { CastleMarkers } from './map/CastleMarkers';
+import { MapStage } from './map/MapStage';
+import { Routes } from './map/Routes';
+import { Terrain } from './map/Terrain';
+import { Territory } from './map/Territory';
+import { useMapView } from './map/useMapView';
+
+/**
+ * 실제로 쓰는 범위. 지도 캔버스는 1760×2049 이지만 거점은 그 일부에만 있다
+ * (요서~우산국, 부여성~탐라). 캔버스 전체를 기준으로 맞추면 빈 바다가 절반이다.
+ */
+const PAD = 90;
+const CONTENT = (() => {
+  const xs = CASTLES.map((c) => c.position.x);
+  const ys = CASTLES.map((c) => c.position.y);
+  const x = Math.min(...xs) - PAD;
+  const y = Math.min(...ys) - PAD;
+  return { x, y, w: Math.max(...xs) + PAD - x, h: Math.max(...ys) + PAD - y };
+})();
 
 interface Props {
   state: GameState;
   selected: string | null;
   onSelect: (id: string) => void;
-  /** 출진 목표를 고르는 중이면 후보 거점 집합 */
+  /** 출진 목표를 고르는 중이면 도달 가능한 거점 집합 */
   marchTargets?: Set<string> | null;
 }
 
-/**
- * 좌표계는 mapdata.json 과 같은 1760×2049 공간이다.
- * 거점이 실제로 놓인 범위만 잘라 낸다(요서~우산국, 부여성~탐라).
- * 줌·팬과 실제 지형선은 다음 단계에서 붙인다.
- */
-const VIEW_BOX = '400 300 1170 1720';
-
-const CASTLE_SHAPE: Record<string, number> = {
-  capital: 13,
-  major: 11,
-  fort: 10,
-  port: 10,
-};
-
-/** 76 거점의 이름을 다 쓰면 겹친다. 등급이 높은 것과 선택한 것만 쓴다. */
-const NAMED_TYPES = new Set(['capital', 'major']);
-
 export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) {
+  const api = useMapView(CONTENT);
+  const { centerOn, ensureVisible, zoomCenter, fit, zoom } = api;
+
+  // 첫 진입에는 내 도성으로 데려간다. 76 거점 전체를 보여 줘 봐야 어디가
+  // 내 땅인지 알 수 없다.
+  const homed = useRef(false);
+  useEffect(() => {
+    if (homed.current || !selected) return;
+    homed.current = true;
+    const def = castleDef(selected);
+    centerOn(def.position.x, def.position.y);
+  }, [selected, centerOn]);
+
+  // 선택이 바뀌면 — 인물 패널에서 건너뛰는 경우를 포함해 — 화면 안으로 당긴다.
+  useEffect(() => {
+    if (!homed.current || !selected) return;
+    const def = castleDef(selected);
+    ensureVisible(def.position.x, def.position.y);
+  }, [selected, ensureVisible]);
+
   const frozen = riversFrozen(state.season);
-  const armies = Object.values(state.armies);
+  const alive = Object.values(state.factions).filter((f) => f.alive);
 
   return (
-    <svg viewBox={VIEW_BOX} preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <radialGradient id="glow" cx="50%" cy="50%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </radialGradient>
-      </defs>
+    <>
+      <MapStage api={api} onSelect={onSelect}>
+        <Terrain season={state.season} />
+        <Territory state={state} />
+        <Routes state={state} />
+        <ArmyMarkers state={state} />
+        <CastleMarkers api={api} state={state} selected={selected} marchTargets={marchTargets} />
+      </MapStage>
 
-      {/* 해안선·하천 — 실제 지리에서 뽑은 윤곽 */}
-      <g pointerEvents="none">
-        <path d={MAP.land} fill="#1b1712" stroke="#3a3026" strokeWidth="1.6" />
-        <path d={MAP.islets} fill="#1b1712" stroke="#3a3026" strokeWidth="1.2" />
-        <path d={MAP.lakes} fill="#141c20" stroke="#2c3a40" strokeWidth="1" />
-        {Object.entries(MAP.rivers).map(([name, d]) => (
-          <path key={name} d={d} fill="none" stroke="#33454c" strokeWidth="1.6" />
-        ))}
-        {Object.entries(MAP.ranges).map(([name, d]) => (
-          <path key={name} d={d} fill="none" stroke="#4a3f31" strokeWidth="1.2" />
-        ))}
-      </g>
+      {/* --- 화면에 고정되는 것들. 지도를 옮겨도 따라가지 않는다. --- */}
 
-      {/* 계절 표시 */}
-      <text x="1540" y="360" textAnchor="end" fill="#7d715c" fontSize="26" fontFamily="serif">
+      <div className="map-hud zoom">
+        <button onClick={() => zoomCenter(1.35)} aria-label="확대">
+          ＋
+        </button>
+        <div className="lv">{zoom}%</div>
+        <button onClick={() => zoomCenter(1 / 1.35)} aria-label="축소">
+          －
+        </button>
+        <button onClick={fit} aria-label="전체 보기">
+          전체
+        </button>
+      </div>
+
+      <div className="map-hud when">
         {state.year}년 {['봄', '여름', '가을', '겨울'][state.season]}
-        {frozen ? ' · 강이 얼었다' : ''}
-      </text>
+        {frozen && <em> · 강이 얼었다</em>}
+      </div>
 
-      {/* 길 — 육로와 수로. 지도 파이프라인이 지형을 피해 그린 곡선을 그대로 쓴다. */}
-      <g fill="none" pointerEvents="none">
-        {ROUTES.map((r) => {
-          const oa = state.castles[r.a]?.owner;
-          const ob = state.castles[r.b]?.owner;
-          const same = oa && oa === ob;
-          return (
-            <path
-              key={`${r.a}-${r.b}`}
-              d={r.d}
-              stroke={same ? factionColor(oa) : r.sea ? '#3d5a63' : '#4a3d2e'}
-              strokeOpacity={same ? 0.5 : 0.8}
-              strokeWidth={r.sea ? 1.6 : 2.4}
-              strokeDasharray={r.sea ? '2 7' : undefined}
-            />
-          );
-        })}
-      </g>
+      <div className="map-hud legend">
+        {alive.map((f) => (
+          <span key={f.id}>
+            <i style={{ background: factionColor(f.id) }} />
+            {factionName(f.id)}
+            <em>{Object.values(state.castles).filter((c) => c.owner === f.id).length}</em>
+          </span>
+        ))}
+      </div>
 
-      {/* 행군 중인 부대 */}
-      <g>
-        {armies.map((army) => {
-          const at = castleDef(army.location);
-          const next = army.path[0] ? castleDef(army.path[0]) : null;
-          const dx = next ? (next.position.x - at.position.x) * 0.28 : 0;
-          const dy = next ? (next.position.y - at.position.y) * 0.28 : -22;
-          const x = at.position.x + dx;
-          const y = at.position.y + dy;
-          return (
-            <g key={army.id}>
-              {next && (
-                <line
-                  x1={at.position.x}
-                  y1={at.position.y}
-                  x2={next.position.x}
-                  y2={next.position.y}
-                  stroke={factionColor(army.faction)}
-                  strokeWidth="3"
-                  strokeDasharray="7 5"
-                  opacity="0.85"
-                />
-              )}
-              <polygon
-                points={`${x},${y - 11} ${x + 9},${y + 7} ${x - 9},${y + 7}`}
-                fill={factionColor(army.faction)}
-                stroke="#14100d"
-                strokeWidth="1.2"
-              />
-              <text x={x} y={y + 24} textAnchor="middle" fontSize="16" fill="#b8a888">
-                {officerName(army.commander)} {fmtTroops(armyTroops(army))}
-              </text>
-            </g>
-          );
-        })}
-      </g>
-
-      {/* 거점 */}
-      <g>
-        {CASTLES.map((def) => {
-          const c = state.castles[def.id];
-          if (!c) return null;
-          const r = CASTLE_SHAPE[def.type] ?? 12;
-          const color = factionColor(c.owner);
-          const isSel = selected === def.id;
-          const isTarget = marchTargets?.has(def.id);
-          const besieged = !!c.besiegedBy;
-
-          return (
-            <g
-              key={def.id}
-              onClick={() => onSelect(def.id)}
-              style={{ cursor: 'pointer' }}
-              opacity={marchTargets && !isTarget ? 0.4 : 1}
-            >
-              {(isSel || isTarget) && (
-                <circle cx={def.position.x} cy={def.position.y} r={r + 16} fill="url(#glow)" />
-              )}
-
-              {/* 등급별 모양: 도성=이중원, 산성=삼각, 항구=마름모, 대성=원 */}
-              {def.type === 'fort' ? (
-                <polygon
-                  points={`${def.position.x},${def.position.y - r} ${def.position.x + r},${def.position.y + r * 0.8} ${def.position.x - r},${def.position.y + r * 0.8}`}
-                  fill={color}
-                  stroke={isSel ? '#e8dcc4' : '#14100d'}
-                  strokeWidth={isSel ? 2.4 : 1.6}
-                />
-              ) : def.type === 'port' ? (
-                <polygon
-                  points={`${def.position.x},${def.position.y - r} ${def.position.x + r},${def.position.y} ${def.position.x},${def.position.y + r} ${def.position.x - r},${def.position.y}`}
-                  fill={color}
-                  stroke={isSel ? '#e8dcc4' : '#14100d'}
-                  strokeWidth={isSel ? 2.4 : 1.6}
-                />
-              ) : (
-                <>
-                  <circle
-                    cx={def.position.x}
-                    cy={def.position.y}
-                    r={r}
-                    fill={color}
-                    stroke={isSel ? '#e8dcc4' : '#14100d'}
-                    strokeWidth={isSel ? 2.4 : 1.6}
-                  />
-                  {def.type === 'capital' && (
-                    <circle
-                      cx={def.position.x}
-                      cy={def.position.y}
-                      r={r - 5}
-                      fill="none"
-                      stroke="#14100d"
-                      strokeWidth="1.6"
-                    />
-                  )}
-                </>
-              )}
-
-              {besieged && (
-                <circle
-                  cx={def.position.x}
-                  cy={def.position.y}
-                  r={r + 7}
-                  fill="none"
-                  stroke="#b0432f"
-                  strokeWidth="1.8"
-                  strokeDasharray="3 3"
-                />
-              )}
-
-              {(NAMED_TYPES.has(def.type) || isSel || isTarget) && (
-                <>
-                  <text
-                    x={def.position.x}
-                    y={def.position.y - r - 8}
-                    textAnchor="middle"
-                    fontSize="19"
-                    fontFamily="serif"
-                    fill="#e8dcc4"
-                    stroke="#100d0a"
-                    strokeWidth="4"
-                    paintOrder="stroke"
-                  >
-                    {def.name}
-                  </text>
-                  <text
-                    x={def.position.x}
-                    y={def.position.y + r + 20}
-                    textAnchor="middle"
-                    fontSize="16"
-                    fill="#b8a888"
-                    stroke="#100d0a"
-                    strokeWidth="3.4"
-                    paintOrder="stroke"
-                  >
-                    {c.owner ? fmtTroops(c.troops) : '무주공산'}
-                  </text>
-                </>
-              )}
-            </g>
-          );
-        })}
-      </g>
-
-      {/* 범례 */}
-      <g transform="translate(430, 1985)">
-        {Object.values(state.factions)
-          .filter((f) => f.alive)
-          .map((f, i) => (
-            <g key={f.id} transform={`translate(${i * 130}, 0)`}>
-              <rect width="16" height="16" y="-14" fill={factionColor(f.id)} rx="2" />
-              <text x="22" y="0" fontSize="19" fill="#b8a888">
-                {factionName(f.id)}
-              </text>
-            </g>
-          ))}
-      </g>
-    </svg>
+      {marchTargets && (
+        <div className="map-hud march-hint">
+          출진할 곳을 지도에서 고르십시오 · 후보 {marchTargets.size}
+        </div>
+      )}
+    </>
   );
 }

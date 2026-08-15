@@ -16,13 +16,39 @@ import { useGame } from './store';
  * 출진
  * ------------------------------------------------------------------ */
 
+/**
+ * 도달 가능한 거점을 가까운 순으로. GameScreen 이 지도를 밝히는 데도 쓰므로
+ * 대화상자 안에 가둬 두지 않는다.
+ */
+export function reachableFrom(state: GameState, faction: string, from: string) {
+  return Object.values(state.castles)
+    .filter((c) => c.id !== from)
+    .filter((c) => !!findMarchPath(state, faction, from, c.id))
+    .sort((a, b) => {
+      const pa = findMarchPath(state, faction, from, a.id)?.length ?? 99;
+      const pb = findMarchPath(state, faction, from, b.id)?.length ?? 99;
+      return pa - pb;
+    });
+}
+
+/**
+ * 출진 편성.
+ *
+ * 전체 화면을 덮는 모달이 아니라 **지도 옆에 떠 있는 창**이다.
+ * 거점이 76개나 되어 목적지를 드롭다운 이름으로 찾는 것이 고역이므로,
+ * 대화상자를 띄운 채로 지도에서 직접 찍을 수 있어야 한다.
+ */
 export function MarchDialog({
   state,
   from,
+  target,
+  onTarget,
   onClose,
 }: {
   state: GameState;
   from: string;
+  target: string;
+  onTarget: (id: string) => void;
   onClose: () => void;
 }) {
   const issue = useGame((s) => s.issue);
@@ -32,20 +58,13 @@ export function MarchDialog({
 
   const [commander, setCommander] = useState(officers[0]?.id ?? '');
   const [escorts, setEscorts] = useState<string[]>([]);
-  const [target, setTarget] = useState<string>('');
   const [mode, setMode] = useState<'assault' | 'encircle'>('assault');
   const [ratio, setRatio] = useState(0.7);
 
-  const reachable = useMemo(() => {
-    return Object.values(state.castles)
-      .filter((c) => c.id !== from)
-      .filter((c) => !!findMarchPath(state, faction, from, c.id))
-      .sort((a, b) => {
-        const pa = findMarchPath(state, faction, from, a.id)?.length ?? 99;
-        const pb = findMarchPath(state, faction, from, b.id)?.length ?? 99;
-        return pa - pb;
-      });
-  }, [state, from, faction]);
+  const reachable = useMemo(
+    () => reachableFrom(state, faction, from),
+    [state, from, faction]
+  );
 
   const units: UnitStack[] = castle.composition
     .map((u) => ({ unitType: u.unitType, count: Math.floor(u.count * ratio) }))
@@ -71,8 +90,8 @@ export function MarchDialog({
   const path = target ? findMarchPath(state, faction, from, target) : null;
 
   return (
-    <div className="overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div className="march-panel">
+      <div className="modal">
         <div className="modal-head">
           <h2>{castleName(from)}에서 출진</h2>
           <button className="btn ghost small" onClick={onClose}>
@@ -127,7 +146,11 @@ export function MarchDialog({
             <div className="section-label" style={{ margin: '0 0 6px' }}>
               목적지
             </div>
-            <select className="btn small block" value={target} onChange={(e) => setTarget(e.target.value)}>
+            <select
+              className="btn small block"
+              value={target}
+              onChange={(e) => onTarget(e.target.value)}
+            >
               <option value="">— 고르십시오 —</option>
               {reachable.map((c) => {
                 const d = castleDef(c.id);
@@ -139,11 +162,11 @@ export function MarchDialog({
                 );
               })}
             </select>
-            {path && path.length > 0 && (
-              <div className="faint" style={{ fontSize: 11.5, marginTop: 4 }}>
-                경로: {castleName(from)} → {path.map(castleName).join(' → ')} ({path.length}계절)
-              </div>
-            )}
+            <div className="faint" style={{ fontSize: 11.5, marginTop: 4 }}>
+              {path && path.length > 0
+                ? `경로: ${castleName(from)} → ${path.map(castleName).join(' → ')} (${path.length}계절)`
+                : '지도에서 밝게 표시된 거점을 눌러도 됩니다.'}
+            </div>
           </div>
 
           <div>

@@ -2,11 +2,11 @@
  * GameScreen.tsx — 전략 화면 전체 조립 (상단 바 + 전략맵 + 사이드 패널 + 로그)
  */
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { factionColor, factionName } from '../core/data';
 import { downloadSave, saveToStorage } from '../core/save';
 import { factionCastles, factionTroops } from '../core/state';
-import { EventModal, GameOverModal, MarchDialog, ReportModal } from './dialogs';
+import { EventModal, GameOverModal, MarchDialog, ReportModal, reachableFrom } from './dialogs';
 import {
   CastlePanel,
   ChroniclePanel,
@@ -44,6 +44,26 @@ export function GameScreen() {
   useGame((s) => s.revision);
 
   const [marchFrom, setMarchFrom] = useState<string | null>(null);
+  const [marchTarget, setMarchTarget] = useState('');
+
+  // 출진 중이면 도달 가능한 거점을 지도에 밝힌다. 76 거점 판에서
+  // 목적지를 드롭다운 이름으로만 고르게 하는 것은 무리다.
+  const marchTargets = useMemo(() => {
+    if (!state || !marchFrom) return null;
+    return new Set(reachableFrom(state, state.playerFaction, marchFrom).map((c) => c.id));
+  }, [state, marchFrom]);
+
+  // 지도 클릭은 평소에는 거점 선택이지만, 출진 중에는 목적지 지정이 된다.
+  const onMapSelect = useCallback(
+    (id: string) => {
+      if (marchTargets) {
+        if (marchTargets.has(id)) setMarchTarget(id);
+        return;
+      }
+      select(id);
+    },
+    [marchTargets, select]
+  );
 
   if (!state) return null;
   const me = state.factions[state.playerFaction];
@@ -122,7 +142,12 @@ export function GameScreen() {
 
       <div className="body">
         <div className="map-wrap">
-          <StrategyMap state={state} selected={selected} onSelect={select} />
+          <StrategyMap
+            state={state}
+            selected={selected}
+            onSelect={onMapSelect}
+            marchTargets={marchTargets}
+          />
         </div>
 
         <div className="side">
@@ -139,7 +164,14 @@ export function GameScreen() {
           </div>
           <div className="side-body">
             {panel === 'castle' && (
-              <CastlePanel state={state} onMarch={() => selected && setMarchFrom(selected)} />
+              <CastlePanel
+                state={state}
+                onMarch={() => {
+                  if (!selected) return;
+                  setMarchTarget('');
+                  setMarchFrom(selected);
+                }}
+              />
             )}
             {panel === 'officers' && <OfficerPanel state={state} />}
             {panel === 'diplomacy' && <DiplomacyPanel state={state} />}
@@ -165,7 +197,13 @@ export function GameScreen() {
       </div>
 
       {marchFrom && (
-        <MarchDialog state={state} from={marchFrom} onClose={() => setMarchFrom(null)} />
+        <MarchDialog
+          state={state}
+          from={marchFrom}
+          target={marchTarget}
+          onTarget={setMarchTarget}
+          onClose={() => setMarchFrom(null)}
+        />
       )}
       {event && <EventModal def={event.def} onChoose={chooseEvent} />}
       {showReport && !state.result && (

@@ -1,0 +1,7574 @@
+[
+ {
+  "id": "geunchogo",
+  "name": "근초고왕",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 346,
+  "histRetire": 375,
+  "role": "royal",
+  "stats": {
+   "lead": 94,
+   "war": 85,
+   "int": 82,
+   "pol": 91,
+   "chr": 90
+  },
+  "skills": [
+   "navy",
+   "trade",
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "평양을 쳐 고국원왕을 전사시킨 백제 최전성기의 왕",
+  "age": 38,
+  "lifespan": 70,
+  "ruler": true
+ },
+ {
+  "id": "gyebaek",
+  "name": "계백",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 655,
+  "histRetire": 660,
+  "role": "general",
+  "stats": {
+   "lead": 90,
+   "war": 94,
+   "int": 74,
+   "pol": 58,
+   "chr": 86
+  },
+  "skills": [
+   "last_stand",
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "황산벌에서 5천으로 5만을 맞음",
+  "age": 36,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "gyeonhwon",
+  "name": "견훤",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 892,
+  "histRetire": 936,
+  "role": "royal",
+  "stats": {
+   "lead": 94,
+   "war": 90,
+   "int": 80,
+   "pol": 76,
+   "chr": 78
+  },
+  "skills": [
+   "conquest",
+   "cavalry",
+   "siege"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기·고려사",
+  "note": "후백제를 세운 맹장. 아들에게 유폐됨",
+  "age": 34,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "seongwang",
+  "name": "성왕",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 523,
+  "histRetire": 554,
+  "role": "royal",
+  "stats": {
+   "lead": 86,
+   "war": 70,
+   "int": 86,
+   "pol": 93,
+   "chr": 88
+  },
+  "skills": [
+   "diplomacy",
+   "buddhism",
+   "reform"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "사비 천도와 불교 전파. 관산성에서 전사",
+  "age": 31,
+  "lifespan": 62,
+  "ruler": false
+ },
+ {
+  "id": "soseono",
+  "name": "소서노",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": -42,
+  "histRetire": -6,
+  "role": "royal",
+  "stats": {
+   "lead": 78,
+   "war": 58,
+   "int": 86,
+   "pol": 92,
+   "chr": 90
+  },
+  "skills": [
+   "founding",
+   "finance"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "주몽을 돕고 온조와 함께 백제를 세운 여걸",
+  "age": 40,
+  "lifespan": 52,
+  "ruler": false
+ },
+ {
+  "id": "muryeong",
+  "name": "무령왕",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 501,
+  "histRetire": 523,
+  "role": "royal",
+  "stats": {
+   "lead": 84,
+   "war": 76,
+   "int": 82,
+   "pol": 90,
+   "chr": 84
+  },
+  "skills": [
+   "governance",
+   "recovery"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·지석",
+  "note": "웅진기 백제를 다시 일으킴",
+  "age": 31,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "seongchung",
+  "name": "성충",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 641,
+  "histRetire": 656,
+  "role": "civil",
+  "stats": {
+   "lead": 62,
+   "war": 50,
+   "int": 90,
+   "pol": 86,
+   "chr": 78
+  },
+  "skills": [
+   "remonstrance",
+   "strategy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "옥중에서 탄현 방어를 간언하고 굶어 죽음",
+  "age": 52,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "heukchi",
+  "name": "흑치상지",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 660,
+  "histRetire": 689,
+  "role": "general",
+  "stats": {
+   "lead": 90,
+   "war": 88,
+   "int": 80,
+   "pol": 68,
+   "chr": 76
+  },
+  "skills": [
+   "insurgency",
+   "cavalry"
+  ],
+  "loyalty": "mercenary",
+  "source": "묘지명 출토",
+  "note": "부흥군을 이끌다 당에 투항해 명장이 됨",
+  "age": 28,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "heungsu",
+  "name": "흥수",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 641,
+  "histRetire": 660,
+  "role": "civil",
+  "stats": {
+   "lead": 60,
+   "war": 48,
+   "int": 88,
+   "pol": 80,
+   "chr": 72
+  },
+  "skills": [
+   "strategy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "유배지에서 백강·탄현 사수를 건의",
+  "age": 50,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "sataekjijeok",
+  "name": "사택지적",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 640,
+  "histRetire": 660,
+  "role": "civil",
+  "stats": {
+   "lead": 55,
+   "war": 45,
+   "int": 84,
+   "pol": 88,
+   "chr": 74
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "사택지적비 출토",
+  "note": "의자왕대의 대좌평. 비문이 전함",
+  "age": 34,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "wangin",
+  "name": "왕인",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 390,
+  "histRetire": 410,
+  "role": "civil",
+  "stats": {
+   "lead": 15,
+   "war": 12,
+   "int": 88,
+   "pol": 70,
+   "chr": 82
+  },
+  "skills": [
+   "culture",
+   "education"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "천자문과 논어를 왜에 전함",
+  "age": 40,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "boksin",
+  "name": "복신",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 660,
+  "histRetire": 663,
+  "role": "general",
+  "stats": {
+   "lead": 86,
+   "war": 78,
+   "int": 76,
+   "pol": 64,
+   "chr": 74
+  },
+  "skills": [
+   "insurgency"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "백제 부흥운동의 중심. 도침을 죽이고 내분",
+  "age": 33,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "mokrageunja",
+  "name": "목라근자",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 360,
+  "histRetire": 390,
+  "role": "general",
+  "stats": {
+   "lead": 86,
+   "war": 82,
+   "int": 74,
+   "pol": 64,
+   "chr": 70
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "가야 방면 원정을 이끈 목씨 가문의 장수",
+  "age": 44,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "yunchung",
+  "name": "윤충",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 642,
+  "histRetire": 645,
+  "role": "general",
+  "stats": {
+   "lead": 84,
+   "war": 82,
+   "int": 70,
+   "pol": 56,
+   "chr": 66
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "642년 대야성을 함락시킴",
+  "age": 39,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "dochim",
+  "name": "도침",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 660,
+  "histRetire": 661,
+  "role": "monk",
+  "stats": {
+   "lead": 72,
+   "war": 60,
+   "int": 80,
+   "pol": 66,
+   "chr": 80
+  },
+  "skills": [
+   "insurgency"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "주류성을 근거로 부흥군을 일으킨 승려",
+  "age": 38,
+  "lifespan": 51,
+  "ruler": false
+ },
+ {
+  "id": "ajikgi",
+  "name": "아직기",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 380,
+  "histRetire": 400,
+  "role": "civil",
+  "stats": {
+   "lead": 18,
+   "war": 20,
+   "int": 80,
+   "pol": 66,
+   "chr": 76
+  },
+  "skills": [
+   "culture"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "왜에 학문을 전한 사절",
+  "age": 39,
+  "lifespan": 80,
+  "ruler": false
+ },
+ {
+  "id": "noricha",
+  "name": "노리사치계",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 552,
+  "histRetire": 560,
+  "role": "civil",
+  "stats": {
+   "lead": 20,
+   "war": 15,
+   "int": 78,
+   "pol": 70,
+   "chr": 80
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "왜에 불상과 경론을 전함",
+  "age": 43,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "uijik",
+  "name": "의직",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 647,
+  "histRetire": 660,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 78,
+   "int": 68,
+   "pol": 54,
+   "chr": 64
+  },
+  "skills": [
+   "assault"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "신라 서변을 여러 차례 공격",
+  "age": 28,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "mokmanchi",
+  "name": "목만치",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 420,
+  "histRetire": 475,
+  "role": "general",
+  "stats": {
+   "lead": 78,
+   "war": 70,
+   "int": 76,
+   "pol": 74,
+   "chr": 68
+  },
+  "skills": [
+   "politics"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기·일본서기",
+  "note": "한성 함락기의 실권자",
+  "age": 39,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "singeom",
+  "name": "신검",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 935,
+  "histRetire": 936,
+  "role": "royal",
+  "stats": {
+   "lead": 74,
+   "war": 78,
+   "int": 60,
+   "pol": 54,
+   "chr": 50
+  },
+  "skills": [
+   "rebellion"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "견훤을 금산사에 가두고 즉위",
+  "age": 31,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "buyeopung",
+  "name": "부여풍",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 661,
+  "histRetire": 663,
+  "role": "royal",
+  "stats": {
+   "lead": 66,
+   "war": 58,
+   "int": 64,
+   "pol": 60,
+   "chr": 72
+  },
+  "skills": [
+   "figurehead"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·일본서기",
+  "note": "왜에서 돌아와 부흥군의 왕으로 옹립됨",
+  "age": 36,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "gaero",
+  "name": "개로왕",
+  "faction": "baekje",
+  "tier": 1,
+  "histAppear": 455,
+  "histRetire": 475,
+  "role": "royal",
+  "stats": {
+   "lead": 62,
+   "war": 58,
+   "int": 54,
+   "pol": 50,
+   "chr": 60
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "도림의 계략에 빠져 한성을 잃고 죽음",
+  "age": 31,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "suro",
+  "name": "김수로",
+  "faction": "gaya",
+  "tier": 1,
+  "histAppear": 42,
+  "histRetire": 199,
+  "role": "royal",
+  "stats": {
+   "lead": 82,
+   "war": 74,
+   "int": 84,
+   "pol": 86,
+   "chr": 92
+  },
+  "skills": [
+   "founding",
+   "iron"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사 가락국기",
+  "note": "금관가야의 시조",
+  "age": 44,
+  "lifespan": 61,
+  "ruler": true
+ },
+ {
+  "id": "ureuk",
+  "name": "우륵",
+  "faction": "gaya",
+  "tier": 1,
+  "histAppear": 520,
+  "histRetire": 551,
+  "role": "artisan",
+  "stats": {
+   "lead": 15,
+   "war": 12,
+   "int": 78,
+   "pol": 60,
+   "chr": 88
+  },
+  "skills": [
+   "music"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "가야금 12곡을 짓고 신라에 귀부",
+  "age": 37,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "ijinasi",
+  "name": "이진아시",
+  "faction": "gaya",
+  "tier": 1,
+  "histAppear": 42,
+  "histRetire": 100,
+  "role": "royal",
+  "stats": {
+   "lead": 74,
+   "war": 70,
+   "int": 72,
+   "pol": 74,
+   "chr": 78
+  },
+  "skills": [
+   "founding"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사·신증동국여지승람",
+  "note": "대가야의 시조로 전함",
+  "age": 37,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "doseolji",
+  "name": "도설지왕",
+  "faction": "gaya",
+  "tier": 1,
+  "histAppear": 550,
+  "histRetire": 562,
+  "role": "royal",
+  "stats": {
+   "lead": 62,
+   "war": 58,
+   "int": 60,
+   "pol": 58,
+   "chr": 60
+  },
+  "skills": [],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "대가야의 마지막 왕으로 추정",
+  "age": 35,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "gwanggaeto",
+  "name": "광개토대왕",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 391,
+  "histRetire": 412,
+  "role": "royal",
+  "stats": {
+   "lead": 98,
+   "war": 92,
+   "int": 85,
+   "pol": 88,
+   "chr": 95
+  },
+  "skills": [
+   "cavalry",
+   "forced_march",
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·광개토왕비",
+  "note": "재위 22년간 요동과 만주를 아우른 정복군주",
+  "age": 29,
+  "lifespan": 85,
+  "ruler": true
+ },
+ {
+  "id": "eulji",
+  "name": "을지문덕",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 590,
+  "histRetire": 618,
+  "role": "general",
+  "stats": {
+   "lead": 96,
+   "war": 78,
+   "int": 97,
+   "pol": 82,
+   "chr": 84
+  },
+  "skills": [
+   "flood_attack",
+   "scheme",
+   "ambush"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "612년 살수에서 수의 대군을 무너뜨림",
+  "age": 46,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "jangsu",
+  "name": "장수왕",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 413,
+  "histRetire": 491,
+  "role": "royal",
+  "stats": {
+   "lead": 92,
+   "war": 74,
+   "int": 90,
+   "pol": 96,
+   "chr": 88
+  },
+  "skills": [
+   "governance",
+   "diplomacy",
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "평양 천도 후 남진을 완성한 장수의 왕",
+  "age": 11,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "wanggeon",
+  "name": "왕건",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 918,
+  "histRetire": 943,
+  "role": "royal",
+  "stats": {
+   "lead": 92,
+   "war": 80,
+   "int": 88,
+   "pol": 94,
+   "chr": 96
+  },
+  "skills": [
+   "unify",
+   "diplomacy",
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "후삼국을 통일한 고려 태조",
+  "age": 41,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "eulpaso",
+  "name": "을파소",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 191,
+  "histRetire": 203,
+  "role": "civil",
+  "stats": {
+   "lead": 60,
+   "war": 42,
+   "int": 92,
+   "pol": 95,
+   "chr": 80
+  },
+  "skills": [
+   "governance",
+   "relief"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "진대법을 시행한 국상",
+  "age": 57,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "yangmanchun",
+  "name": "양만춘",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 640,
+  "histRetire": 650,
+  "role": "general",
+  "stats": {
+   "lead": 94,
+   "war": 80,
+   "int": 86,
+   "pol": 74,
+   "chr": 82
+  },
+  "skills": [
+   "siege_defense",
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "통칭(조선후기 문헌)",
+  "note": "645년 안시성에서 당 태종의 대군을 막아냄",
+  "age": 31,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "yeongaesomun",
+  "name": "연개소문",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 642,
+  "histRetire": 665,
+  "role": "general",
+  "stats": {
+   "lead": 93,
+   "war": 90,
+   "int": 84,
+   "pol": 66,
+   "chr": 72
+  },
+  "skills": [
+   "intimidate",
+   "autocracy",
+   "defense"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "영류왕을 시해하고 대막리지로 집권",
+  "age": 41,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "ondal",
+  "name": "온달",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 560,
+  "histRetire": 590,
+  "role": "general",
+  "stats": {
+   "lead": 82,
+   "war": 93,
+   "int": 58,
+   "pol": 45,
+   "chr": 80
+  },
+  "skills": [
+   "duel",
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "평강공주 설화의 주인공. 아단성에서 전사",
+  "age": 24,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "yugeumpil",
+  "name": "유금필",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 920,
+  "histRetire": 941,
+  "role": "general",
+  "stats": {
+   "lead": 93,
+   "war": 88,
+   "int": 82,
+   "pol": 70,
+   "chr": 80
+  },
+  "skills": [
+   "cavalry",
+   "raid",
+   "relief"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "고려 최고의 야전 명장",
+  "age": 41,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "jumong",
+  "name": "주몽",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": -37,
+  "histRetire": -19,
+  "role": "royal",
+  "stats": {
+   "lead": 90,
+   "war": 88,
+   "int": 84,
+   "pol": 80,
+   "chr": 92
+  },
+  "skills": [
+   "founding",
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·광개토왕비",
+  "note": "고구려의 시조 동명성왕",
+  "age": 36,
+  "lifespan": 82,
+  "ruler": false
+ },
+ {
+  "id": "dorim",
+  "name": "도림",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 455,
+  "histRetire": 475,
+  "role": "monk",
+  "stats": {
+   "lead": 40,
+   "war": 20,
+   "int": 90,
+   "pol": 72,
+   "chr": 74
+  },
+  "skills": [
+   "spy",
+   "scheme"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "백제에 잠입해 개로왕을 토목에 빠뜨린 첩자승",
+  "age": 50,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "sinsunggyeom",
+  "name": "신숭겸",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 918,
+  "histRetire": 927,
+  "role": "general",
+  "stats": {
+   "lead": 82,
+   "war": 90,
+   "int": 66,
+   "pol": 58,
+   "chr": 86
+  },
+  "skills": [
+   "last_stand",
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "공산에서 왕건 대신 죽음",
+  "age": 30,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "daejoyeong",
+  "name": "대조영",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 698,
+  "histRetire": 719,
+  "role": "royal",
+  "stats": {
+   "lead": 90,
+   "war": 84,
+   "int": 86,
+   "pol": 88,
+   "chr": 86
+  },
+  "skills": [
+   "founding",
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "신당서·발해고",
+  "note": "발해를 세운 고구려 유민의 지도자",
+  "age": 34,
+  "lifespan": 84,
+  "ruler": false
+ },
+ {
+  "id": "myeongnim",
+  "name": "명림답부",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 165,
+  "histRetire": 179,
+  "role": "general",
+  "stats": {
+   "lead": 88,
+   "war": 72,
+   "int": 86,
+   "pol": 84,
+   "chr": 76
+  },
+  "skills": [
+   "ambush",
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "좌원에서 한의 군대를 청야전술로 격파",
+  "age": 59,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "changjori",
+  "name": "창조리",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 292,
+  "histRetire": 300,
+  "role": "civil",
+  "stats": {
+   "lead": 70,
+   "war": 58,
+   "int": 84,
+   "pol": 88,
+   "chr": 74
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "봉상왕을 폐하고 미천왕을 세운 국상",
+  "age": 58,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "miloo",
+  "name": "밀우",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 244,
+  "histRetire": 250,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 86,
+   "int": 62,
+   "pol": 48,
+   "chr": 68
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "동천왕의 퇴각을 몸으로 막아냄",
+  "age": 34,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "wangsanak",
+  "name": "왕산악",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 400,
+  "histRetire": 450,
+  "role": "artisan",
+  "stats": {
+   "lead": 20,
+   "war": 15,
+   "int": 80,
+   "pol": 64,
+   "chr": 86
+  },
+  "skills": [
+   "music"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "거문고를 만든 악사",
+  "age": 38,
+  "lifespan": 60,
+  "ruler": false
+ },
+ {
+  "id": "gungye",
+  "name": "궁예",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 901,
+  "histRetire": 918,
+  "role": "royal",
+  "stats": {
+   "lead": 86,
+   "war": 84,
+   "int": 78,
+   "pol": 58,
+   "chr": 62
+  },
+  "skills": [
+   "tyranny",
+   "conquest"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "태봉을 세웠으나 폭정으로 축출됨",
+  "age": 39,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "yuyu",
+  "name": "유유",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 244,
+  "histRetire": 246,
+  "role": "general",
+  "stats": {
+   "lead": 66,
+   "war": 84,
+   "int": 74,
+   "pol": 50,
+   "chr": 72
+  },
+  "skills": [
+   "suicide_attack"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "위군 진영에 거짓 항복해 장수를 찔러 죽임",
+  "age": 31,
+  "lifespan": 41,
+  "ruler": false
+ },
+ {
+  "id": "damjing",
+  "name": "담징",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 590,
+  "histRetire": 620,
+  "role": "monk",
+  "stats": {
+   "lead": 15,
+   "war": 12,
+   "int": 84,
+   "pol": 58,
+   "chr": 80
+  },
+  "skills": [
+   "craft",
+   "culture"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "종이·먹 제법과 회화를 왜에 전함",
+  "age": 42,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "jangmunhyu",
+  "name": "장문휴",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 732,
+  "histRetire": 733,
+  "role": "general",
+  "stats": {
+   "lead": 84,
+   "war": 82,
+   "int": 76,
+   "pol": 60,
+   "chr": 70
+  },
+  "skills": [
+   "navy",
+   "raid"
+  ],
+  "loyalty": "loyal",
+  "source": "신당서",
+  "note": "발해 수군으로 당의 등주를 기습",
+  "age": 31,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "goyeonmu",
+  "name": "고연무",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 670,
+  "histRetire": 673,
+  "role": "general",
+  "stats": {
+   "lead": 82,
+   "war": 80,
+   "int": 70,
+   "pol": 58,
+   "chr": 70
+  },
+  "skills": [
+   "insurgency",
+   "raid"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "부흥군을 이끌고 신라와 연합",
+  "age": 41,
+  "lifespan": 58,
+  "ruler": false
+ },
+ {
+  "id": "namgeon",
+  "name": "연남건",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 665,
+  "histRetire": 668,
+  "role": "general",
+  "stats": {
+   "lead": 78,
+   "war": 80,
+   "int": 54,
+   "pol": 44,
+   "chr": 48
+  },
+  "skills": [
+   "defense"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "평양성 최후까지 항전한 연개소문의 차남",
+  "age": 15,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "geommojam",
+  "name": "검모잠",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 670,
+  "histRetire": 670,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 74,
+   "int": 72,
+   "pol": 66,
+   "chr": 78
+  },
+  "skills": [
+   "insurgency"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "고구려 부흥운동을 일으킴",
+  "age": 32,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "namsaeng",
+  "name": "연남생",
+  "faction": "goguryeo",
+  "tier": 1,
+  "histAppear": 665,
+  "histRetire": 679,
+  "role": "general",
+  "stats": {
+   "lead": 74,
+   "war": 70,
+   "int": 66,
+   "pol": 58,
+   "chr": 50
+  },
+  "skills": [
+   "defect"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기·묘지명",
+  "note": "연개소문의 장남. 형제 다툼 끝에 당에 투항",
+  "age": 17,
+  "lifespan": 57,
+  "ruler": false
+ },
+ {
+  "id": "kimchunchu",
+  "name": "김춘추",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 642,
+  "histRetire": 661,
+  "role": "royal",
+  "stats": {
+   "lead": 72,
+   "war": 55,
+   "int": 94,
+   "pol": 98,
+   "chr": 90
+  },
+  "skills": [
+   "eloquence",
+   "tang_diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "외교로 당을 끌어들인 태종무열왕",
+  "age": 31,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "kimyusin",
+  "name": "김유신",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 629,
+  "histRetire": 673,
+  "role": "general",
+  "stats": {
+   "lead": 97,
+   "war": 89,
+   "int": 90,
+   "pol": 85,
+   "chr": 92
+  },
+  "skills": [
+   "hwarang",
+   "unify",
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "삼국통일 전쟁의 총사령",
+  "age": 22,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "wonhyo",
+  "name": "원효",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 650,
+  "histRetire": 686,
+  "role": "monk",
+  "stats": {
+   "lead": 15,
+   "war": 20,
+   "int": 96,
+   "pol": 70,
+   "chr": 94
+  },
+  "skills": [
+   "philosophy",
+   "popularize"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "일심 사상으로 불교를 민중에 퍼뜨림",
+  "age": 34,
+  "lifespan": 83,
+  "ruler": false
+ },
+ {
+  "id": "choechiwon",
+  "name": "최치원",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 885,
+  "histRetire": 908,
+  "role": "civil",
+  "stats": {
+   "lead": 22,
+   "war": 15,
+   "int": 96,
+   "pol": 80,
+   "chr": 84
+  },
+  "skills": [
+   "writing",
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "당에서 이름을 떨친 대문장가",
+  "age": 33,
+  "lifespan": 80,
+  "ruler": false
+ },
+ {
+  "id": "seondeok",
+  "name": "선덕여왕",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 632,
+  "histRetire": 647,
+  "role": "royal",
+  "stats": {
+   "lead": 70,
+   "war": 35,
+   "int": 92,
+   "pol": 95,
+   "chr": 90
+  },
+  "skills": [
+   "insight",
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "첨성대와 황룡사 구층탑을 세움",
+  "age": 39,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "munmu",
+  "name": "문무왕",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 661,
+  "histRetire": 681,
+  "role": "royal",
+  "stats": {
+   "lead": 88,
+   "war": 70,
+   "int": 90,
+   "pol": 94,
+   "chr": 86
+  },
+  "skills": [
+   "unify",
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "삼국통일과 나당전쟁을 완수",
+  "age": 8,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "jinheung",
+  "name": "진흥왕",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 540,
+  "histRetire": 576,
+  "role": "royal",
+  "stats": {
+   "lead": 90,
+   "war": 74,
+   "int": 86,
+   "pol": 92,
+   "chr": 88
+  },
+  "skills": [
+   "conquest",
+   "hwarang"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·순수비",
+  "note": "한강 유역을 장악하고 순수비를 세움",
+  "age": 33,
+  "lifespan": 72,
+  "ruler": true
+ },
+ {
+  "id": "ichadon",
+  "name": "이차돈",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 527,
+  "histRetire": 527,
+  "role": "civil",
+  "stats": {
+   "lead": 20,
+   "war": 25,
+   "int": 70,
+   "pol": 60,
+   "chr": 92
+  },
+  "skills": [
+   "martyr",
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·삼국유사",
+  "note": "순교로 불교 공인을 이끌어냄",
+  "age": 40,
+  "lifespan": 50,
+  "ruler": false
+ },
+ {
+  "id": "uisang",
+  "name": "의상",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 661,
+  "histRetire": 702,
+  "role": "monk",
+  "stats": {
+   "lead": 15,
+   "war": 15,
+   "int": 92,
+   "pol": 74,
+   "chr": 84
+  },
+  "skills": [
+   "philosophy",
+   "temple"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "화엄종을 열고 부석사를 세움",
+  "age": 30,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "isabu",
+  "name": "이사부",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 505,
+  "histRetire": 562,
+  "role": "general",
+  "stats": {
+   "lead": 90,
+   "war": 82,
+   "int": 86,
+   "pol": 80,
+   "chr": 78
+  },
+  "skills": [
+   "navy",
+   "stratagem"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "나무 사자로 우산국을 복속시킴",
+  "age": 48,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "bakjesang",
+  "name": "박제상",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 418,
+  "histRetire": 418,
+  "role": "civil",
+  "stats": {
+   "lead": 60,
+   "war": 50,
+   "int": 84,
+   "pol": 76,
+   "chr": 90
+  },
+  "skills": [
+   "loyalty",
+   "rescue"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·삼국유사",
+  "note": "왜에 볼모로 간 왕제를 구하고 순사",
+  "age": 34,
+  "lifespan": 46,
+  "ruler": false
+ },
+ {
+  "id": "jangbogo",
+  "name": "장보고",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 828,
+  "histRetire": 846,
+  "role": "general",
+  "stats": {
+   "lead": 90,
+   "war": 82,
+   "int": 86,
+   "pol": 84,
+   "chr": 88
+  },
+  "skills": [
+   "navy",
+   "naval_trade",
+   "sea_route"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기·신당서",
+  "note": "청해진을 근거로 동아시아 해상을 장악",
+  "age": 38,
+  "lifespan": 62,
+  "ruler": false
+ },
+ {
+  "id": "myeongnang",
+  "name": "명랑",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 668,
+  "histRetire": 676,
+  "role": "monk",
+  "stats": {
+   "lead": 40,
+   "war": 20,
+   "int": 90,
+   "pol": 64,
+   "chr": 80
+  },
+  "skills": [
+   "ritual",
+   "navy_defense"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "문두루비법으로 당 수군을 물리쳤다 전함",
+  "age": 39,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "sadaham",
+  "name": "사다함",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 562,
+  "histRetire": 564,
+  "role": "general",
+  "stats": {
+   "lead": 78,
+   "war": 86,
+   "int": 70,
+   "pol": 58,
+   "chr": 88
+  },
+  "skills": [
+   "hwarang",
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "15세로 대가야 정벌에 종군한 화랑",
+  "age": 15,
+  "lifespan": 31,
+  "ruler": false
+ },
+ {
+  "id": "gwanchang",
+  "name": "관창",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 660,
+  "histRetire": 660,
+  "role": "general",
+  "stats": {
+   "lead": 60,
+   "war": 80,
+   "int": 50,
+   "pol": 40,
+   "chr": 88
+  },
+  "skills": [
+   "valor",
+   "martyr"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "황산벌에서 홀로 돌격해 전사한 소년 화랑",
+  "age": 15,
+  "lifespan": 26,
+  "ruler": false
+ },
+ {
+  "id": "kiminmun",
+  "name": "김인문",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 651,
+  "histRetire": 694,
+  "role": "royal",
+  "stats": {
+   "lead": 78,
+   "war": 72,
+   "int": 86,
+   "pol": 88,
+   "chr": 82
+  },
+  "skills": [
+   "tang_diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "당에 오래 머물며 외교를 담당",
+  "age": 20,
+  "lifespan": 86,
+  "ruler": false
+ },
+ {
+  "id": "wongwang",
+  "name": "원광",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 589,
+  "histRetire": 630,
+  "role": "monk",
+  "stats": {
+   "lead": 25,
+   "war": 20,
+   "int": 88,
+   "pol": 78,
+   "chr": 82
+  },
+  "skills": [
+   "sesok_ogye"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "세속오계를 지어 화랑도의 규범을 세움",
+  "age": 48,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "gangsu",
+  "name": "강수",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 654,
+  "histRetire": 692,
+  "role": "civil",
+  "stats": {
+   "lead": 15,
+   "war": 10,
+   "int": 88,
+   "pol": 80,
+   "chr": 72
+  },
+  "skills": [
+   "writing",
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "외교 문서를 도맡은 문장가",
+  "age": 26,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "geochilbu",
+  "name": "거칠부",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 545,
+  "histRetire": 579,
+  "role": "general",
+  "stats": {
+   "lead": 84,
+   "war": 74,
+   "int": 86,
+   "pol": 82,
+   "chr": 74
+  },
+  "skills": [
+   "history",
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "국사를 편찬하고 고구려 10군을 취함",
+  "age": 45,
+  "lifespan": 82,
+  "ruler": false
+ },
+ {
+  "id": "kimheumsun",
+  "name": "김흠순",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 655,
+  "histRetire": 680,
+  "role": "general",
+  "stats": {
+   "lead": 86,
+   "war": 84,
+   "int": 74,
+   "pol": 70,
+   "chr": 78
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "김유신의 아우. 백제·고구려 정벌에 종군",
+  "age": 34,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "alcheon",
+  "name": "김알천",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 636,
+  "histRetire": 654,
+  "role": "general",
+  "stats": {
+   "lead": 86,
+   "war": 84,
+   "int": 76,
+   "pol": 78,
+   "chr": 74
+  },
+  "skills": [
+   "defense"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "비담의 난을 진압한 상대등",
+  "age": 30,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "jajang",
+  "name": "자장",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 636,
+  "histRetire": 655,
+  "role": "monk",
+  "stats": {
+   "lead": 20,
+   "war": 15,
+   "int": 86,
+   "pol": 82,
+   "chr": 78
+  },
+  "skills": [
+   "buddhism",
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "황룡사 구층탑 건립을 건의",
+  "age": 42,
+  "lifespan": 84,
+  "ruler": false
+ },
+ {
+  "id": "seokuro",
+  "name": "석우로",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 231,
+  "histRetire": 253,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 82,
+   "int": 70,
+   "pol": 62,
+   "chr": 70
+  },
+  "skills": [
+   "raid"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "여러 차례 외적을 물리친 장수",
+  "age": 29,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "wonsul",
+  "name": "원술",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 672,
+  "histRetire": 680,
+  "role": "general",
+  "stats": {
+   "lead": 74,
+   "war": 80,
+   "int": 64,
+   "pol": 54,
+   "chr": 60
+  },
+  "skills": [
+   "redemption"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "석문에서 패해 아버지 김유신에게 버림받음",
+  "age": -6,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "jukjuk",
+  "name": "죽죽",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 642,
+  "histRetire": 642,
+  "role": "general",
+  "stats": {
+   "lead": 66,
+   "war": 74,
+   "int": 58,
+   "pol": 46,
+   "chr": 76
+  },
+  "skills": [
+   "last_stand"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "대야성에서 항복을 거부하고 전사",
+  "age": 19,
+  "lifespan": 25,
+  "ruler": false
+ },
+ {
+  "id": "bipam",
+  "name": "비담",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 645,
+  "histRetire": 647,
+  "role": "general",
+  "stats": {
+   "lead": 70,
+   "war": 66,
+   "int": 68,
+   "pol": 72,
+   "chr": 60
+  },
+  "skills": [
+   "rebellion"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "선덕여왕 말년에 반란을 일으킨 상대등",
+  "age": 35,
+  "lifespan": 58,
+  "ruler": false
+ },
+ {
+  "id": "pumseok",
+  "name": "김품석",
+  "faction": "silla",
+  "tier": 1,
+  "histAppear": 640,
+  "histRetire": 642,
+  "role": "general",
+  "stats": {
+   "lead": 48,
+   "war": 52,
+   "int": 40,
+   "pol": 44,
+   "chr": 38
+  },
+  "skills": [],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "대야성 도독. 실정으로 성을 잃음",
+  "age": 41,
+  "lifespan": 82,
+  "ruler": false
+ },
+ {
+  "id": "onjo",
+  "name": "온조왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": -18,
+  "histRetire": 28,
+  "role": "royal",
+  "stats": {
+   "lead": 75,
+   "war": 74,
+   "int": 72,
+   "pol": 78,
+   "chr": 88
+  },
+  "skills": [
+   "buddhism",
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "백제의 시조",
+  "age": 37,
+  "lifespan": 62,
+  "ruler": false
+ },
+ {
+  "id": "goi",
+  "name": "고이왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 234,
+  "histRetire": 286,
+  "role": "royal",
+  "stats": {
+   "lead": 88,
+   "war": 71,
+   "int": 72,
+   "pol": 83,
+   "chr": 82
+  },
+  "skills": [
+   "buddhism",
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "관등제를 정비한 왕",
+  "age": 5,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "mu",
+  "name": "무왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 600,
+  "histRetire": 641,
+  "role": "royal",
+  "stats": {
+   "lead": 71,
+   "war": 66,
+   "int": 88,
+   "pol": 87,
+   "chr": 80
+  },
+  "skills": [
+   "insight",
+   "reform"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "미륵사를 세우고 신라를 압박",
+  "age": 28,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "uija",
+  "name": "의자왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 641,
+  "histRetire": 660,
+  "role": "royal",
+  "stats": {
+   "lead": 70,
+   "war": 61,
+   "int": 74,
+   "pol": 88,
+   "chr": 78
+  },
+  "skills": [
+   "buddhism",
+   "diplomacy"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "해동증자로 불렸으나 말년에 실정",
+  "age": 40,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "jinmu",
+  "name": "진무",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 392,
+  "histRetire": 407,
+  "role": "general",
+  "stats": {
+   "lead": 66,
+   "war": 87,
+   "int": 68,
+   "pol": 59,
+   "chr": 52
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "아신왕대에 고구려와 싸움",
+  "age": 31,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "baekga",
+  "name": "백가",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 498,
+  "histRetire": 501,
+  "role": "general",
+  "stats": {
+   "lead": 67,
+   "war": 87,
+   "int": 45,
+   "pol": 49,
+   "chr": 64
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "동성왕을 시해함",
+  "age": 1,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "choeseungwu",
+  "name": "최승우",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 900,
+  "histRetire": 930,
+  "role": "civil",
+  "stats": {
+   "lead": 31,
+   "war": 45,
+   "int": 67,
+   "pol": 87,
+   "chr": 69
+  },
+  "skills": [
+   "writing"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "견훤의 격서를 지은 문객",
+  "age": 49,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "mokhyeopmanna",
+  "name": "목협만치",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 475,
+  "histRetire": 480,
+  "role": "general",
+  "stats": {
+   "lead": 73,
+   "war": 86,
+   "int": 58,
+   "pol": 51,
+   "chr": 56
+  },
+  "skills": [
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "한성 함락 때 문주왕을 호위",
+  "age": 48,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "guisil",
+  "name": "귀실복신",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 660,
+  "histRetire": 663,
+  "role": "general",
+  "stats": {
+   "lead": 86,
+   "war": 85,
+   "int": 69,
+   "pol": 65,
+   "chr": 72
+  },
+  "skills": [
+   "raid",
+   "ambush"
+  ],
+  "loyalty": "ambitious",
+  "source": "일본서기",
+  "note": "복신의 다른 표기. 부흥군 지도자",
+  "age": 41,
+  "lifespan": 60,
+  "ruler": false
+ },
+ {
+  "id": "gwalleuk",
+  "name": "관륵",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 602,
+  "histRetire": 620,
+  "role": "monk",
+  "stats": {
+   "lead": 29,
+   "war": 10,
+   "int": 85,
+   "pol": 60,
+   "chr": 73
+  },
+  "skills": [
+   "medicine"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "역법과 천문을 왜에 전함",
+  "age": 35,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "gyeomik",
+  "name": "겸익",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 526,
+  "histRetire": 540,
+  "role": "monk",
+  "stats": {
+   "lead": 23,
+   "war": 19,
+   "int": 83,
+   "pol": 63,
+   "chr": 72
+  },
+  "skills": [
+   "temple"
+  ],
+  "loyalty": "loyal",
+  "source": "미륵불광사사적",
+  "note": "인도에서 율장을 구해옴",
+  "age": 35,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "dongseong",
+  "name": "동성왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 479,
+  "histRetire": 501,
+  "role": "royal",
+  "stats": {
+   "lead": 81,
+   "war": 42,
+   "int": 67,
+   "pol": 77,
+   "chr": 71
+  },
+  "skills": [
+   "reform"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "웅진기의 왕권 회복을 꾀함",
+  "age": 28,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "buyeoyung",
+  "name": "부여융",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 660,
+  "histRetire": 682,
+  "role": "royal",
+  "stats": {
+   "lead": 74,
+   "war": 61,
+   "int": 65,
+   "pol": 64,
+   "chr": 81
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기·묘지명",
+  "note": "의자왕의 아들. 당의 웅진도독",
+  "age": 3,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "asanyeo",
+  "name": "아사녀",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 750,
+  "histRetire": 760,
+  "role": "civil",
+  "stats": {
+   "lead": 33,
+   "war": 29,
+   "int": 57,
+   "pol": 81,
+   "chr": 38
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "설화",
+  "note": "아사달의 아내. 무영탑 전설",
+  "age": 35,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "yanggeom",
+  "name": "양검",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 935,
+  "histRetire": 936,
+  "role": "royal",
+  "stats": {
+   "lead": 65,
+   "war": 49,
+   "int": 64,
+   "pol": 74,
+   "chr": 78
+  },
+  "skills": [
+   "reform"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "견훤의 아들. 신검의 거사에 가담",
+  "age": 30,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "geumgang",
+  "name": "금강",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 930,
+  "histRetire": 935,
+  "role": "royal",
+  "stats": {
+   "lead": 54,
+   "war": 63,
+   "int": 78,
+   "pol": 69,
+   "chr": 69
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "견훤이 후계로 삼으려 한 아들",
+  "age": 29,
+  "lifespan": 55,
+  "ruler": false
+ },
+ {
+  "id": "kimchong",
+  "name": "김총",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 900,
+  "histRetire": 930,
+  "role": "general",
+  "stats": {
+   "lead": 78,
+   "war": 72,
+   "int": 48,
+   "pol": 47,
+   "chr": 55
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "견훤을 도운 순천 호족",
+  "age": 41,
+  "lifespan": 58,
+  "ruler": false
+ },
+ {
+  "id": "asin",
+  "name": "아신왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 392,
+  "histRetire": 405,
+  "role": "royal",
+  "stats": {
+   "lead": 61,
+   "war": 55,
+   "int": 73,
+   "pol": 63,
+   "chr": 77
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "광개토대왕에게 굴복",
+  "age": 34,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "haegu",
+  "name": "해구",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 475,
+  "histRetire": 478,
+  "role": "general",
+  "stats": {
+   "lead": 60,
+   "war": 77,
+   "int": 63,
+   "pol": 56,
+   "chr": 55
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "문주왕을 시해한 병관좌평",
+  "age": 29,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "ajagae",
+  "name": "아자개",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 885,
+  "histRetire": 918,
+  "role": "general",
+  "stats": {
+   "lead": 76,
+   "war": 76,
+   "int": 48,
+   "pol": 52,
+   "chr": 51
+  },
+  "skills": [
+   "navy"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "상주의 호족. 견훤의 아버지로 전함",
+  "age": 36,
+  "lifespan": 52,
+  "ruler": false
+ },
+ {
+  "id": "seonhwa",
+  "name": "선화공주",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 600,
+  "histRetire": 630,
+  "role": "royal",
+  "stats": {
+   "lead": 76,
+   "war": 53,
+   "int": 66,
+   "pol": 74,
+   "chr": 70
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "서동요 설화의 주인공",
+  "age": 37,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "chogo",
+  "name": "초고왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 166,
+  "histRetire": 214,
+  "role": "royal",
+  "stats": {
+   "lead": 75,
+   "war": 59,
+   "int": 67,
+   "pol": 60,
+   "chr": 64
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "신라와 자주 충돌",
+  "age": 28,
+  "lifespan": 56,
+  "ruler": false
+ },
+ {
+  "id": "jeonji",
+  "name": "전지왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 405,
+  "histRetire": 420,
+  "role": "royal",
+  "stats": {
+   "lead": 68,
+   "war": 58,
+   "int": 62,
+   "pol": 71,
+   "chr": 74
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "왜에서 돌아와 즉위",
+  "age": 29,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "sabeopmyeong",
+  "name": "사법명",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 488,
+  "histRetire": 495,
+  "role": "general",
+  "stats": {
+   "lead": 70,
+   "war": 74,
+   "int": 50,
+   "pol": 48,
+   "chr": 57
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "남제서",
+  "note": "북위군을 물리쳤다 전함",
+  "age": 2,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "yeoseoni",
+  "name": "여신",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 405,
+  "histRetire": 427,
+  "role": "civil",
+  "stats": {
+   "lead": 36,
+   "war": 58,
+   "int": 68,
+   "pol": 74,
+   "chr": 69
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "전지왕대의 상좌평",
+  "age": 40,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "chuheojo",
+  "name": "추허조",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 920,
+  "histRetire": 936,
+  "role": "general",
+  "stats": {
+   "lead": 68,
+   "war": 74,
+   "int": 44,
+   "pol": 43,
+   "chr": 64
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "후백제의 장수",
+  "age": 22,
+  "lifespan": 80,
+  "ruler": false
+ },
+ {
+  "id": "neunghwan",
+  "name": "능환",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 920,
+  "histRetire": 936,
+  "role": "civil",
+  "stats": {
+   "lead": 45,
+   "war": 48,
+   "int": 72,
+   "pol": 73,
+   "chr": 51
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "후백제의 재상. 신검을 옹립",
+  "age": 41,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "yeoneun",
+  "name": "은상",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 645,
+  "histRetire": 649,
+  "role": "general",
+  "stats": {
+   "lead": 69,
+   "war": 71,
+   "int": 67,
+   "pol": 51,
+   "chr": 50
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "신라 석토성 등을 공격",
+  "age": 39,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "mucchan",
+  "name": "무광왕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 600,
+  "histRetire": 640,
+  "role": "royal",
+  "stats": {
+   "lead": 51,
+   "war": 69,
+   "int": 50,
+   "pol": 56,
+   "chr": 68
+  },
+  "skills": [
+   "reform"
+  ],
+  "loyalty": "loyal",
+  "source": "관세음응험기",
+  "note": "익산 천도설과 관련",
+  "age": 34,
+  "lifespan": 54,
+  "ruler": false
+ },
+ {
+  "id": "asadal",
+  "name": "아사달",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 750,
+  "histRetire": 760,
+  "role": "artisan",
+  "stats": {
+   "lead": 28,
+   "war": 32,
+   "int": 64,
+   "pol": 50,
+   "chr": 68
+  },
+  "skills": [
+   "architecture"
+  ],
+  "loyalty": "loyal",
+  "source": "설화",
+  "note": "석가탑을 만든 석공",
+  "age": 48,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "yonggeom",
+  "name": "용검",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 935,
+  "histRetire": 936,
+  "role": "royal",
+  "stats": {
+   "lead": 55,
+   "war": 41,
+   "int": 57,
+   "pol": 67,
+   "chr": 57
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "견훤의 아들",
+  "age": 34,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "jindoun",
+  "name": "진도",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 396,
+  "histRetire": 400,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 66,
+   "int": 45,
+   "pol": 25,
+   "chr": 40
+  },
+  "skills": [
+   "forced_march"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "아신왕대 장수",
+  "age": 30,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "jomiggeon",
+  "name": "조미걸취",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 475,
+  "histRetire": 480,
+  "role": "general",
+  "stats": {
+   "lead": 63,
+   "war": 64,
+   "int": 53,
+   "pol": 34,
+   "chr": 56
+  },
+  "skills": [
+   "siege_defense"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "웅진 천도를 도움",
+  "age": 20,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "ajwa",
+  "name": "아좌태자",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 597,
+  "histRetire": 600,
+  "role": "royal",
+  "stats": {
+   "lead": 60,
+   "war": 41,
+   "int": 49,
+   "pol": 63,
+   "chr": 45
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "왜에 건너가 활동",
+  "age": 44,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "domi",
+  "name": "도미",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 455,
+  "histRetire": 475,
+  "role": "civil",
+  "stats": {
+   "lead": 30,
+   "war": 41,
+   "int": 62,
+   "pol": 63,
+   "chr": 44
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전(설화)",
+  "note": "개로왕에게 눈을 잃은 인물",
+  "age": 25,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "sanggwi",
+  "name": "상귀",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 930,
+  "histRetire": 936,
+  "role": "general",
+  "stats": {
+   "lead": 55,
+   "war": 61,
+   "int": 43,
+   "pol": 32,
+   "chr": 49
+  },
+  "skills": [
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "예성강을 습격한 후백제 수군장",
+  "age": -3,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "biryu",
+  "name": "비류",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": -18,
+  "histRetire": -18,
+  "role": "royal",
+  "stats": {
+   "lead": 50,
+   "war": 50,
+   "int": 48,
+   "pol": 60,
+   "chr": 54
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "온조의 형. 미추홀에 정착",
+  "age": -1,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "yeonsin",
+  "name": "연신",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 499,
+  "histRetire": 501,
+  "role": "general",
+  "stats": {
+   "lead": 60,
+   "war": 60,
+   "int": 43,
+   "pol": 28,
+   "chr": 57
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "고구려로 달아난 장수",
+  "age": 42,
+  "lifespan": 54,
+  "ruler": false
+ },
+ {
+  "id": "sindeok",
+  "name": "신덕",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 920,
+  "histRetire": 936,
+  "role": "general",
+  "stats": {
+   "lead": 60,
+   "war": 53,
+   "int": 52,
+   "pol": 28,
+   "chr": 53
+  },
+  "skills": [
+   "siege_defense"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "후백제 장수",
+  "age": 27,
+  "lifespan": 50,
+  "ruler": false
+ },
+ {
+  "id": "domibuin",
+  "name": "도미부인",
+  "faction": "baekje",
+  "tier": 2,
+  "histAppear": 455,
+  "histRetire": 475,
+  "role": "civil",
+  "stats": {
+   "lead": 27,
+   "war": 30,
+   "int": 59,
+   "pol": 59,
+   "chr": 46
+  },
+  "skills": [
+   "relief"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전(설화)",
+  "note": "정절로 이름을 남김",
+  "age": 30,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "heohwangok",
+  "name": "허황옥",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 48,
+  "histRetire": 189,
+  "role": "royal",
+  "stats": {
+   "lead": 69,
+   "war": 54,
+   "int": 69,
+   "pol": 79,
+   "chr": 77
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사 가락국기",
+  "note": "김수로의 왕비로 전함",
+  "age": 33,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "jeonggyeonmoju",
+  "name": "정견모주",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 42,
+  "histRetire": 80,
+  "role": "royal",
+  "stats": {
+   "lead": 67,
+   "war": 61,
+   "int": 77,
+   "pol": 69,
+   "chr": 67
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "신증동국여지승람(설화)",
+  "note": "대가야·금관가야 시조의 어머니로 전함",
+  "age": 40,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "gyeongdeung",
+  "name": "김구해",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 521,
+  "histRetire": 532,
+  "role": "royal",
+  "stats": {
+   "lead": 54,
+   "war": 69,
+   "int": 66,
+   "pol": 74,
+   "chr": 70
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "금관가야 마지막 왕. 신라에 항복",
+  "age": 33,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "hajiwang",
+  "name": "하지왕",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 479,
+  "histRetire": 490,
+  "role": "royal",
+  "stats": {
+   "lead": 59,
+   "war": 64,
+   "int": 71,
+   "pol": 64,
+   "chr": 72
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "남제서",
+  "note": "남제에 사신을 보낸 대가야 왕",
+  "age": 39,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "taljigijeun",
+  "name": "탈지이질금",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 532,
+  "histRetire": 540,
+  "role": "royal",
+  "stats": {
+   "lead": 57,
+   "war": 38,
+   "int": 59,
+   "pol": 67,
+   "chr": 68
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "금관가야 왕족",
+  "age": 37,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "gyeomji",
+  "name": "겸지왕",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 492,
+  "histRetire": 521,
+  "role": "royal",
+  "stats": {
+   "lead": 55,
+   "war": 55,
+   "int": 63,
+   "pol": 68,
+   "chr": 52
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "금관가야의 왕",
+  "age": 39,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "jilji",
+  "name": "질지왕",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 451,
+  "histRetire": 492,
+  "role": "royal",
+  "stats": {
+   "lead": 65,
+   "war": 41,
+   "int": 57,
+   "pol": 64,
+   "chr": 56
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "금관가야의 왕",
+  "age": 5,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "noejilcheongye",
+  "name": "뇌질청예",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 42,
+  "histRetire": 90,
+  "role": "royal",
+  "stats": {
+   "lead": 54,
+   "war": 55,
+   "int": 47,
+   "pol": 63,
+   "chr": 60
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "설화",
+  "note": "금관가야 시조 설화의 이름",
+  "age": 34,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "isipum",
+  "name": "이시품왕",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 346,
+  "histRetire": 407,
+  "role": "royal",
+  "stats": {
+   "lead": 61,
+   "war": 49,
+   "int": 53,
+   "pol": 58,
+   "chr": 61
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "금관가야의 왕",
+  "age": 41,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "chwihui",
+  "name": "취희왕",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 421,
+  "histRetire": 451,
+  "role": "royal",
+  "stats": {
+   "lead": 60,
+   "war": 38,
+   "int": 60,
+   "pol": 54,
+   "chr": 50
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "금관가야의 왕",
+  "age": 30,
+  "lifespan": 62,
+  "ruler": false
+ },
+ {
+  "id": "wolgwang",
+  "name": "월광태자",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 550,
+  "histRetire": 562,
+  "role": "royal",
+  "stats": {
+   "lead": 45,
+   "war": 51,
+   "int": 44,
+   "pol": 58,
+   "chr": 52
+  },
+  "skills": [
+   "reform"
+  ],
+  "loyalty": "loyal",
+  "source": "신증동국여지승람",
+  "note": "대가야 왕자로 전함",
+  "age": 41,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "beopji",
+  "name": "법지",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 551,
+  "histRetire": 570,
+  "role": "artisan",
+  "stats": {
+   "lead": 14,
+   "war": 15,
+   "int": 48,
+   "pol": 43,
+   "chr": 57
+  },
+  "skills": [
+   "music"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "우륵의 제자",
+  "age": 30,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "gyego",
+  "name": "계고",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 551,
+  "histRetire": 570,
+  "role": "artisan",
+  "stats": {
+   "lead": 21,
+   "war": 13,
+   "int": 55,
+   "pol": 25,
+   "chr": 46
+  },
+  "skills": [
+   "architecture"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "우륵에게 가야금을 배움",
+  "age": 48,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "mandeok",
+  "name": "만덕",
+  "faction": "gaya",
+  "tier": 2,
+  "histAppear": 551,
+  "histRetire": 570,
+  "role": "artisan",
+  "stats": {
+   "lead": 24,
+   "war": 14,
+   "int": 49,
+   "pol": 39,
+   "chr": 35
+  },
+  "skills": [
+   "painting"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "우륵의 제자",
+  "age": 42,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "gongeonmu",
+  "name": "고건무",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 612,
+  "histRetire": 642,
+  "role": "royal",
+  "stats": {
+   "lead": 88,
+   "war": 73,
+   "int": 74,
+   "pol": 67,
+   "chr": 79
+  },
+  "skills": [
+   "conquest",
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "영류왕. 연개소문에게 시해됨",
+  "age": 30,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "micheon",
+  "name": "미천왕",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 300,
+  "histRetire": 331,
+  "role": "royal",
+  "stats": {
+   "lead": 87,
+   "war": 79,
+   "int": 76,
+   "pol": 86,
+   "chr": 79
+  },
+  "skills": [
+   "conquest",
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "소금장수로 숨어 지내다 즉위",
+  "age": 31,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "yeonjeongto",
+  "name": "연정토",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 666,
+  "histRetire": 668,
+  "role": "general",
+  "stats": {
+   "lead": 86,
+   "war": 64,
+   "int": 54,
+   "pol": 49,
+   "chr": 62
+  },
+  "skills": [
+   "raid"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "연개소문의 아우. 신라에 투항",
+  "age": 34,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "daeso",
+  "name": "대소",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -24,
+  "histRetire": 22,
+  "role": "royal",
+  "stats": {
+   "lead": 72,
+   "war": 58,
+   "int": 66,
+   "pol": 84,
+   "chr": 60
+  },
+  "skills": [
+   "reform"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "동부여 왕. 대무신왕에게 죽음",
+  "age": -3,
+  "lifespan": 56,
+  "ruler": false
+ },
+ {
+  "id": "goeyu",
+  "name": "괴유",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 22,
+  "histRetire": 25,
+  "role": "general",
+  "stats": {
+   "lead": 83,
+   "war": 66,
+   "int": 66,
+   "pol": 46,
+   "chr": 64
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "부여 정벌에서 대소왕을 벰",
+  "age": 31,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "myeongnimeosu",
+  "name": "명림어수",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 179,
+  "histRetire": 200,
+  "role": "civil",
+  "stats": {
+   "lead": 43,
+   "war": 39,
+   "int": 83,
+   "pol": 76,
+   "chr": 67
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "고국천왕대의 국상",
+  "age": 38,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "bubunno",
+  "name": "부분노",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -19,
+  "histRetire": 10,
+  "role": "general",
+  "stats": {
+   "lead": 82,
+   "war": 80,
+   "int": 49,
+   "pol": 49,
+   "chr": 64
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "주몽을 도와 비류국을 취함",
+  "age": -1,
+  "lifespan": 81,
+  "ruler": false
+ },
+ {
+  "id": "gomu",
+  "name": "고무",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 598,
+  "histRetire": 614,
+  "role": "general",
+  "stats": {
+   "lead": 82,
+   "war": 72,
+   "int": 64,
+   "pol": 54,
+   "chr": 59
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "영양왕대의 장수",
+  "age": 40,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "anseung",
+  "name": "안승",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 670,
+  "histRetire": 683,
+  "role": "royal",
+  "stats": {
+   "lead": 68,
+   "war": 70,
+   "int": 79,
+   "pol": 70,
+   "chr": 82
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "보덕국왕으로 신라에 의탁",
+  "age": 34,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "baksulhui",
+  "name": "박술희",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 921,
+  "histRetire": 945,
+  "role": "general",
+  "stats": {
+   "lead": 82,
+   "war": 71,
+   "int": 48,
+   "pol": 47,
+   "chr": 61
+  },
+  "skills": [
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "혜종을 보호한 무장",
+  "age": 24,
+  "lifespan": 83,
+  "ruler": false
+ },
+ {
+  "id": "bokjigyeom",
+  "name": "복지겸",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 930,
+  "role": "general",
+  "stats": {
+   "lead": 71,
+   "war": 81,
+   "int": 51,
+   "pol": 56,
+   "chr": 51
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "왕건을 추대한 사기장(四騎將)의 하나",
+  "age": 30,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "kimrak",
+  "name": "김락",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 927,
+  "role": "general",
+  "stats": {
+   "lead": 71,
+   "war": 81,
+   "int": 48,
+   "pol": 51,
+   "chr": 75
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "공산에서 신숭겸과 함께 전사",
+  "age": 25,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "daemuye",
+  "name": "대무예",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 719,
+  "histRetire": 737,
+  "role": "royal",
+  "stats": {
+   "lead": 76,
+   "war": 76,
+   "int": 81,
+   "pol": 78,
+   "chr": 73
+  },
+  "skills": [
+   "reform",
+   "governance"
+  ],
+  "loyalty": "ambitious",
+  "source": "신당서",
+  "note": "발해 무왕. 당을 선제 공격",
+  "age": 49,
+  "lifespan": 55,
+  "ruler": false
+ },
+ {
+  "id": "bodeok",
+  "name": "보덕",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 650,
+  "histRetire": 668,
+  "role": "monk",
+  "stats": {
+   "lead": 29,
+   "war": 23,
+   "int": 80,
+   "pol": 52,
+   "chr": 71
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "도교 숭상에 반발해 백제로 옮김",
+  "age": 14,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "jonggan",
+  "name": "종간",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 905,
+  "histRetire": 918,
+  "role": "civil",
+  "stats": {
+   "lead": 58,
+   "war": 22,
+   "int": 72,
+   "pol": 80,
+   "chr": 59
+  },
+  "skills": [
+   "finance"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "궁예의 측근",
+  "age": 39,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "euldoji",
+  "name": "을두지",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 20,
+  "histRetire": 40,
+  "role": "civil",
+  "stats": {
+   "lead": 42,
+   "war": 47,
+   "int": 79,
+   "pol": 76,
+   "chr": 68
+  },
+  "skills": [
+   "remonstrance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "대무신왕대의 재상",
+  "age": 26,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "onsamun",
+  "name": "온사문",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 661,
+  "histRetire": 668,
+  "role": "general",
+  "stats": {
+   "lead": 78,
+   "war": 73,
+   "int": 60,
+   "pol": 48,
+   "chr": 68
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "말기의 장수",
+  "age": 36,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "wangsikryeom",
+  "name": "왕식렴",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 930,
+  "histRetire": 949,
+  "role": "general",
+  "stats": {
+   "lead": 76,
+   "war": 78,
+   "int": 48,
+   "pol": 48,
+   "chr": 61
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "서경을 지킨 왕실 종친",
+  "age": 31,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "gonojIa",
+  "name": "고노자",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 280,
+  "histRetire": 300,
+  "role": "general",
+  "stats": {
+   "lead": 76,
+   "war": 77,
+   "int": 52,
+   "pol": 53,
+   "chr": 66
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "선비의 침입을 막아냄",
+  "age": 34,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "yuriwang",
+  "name": "유리왕",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -19,
+  "histRetire": 18,
+  "role": "royal",
+  "stats": {
+   "lead": 69,
+   "war": 67,
+   "int": 65,
+   "pol": 75,
+   "chr": 77
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "황조가를 지은 고구려 2대 왕",
+  "age": 40,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "oi",
+  "name": "오이",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -37,
+  "histRetire": -10,
+  "role": "general",
+  "stats": {
+   "lead": 67,
+   "war": 76,
+   "int": 51,
+   "pol": 49,
+   "chr": 56
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "주몽의 건국을 도운 세 벗 중 하나",
+  "age": 38,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "pyeonggang",
+  "name": "평강공주",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 560,
+  "histRetire": 590,
+  "role": "royal",
+  "stats": {
+   "lead": 66,
+   "war": 59,
+   "int": 76,
+   "pol": 66,
+   "chr": 64
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "온달을 장수로 키움",
+  "age": 44,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "gobokjang",
+  "name": "고복장",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 146,
+  "histRetire": 165,
+  "role": "civil",
+  "stats": {
+   "lead": 57,
+   "war": 37,
+   "int": 75,
+   "pol": 74,
+   "chr": 63
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "차대왕에게 직간하다 죽음",
+  "age": 29,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "seungnang",
+  "name": "승랑",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 480,
+  "histRetire": 520,
+  "role": "monk",
+  "stats": {
+   "lead": 25,
+   "war": 24,
+   "int": 74,
+   "pol": 70,
+   "chr": 67
+  },
+  "skills": [
+   "temple"
+  ],
+  "loyalty": "loyal",
+  "source": "고승전",
+  "note": "삼론학을 정립한 학승",
+  "age": 52,
+  "lifespan": 82,
+  "ruler": false
+ },
+ {
+  "id": "daemunye",
+  "name": "대문예",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 719,
+  "histRetire": 730,
+  "role": "general",
+  "stats": {
+   "lead": 74,
+   "war": 72,
+   "int": 57,
+   "pol": 50,
+   "chr": 53
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "mercenary",
+  "source": "신당서",
+  "note": "무왕의 아우. 당에 망명",
+  "age": 0,
+  "lifespan": 58,
+  "ruler": false
+ },
+ {
+  "id": "haemosu",
+  "name": "해모수",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -59,
+  "histRetire": -40,
+  "role": "royal",
+  "stats": {
+   "lead": 72,
+   "war": 45,
+   "int": 74,
+   "pol": 74,
+   "chr": 69
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "천제의 아들로 전하는 북부여의 시조",
+  "age": 39,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "hyeja",
+  "name": "혜자",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 595,
+  "histRetire": 615,
+  "role": "monk",
+  "stats": {
+   "lead": 24,
+   "war": 19,
+   "int": 63,
+   "pol": 55,
+   "chr": 73
+  },
+  "skills": [
+   "medicine"
+  ],
+  "loyalty": "loyal",
+  "source": "일본서기",
+  "note": "쇼토쿠 태자의 스승",
+  "age": 39,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "baehyeongyeong",
+  "name": "배현경",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 936,
+  "role": "general",
+  "stats": {
+   "lead": 55,
+   "war": 73,
+   "int": 51,
+   "pol": 50,
+   "chr": 60
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "기장 출신으로 왕건 추대에 앞장섬",
+  "age": 26,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "choebi",
+  "name": "최비",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 319,
+  "histRetire": 320,
+  "role": "civil",
+  "stats": {
+   "lead": 23,
+   "war": 13,
+   "int": 72,
+   "pol": 57,
+   "chr": 45
+  },
+  "skills": [
+   "law"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "요동에서 고구려에 투항",
+  "age": 40,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "hongyu",
+  "name": "홍유",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 936,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 68,
+   "int": 58,
+   "pol": 54,
+   "chr": 63
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "왕건 추대 사기장의 하나",
+  "age": 25,
+  "lifespan": 58,
+  "ruler": false
+ },
+ {
+  "id": "daeheummu",
+  "name": "대흠무",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 737,
+  "histRetire": 793,
+  "role": "royal",
+  "stats": {
+   "lead": 57,
+   "war": 61,
+   "int": 72,
+   "pol": 69,
+   "chr": 71
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "신당서",
+  "note": "발해 문왕. 제도를 정비",
+  "age": 14,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "choeeung",
+  "name": "최응",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 932,
+  "role": "civil",
+  "stats": {
+   "lead": 40,
+   "war": 43,
+   "int": 63,
+   "pol": 57,
+   "chr": 71
+  },
+  "skills": [
+   "relief"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "궁예·왕건을 섬긴 문신",
+  "age": 24,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "yuhwa",
+  "name": "유화부인",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -58,
+  "histRetire": -24,
+  "role": "royal",
+  "stats": {
+   "lead": 46,
+   "war": 54,
+   "int": 53,
+   "pol": 71,
+   "chr": 55
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "주몽의 어머니",
+  "age": 33,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "hwang",
+  "name": "황조",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 300,
+  "histRetire": 320,
+  "role": "general",
+  "stats": {
+   "lead": 70,
+   "war": 50,
+   "int": 53,
+   "pol": 35,
+   "chr": 40
+  },
+  "skills": [
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "미천왕대의 장수",
+  "age": 31,
+  "lifespan": 84,
+  "ruler": false
+ },
+ {
+  "id": "songokgu",
+  "name": "송옥구",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 20,
+  "histRetire": 40,
+  "role": "civil",
+  "stats": {
+   "lead": 46,
+   "war": 34,
+   "int": 64,
+   "pol": 69,
+   "chr": 57
+  },
+  "skills": [
+   "census"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "대무신왕에게 계책을 올림",
+  "age": 30,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "neungsan",
+  "name": "능산",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 930,
+  "role": "general",
+  "stats": {
+   "lead": 56,
+   "war": 69,
+   "int": 55,
+   "pol": 34,
+   "chr": 54
+  },
+  "skills": [
+   "forced_march"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "고려 초의 장수",
+  "age": 30,
+  "lifespan": 56,
+  "ruler": false
+ },
+ {
+  "id": "yugeungdal",
+  "name": "유긍달",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 918,
+  "histRetire": 930,
+  "role": "civil",
+  "stats": {
+   "lead": 29,
+   "war": 29,
+   "int": 68,
+   "pol": 69,
+   "chr": 56
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "고려사",
+  "note": "충주 호족",
+  "age": 30,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "geumwa",
+  "name": "금와왕",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -48,
+  "histRetire": -24,
+  "role": "royal",
+  "stats": {
+   "lead": 68,
+   "war": 58,
+   "int": 62,
+   "pol": 65,
+   "chr": 64
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기(설화)",
+  "note": "동부여의 왕. 주몽을 거두어 기름",
+  "age": 41,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "hodong",
+  "name": "호동왕자",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 32,
+  "histRetire": 32,
+  "role": "royal",
+  "stats": {
+   "lead": 49,
+   "war": 36,
+   "int": 50,
+   "pol": 68,
+   "chr": 66
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기(설화)",
+  "note": "낙랑공주 설화의 주인공",
+  "age": 37,
+  "lifespan": 53,
+  "ruler": false
+ },
+ {
+  "id": "nakrang",
+  "name": "낙랑공주",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 32,
+  "histRetire": 32,
+  "role": "royal",
+  "stats": {
+   "lead": 45,
+   "war": 49,
+   "int": 66,
+   "pol": 51,
+   "chr": 58
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기(설화)",
+  "note": "자명고를 찢고 죽음",
+  "age": 29,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "eunbu",
+  "name": "은부",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 905,
+  "histRetire": 918,
+  "role": "general",
+  "stats": {
+   "lead": 65,
+   "war": 55,
+   "int": 42,
+   "pol": 29,
+   "chr": 42
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "궁예의 심복",
+  "age": 33,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "maori",
+  "name": "마리",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -37,
+  "histRetire": -10,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 62,
+   "int": 44,
+   "pol": 32,
+   "chr": 52
+  },
+  "skills": [
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "주몽의 건국 동반자",
+  "age": 37,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "eulmin",
+  "name": "을소",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 3,
+  "histRetire": 20,
+  "role": "civil",
+  "stats": {
+   "lead": 30,
+   "war": 11,
+   "int": 61,
+   "pol": 59,
+   "chr": 48
+  },
+  "skills": [
+   "law"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "유리왕대의 대보",
+  "age": 46,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "buwiyeom",
+  "name": "부위염",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -37,
+  "histRetire": -20,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 54,
+   "int": 48,
+   "pol": 42,
+   "chr": 49
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "건국기의 장수",
+  "age": -5,
+  "lifespan": 52,
+  "ruler": false
+ },
+ {
+  "id": "mokdoru",
+  "name": "목도루",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 121,
+  "histRetire": 150,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 51,
+   "int": 31,
+   "pol": 39,
+   "chr": 39
+  },
+  "skills": [
+   "siege_defense"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "태조왕대의 장수",
+  "age": -6,
+  "lifespan": 60,
+  "ruler": false
+ },
+ {
+  "id": "gojeongui",
+  "name": "고정의",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": 645,
+  "histRetire": 660,
+  "role": "general",
+  "stats": {
+   "lead": 56,
+   "war": 53,
+   "int": 42,
+   "pol": 28,
+   "chr": 57
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "당과의 전쟁기 장수",
+  "age": 20,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "hyeopbo",
+  "name": "협보",
+  "faction": "goguryeo",
+  "tier": 2,
+  "histAppear": -37,
+  "histRetire": -10,
+  "role": "general",
+  "stats": {
+   "lead": 49,
+   "war": 45,
+   "int": 44,
+   "pol": 35,
+   "chr": 42
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "주몽의 건국 동반자",
+  "age": 33,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "beopheung",
+  "name": "법흥왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 514,
+  "histRetire": 540,
+  "role": "royal",
+  "stats": {
+   "lead": 70,
+   "war": 65,
+   "int": 83,
+   "pol": 88,
+   "chr": 74
+  },
+  "skills": [
+   "buddhism",
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "율령 반포와 불교 공인",
+  "age": 35,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "kimmuryeok",
+  "name": "김무력",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 550,
+  "histRetire": 570,
+  "role": "general",
+  "stats": {
+   "lead": 88,
+   "war": 71,
+   "int": 64,
+   "pol": 51,
+   "chr": 50
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기·순수비",
+  "note": "관산성에서 성왕을 잡음. 김유신의 조부",
+  "age": 61,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "seolchong",
+  "name": "설총",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 680,
+  "histRetire": 720,
+  "role": "civil",
+  "stats": {
+   "lead": 51,
+   "war": 55,
+   "int": 88,
+   "pol": 82,
+   "chr": 71
+  },
+  "skills": [
+   "remonstrance",
+   "law"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "이두를 정리한 원효의 아들",
+  "age": 18,
+  "lifespan": 80,
+  "ruler": false
+ },
+ {
+  "id": "sinmun",
+  "name": "신문왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 681,
+  "histRetire": 692,
+  "role": "royal",
+  "stats": {
+   "lead": 71,
+   "war": 49,
+   "int": 60,
+   "pol": 75,
+   "chr": 87
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "통일 후 체제를 정비",
+  "age": 35,
+  "lifespan": 81,
+  "ruler": false
+ },
+ {
+  "id": "jinpyeong",
+  "name": "진평왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 579,
+  "histRetire": 632,
+  "role": "royal",
+  "stats": {
+   "lead": 52,
+   "war": 54,
+   "int": 86,
+   "pol": 74,
+   "chr": 74
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "오랜 재위 동안 백제와 대치",
+  "age": 33,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "hyeokgeose",
+  "name": "박혁거세",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": -57,
+  "histRetire": 4,
+  "role": "royal",
+  "stats": {
+   "lead": 82,
+   "war": 60,
+   "int": 79,
+   "pol": 81,
+   "chr": 84
+  },
+  "skills": [
+   "diplomacy",
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "신라의 시조",
+  "age": 36,
+  "lifespan": 60,
+  "ruler": false
+ },
+ {
+  "id": "jukji",
+  "name": "죽지",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 649,
+  "histRetire": 690,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 83,
+   "int": 62,
+   "pol": 58,
+   "chr": 54
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "여러 전투에 종군한 화랑 출신 장수",
+  "age": 31,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "hyetong",
+  "name": "혜통",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 665,
+  "histRetire": 690,
+  "role": "monk",
+  "stats": {
+   "lead": 26,
+   "war": 27,
+   "int": 77,
+   "pol": 75,
+   "chr": 82
+  },
+  "skills": [
+   "medicine"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "주술로 이름난 승려",
+  "age": 50,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "jijeung",
+  "name": "지증왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 500,
+  "histRetire": 514,
+  "role": "royal",
+  "stats": {
+   "lead": 81,
+   "war": 75,
+   "int": 80,
+   "pol": 73,
+   "chr": 77
+  },
+  "skills": [
+   "conquest",
+   "reform"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "국호와 왕호를 정하고 우산국을 복속",
+  "age": 24,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "kimseoheon",
+  "name": "김서현",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 595,
+  "histRetire": 630,
+  "role": "general",
+  "stats": {
+   "lead": 81,
+   "war": 81,
+   "int": 53,
+   "pol": 50,
+   "chr": 62
+  },
+  "skills": [
+   "siege_defense"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "김유신의 아버지",
+  "age": 44,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "jinpyo",
+  "name": "진표",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 750,
+  "histRetire": 780,
+  "role": "monk",
+  "stats": {
+   "lead": 32,
+   "war": 17,
+   "int": 80,
+   "pol": 63,
+   "chr": 64
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "점찰법회를 연 율사",
+  "age": 49,
+  "lifespan": 84,
+  "ruler": false
+ },
+ {
+  "id": "naemul",
+  "name": "내물왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 356,
+  "histRetire": 402,
+  "role": "royal",
+  "stats": {
+   "lead": 77,
+   "war": 69,
+   "int": 79,
+   "pol": 74,
+   "chr": 77
+  },
+  "skills": [
+   "conquest",
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "김씨 왕위 세습을 확립",
+  "age": 37,
+  "lifespan": 52,
+  "ruler": false
+ },
+ {
+  "id": "kimdaemun",
+  "name": "김대문",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 700,
+  "histRetire": 720,
+  "role": "civil",
+  "stats": {
+   "lead": 42,
+   "war": 41,
+   "int": 72,
+   "pol": 79,
+   "chr": 53
+  },
+  "skills": [
+   "relief"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "화랑세기를 지음",
+  "age": 30,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "bakyeonggyu",
+  "name": "박영규",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 930,
+  "histRetire": 940,
+  "role": "civil",
+  "stats": {
+   "lead": 39,
+   "war": 25,
+   "int": 78,
+   "pol": 56,
+   "chr": 38
+  },
+  "skills": [
+   "finance"
+  ],
+  "loyalty": "mercenary",
+  "source": "고려사",
+  "note": "승주 호족. 고려에 귀부",
+  "age": 36,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "kimalji",
+  "name": "김알지",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 65,
+  "histRetire": 100,
+  "role": "royal",
+  "stats": {
+   "lead": 64,
+   "war": 60,
+   "int": 64,
+   "pol": 77,
+   "chr": 59
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "경주 김씨의 시조",
+  "age": 28,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "kimpumil",
+  "name": "김품일",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 655,
+  "histRetire": 670,
+  "role": "general",
+  "stats": {
+   "lead": 63,
+   "war": 57,
+   "int": 77,
+   "pol": 37,
+   "chr": 56
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "관창의 아버지. 여러 전투에 종군",
+  "age": 22,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "talhae",
+  "name": "석탈해",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 57,
+  "histRetire": 80,
+  "role": "royal",
+  "stats": {
+   "lead": 71,
+   "war": 59,
+   "int": 74,
+   "pol": 76,
+   "chr": 64
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "석씨 왕조의 시조",
+  "age": 37,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "jindeok",
+  "name": "진덕여왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 647,
+  "histRetire": 654,
+  "role": "royal",
+  "stats": {
+   "lead": 76,
+   "war": 58,
+   "int": 68,
+   "pol": 69,
+   "chr": 72
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "당과의 관계를 다짐",
+  "age": -2,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "kimyangdo",
+  "name": "김양도",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 660,
+  "histRetire": 670,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 76,
+   "int": 53,
+   "pol": 45,
+   "chr": 62
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "당에 사신으로 오가다 옥사",
+  "age": 39,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "kimyang",
+  "name": "김양",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 836,
+  "histRetire": 857,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 75,
+   "int": 50,
+   "pol": 43,
+   "chr": 57
+  },
+  "skills": [
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "신무왕을 옹립한 장수",
+  "age": 46,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "kimheonchang",
+  "name": "김헌창",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 807,
+  "histRetire": 822,
+  "role": "general",
+  "stats": {
+   "lead": 71,
+   "war": 75,
+   "int": 53,
+   "pol": 58,
+   "chr": 50
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "웅천주에서 반란을 일으킴",
+  "age": 5,
+  "lifespan": 58,
+  "ruler": false
+ },
+ {
+  "id": "kimdaeseong",
+  "name": "김대성",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 745,
+  "histRetire": 774,
+  "role": "civil",
+  "stats": {
+   "lead": 37,
+   "war": 43,
+   "int": 72,
+   "pol": 74,
+   "chr": 64
+  },
+  "skills": [
+   "remonstrance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "불국사와 석굴암을 세움",
+  "age": 44,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "sonsun",
+  "name": "손순",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 826,
+  "histRetire": 836,
+  "role": "civil",
+  "stats": {
+   "lead": 33,
+   "war": 23,
+   "int": 66,
+   "pol": 74,
+   "chr": 50
+  },
+  "skills": [
+   "remonstrance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "효행으로 이름을 남김",
+  "age": 43,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "dohwanyeo",
+  "name": "도화녀",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 576,
+  "histRetire": 600,
+  "role": "civil",
+  "stats": {
+   "lead": 19,
+   "war": 26,
+   "int": 74,
+   "pol": 67,
+   "chr": 51
+  },
+  "skills": [
+   "remonstrance"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "비형랑의 어머니",
+  "age": 24,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "cheongwannyeo",
+  "name": "천관녀",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 610,
+  "histRetire": 630,
+  "role": "artisan",
+  "stats": {
+   "lead": 24,
+   "war": 15,
+   "int": 74,
+   "pol": 33,
+   "chr": 46
+  },
+  "skills": [
+   "music"
+  ],
+  "loyalty": "loyal",
+  "source": "설화",
+  "note": "김유신 설화에 등장",
+  "age": 33,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "nulji",
+  "name": "눌지왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 417,
+  "histRetire": 458,
+  "role": "royal",
+  "stats": {
+   "lead": 67,
+   "war": 67,
+   "int": 64,
+   "pol": 63,
+   "chr": 73
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "고구려의 간섭에서 벗어남",
+  "age": 38,
+  "lifespan": 81,
+  "ruler": false
+ },
+ {
+  "id": "hyecheol",
+  "name": "혜량",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 551,
+  "histRetire": 570,
+  "role": "monk",
+  "stats": {
+   "lead": 35,
+   "war": 23,
+   "int": 73,
+   "pol": 55,
+   "chr": 71
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "mercenary",
+  "source": "삼국사기",
+  "note": "고구려에서 신라로 귀부한 승려",
+  "age": 28,
+  "lifespan": 85,
+  "ruler": false
+ },
+ {
+  "id": "geotaji",
+  "name": "거타지",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 888,
+  "histRetire": 895,
+  "role": "general",
+  "stats": {
+   "lead": 51,
+   "war": 73,
+   "int": 40,
+   "pol": 48,
+   "chr": 52
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "활로 요괴를 물리친 무사",
+  "age": 32,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "gyeongsun",
+  "name": "경순왕",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 927,
+  "histRetire": 935,
+  "role": "royal",
+  "stats": {
+   "lead": 71,
+   "war": 62,
+   "int": 71,
+   "pol": 63,
+   "chr": 67
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "고려에 나라를 넘긴 신라 마지막 왕",
+  "age": 31,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "jeongnyeon",
+  "name": "정년",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 828,
+  "histRetire": 846,
+  "role": "general",
+  "stats": {
+   "lead": 70,
+   "war": 68,
+   "int": 54,
+   "pol": 63,
+   "chr": 55
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "장보고의 동료 무장",
+  "age": 25,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "sabok",
+  "name": "사복",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 650,
+  "histRetire": 670,
+  "role": "monk",
+  "stats": {
+   "lead": 13,
+   "war": 18,
+   "int": 70,
+   "pol": 53,
+   "chr": 56
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "원효와 얽힌 설화의 인물",
+  "age": 40,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "nohilbudeuk",
+  "name": "노힐부득",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 700,
+  "histRetire": 720,
+  "role": "monk",
+  "stats": {
+   "lead": 15,
+   "war": 17,
+   "int": 70,
+   "pol": 53,
+   "chr": 46
+  },
+  "skills": [
+   "temple"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "달달박박과 함께 성불",
+  "age": 5,
+  "lifespan": 86,
+  "ruler": false
+ },
+ {
+  "id": "ukmyeon",
+  "name": "욱면",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 755,
+  "histRetire": 765,
+  "role": "civil",
+  "stats": {
+   "lead": 29,
+   "war": 35,
+   "int": 54,
+   "pol": 69,
+   "chr": 40
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "염불로 승천했다 전함",
+  "age": -2,
+  "lifespan": 86,
+  "ruler": false
+ },
+ {
+  "id": "wonjong",
+  "name": "원종",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 889,
+  "histRetire": 890,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 67,
+   "int": 43,
+   "pol": 35,
+   "chr": 54
+  },
+  "skills": [
+   "raid"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "사벌주에서 봉기",
+  "age": 25,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "aeno",
+  "name": "애노",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 889,
+  "histRetire": 890,
+  "role": "general",
+  "stats": {
+   "lead": 54,
+   "war": 67,
+   "int": 53,
+   "pol": 39,
+   "chr": 41
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "ambitious",
+  "source": "삼국사기",
+  "note": "원종과 함께 봉기",
+  "age": 10,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "yangji",
+  "name": "양지",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 630,
+  "histRetire": 660,
+  "role": "artisan",
+  "stats": {
+   "lead": 21,
+   "war": 17,
+   "int": 63,
+   "pol": 44,
+   "chr": 67
+  },
+  "skills": [
+   "architecture"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "석장사의 조각승",
+  "age": 40,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "chwido",
+  "name": "취도",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 670,
+  "histRetire": 684,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 65,
+   "int": 48,
+   "pol": 38,
+   "chr": 52
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "형제가 대를 이어 전사",
+  "age": 27,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "suro_buin",
+  "name": "수로부인",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 702,
+  "histRetire": 737,
+  "role": "royal",
+  "stats": {
+   "lead": 51,
+   "war": 46,
+   "int": 51,
+   "pol": 64,
+   "chr": 58
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "헌화가 설화의 주인공",
+  "age": 30,
+  "lifespan": 64,
+  "ruler": false
+ },
+ {
+  "id": "yeono",
+  "name": "연오랑",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 157,
+  "histRetire": 160,
+  "role": "artisan",
+  "stats": {
+   "lead": 8,
+   "war": 11,
+   "int": 64,
+   "pol": 29,
+   "chr": 54
+  },
+  "skills": [
+   "music"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "해와 달의 정기로 전함",
+  "age": 45,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "solgeo",
+  "name": "솔거",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 700,
+  "histRetire": 750,
+  "role": "artisan",
+  "stats": {
+   "lead": 29,
+   "war": 20,
+   "int": 60,
+   "pol": 59,
+   "chr": 63
+  },
+  "skills": [
+   "craft"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "황룡사 벽에 소나무를 그린 화가",
+  "age": 31,
+  "lifespan": 60,
+  "ruler": false
+ },
+ {
+  "id": "yeomjang",
+  "name": "염장",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 647,
+  "histRetire": 650,
+  "role": "general",
+  "stats": {
+   "lead": 52,
+   "war": 63,
+   "int": 45,
+   "pol": 29,
+   "chr": 45
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "비담의 난 진압에 참여",
+  "age": 38,
+  "lifespan": 57,
+  "ruler": false
+ },
+ {
+  "id": "seo_o",
+  "name": "세오녀",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 157,
+  "histRetire": 160,
+  "role": "artisan",
+  "stats": {
+   "lead": 13,
+   "war": 8,
+   "int": 63,
+   "pol": 28,
+   "chr": 59
+  },
+  "skills": [
+   "music"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "연오랑의 아내",
+  "age": 46,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "daldalbakbak",
+  "name": "달달박박",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 700,
+  "histRetire": 720,
+  "role": "monk",
+  "stats": {
+   "lead": 8,
+   "war": 12,
+   "int": 58,
+   "pol": 26,
+   "chr": 63
+  },
+  "skills": [
+   "medicine"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "노힐부득과 함께 수도",
+  "age": 44,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "kimyeongyun",
+  "name": "김영윤",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 684,
+  "histRetire": 684,
+  "role": "general",
+  "stats": {
+   "lead": 54,
+   "war": 62,
+   "int": 40,
+   "pol": 38,
+   "chr": 41
+  },
+  "skills": [
+   "forced_march"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "보덕국의 난에서 전사",
+  "age": 22,
+  "lifespan": 28,
+  "ruler": false
+ },
+ {
+  "id": "mulgyeja",
+  "name": "물계자",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 209,
+  "histRetire": 220,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 62,
+   "int": 36,
+   "pol": 36,
+   "chr": 36
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "포상팔국 전투의 공을 사양",
+  "age": 3,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "pilbu",
+  "name": "필부",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 660,
+  "histRetire": 660,
+  "role": "general",
+  "stats": {
+   "lead": 50,
+   "war": 61,
+   "int": 34,
+   "pol": 34,
+   "chr": 43
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "칠중성을 지키다 전사",
+  "age": 1,
+  "lifespan": 22,
+  "ruler": false
+ },
+ {
+  "id": "nulchoe",
+  "name": "눌최",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 624,
+  "histRetire": 624,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 54,
+   "int": 47,
+   "pol": 33,
+   "chr": 53
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "속함성에서 끝까지 항전",
+  "age": 23,
+  "lifespan": 34,
+  "ruler": false
+ },
+ {
+  "id": "bisumun",
+  "name": "비형랑",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 580,
+  "histRetire": 600,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 49,
+   "int": 46,
+   "pol": 21,
+   "chr": 45
+  },
+  "skills": [
+   "forced_march"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사",
+  "note": "진지왕의 아들로 전하는 설화적 인물",
+  "age": 35,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "baekgyeol",
+  "name": "백결선생",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 450,
+  "histRetire": 480,
+  "role": "artisan",
+  "stats": {
+   "lead": 24,
+   "war": 8,
+   "int": 53,
+   "pol": 38,
+   "chr": 60
+  },
+  "skills": [
+   "painting"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "방아타령을 지은 가난한 악사",
+  "age": 41,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "alyeong",
+  "name": "알영부인",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": -53,
+  "histRetire": -4,
+  "role": "royal",
+  "stats": {
+   "lead": 55,
+   "war": 52,
+   "int": 47,
+   "pol": 60,
+   "chr": 54
+  },
+  "skills": [
+   "reform"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기(설화)",
+  "note": "박혁거세의 왕비",
+  "age": 38,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "kimhyeon",
+  "name": "김현",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 790,
+  "histRetire": 800,
+  "role": "civil",
+  "stats": {
+   "lead": 28,
+   "war": 22,
+   "int": 58,
+   "pol": 57,
+   "chr": 60
+  },
+  "skills": [
+   "writing"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "호랑이 처녀 설화의 주인공",
+  "age": 26,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "geomgun",
+  "name": "검군",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 627,
+  "histRetire": 628,
+  "role": "civil",
+  "stats": {
+   "lead": 32,
+   "war": 28,
+   "int": 59,
+   "pol": 50,
+   "chr": 37
+  },
+  "skills": [
+   "law"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "부정을 거부하다 독살됨",
+  "age": 21,
+  "lifespan": 33,
+  "ruler": false
+ },
+ {
+  "id": "jigwi",
+  "name": "지귀",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 632,
+  "histRetire": 647,
+  "role": "civil",
+  "stats": {
+   "lead": 35,
+   "war": 19,
+   "int": 57,
+   "pol": 57,
+   "chr": 54
+  },
+  "skills": [
+   "law"
+  ],
+  "loyalty": "loyal",
+  "source": "설화",
+  "note": "선덕여왕을 사모하다 불귀신이 됨",
+  "age": 27,
+  "lifespan": 56,
+  "ruler": false
+ },
+ {
+  "id": "sona",
+  "name": "소나",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 675,
+  "histRetire": 675,
+  "role": "general",
+  "stats": {
+   "lead": 53,
+   "war": 55,
+   "int": 47,
+   "pol": 43,
+   "chr": 40
+  },
+  "skills": [
+   "navy"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기 열전",
+  "note": "아달성에서 말갈과 싸우다 전사",
+  "age": 42,
+  "lifespan": 51,
+  "ruler": false
+ },
+ {
+  "id": "cheoyong",
+  "name": "처용",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 879,
+  "histRetire": 890,
+  "role": "civil",
+  "stats": {
+   "lead": 24,
+   "war": 23,
+   "int": 52,
+   "pol": 54,
+   "chr": 54
+  },
+  "skills": [
+   "law"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국유사(설화)",
+  "note": "처용가와 처용무의 주인공",
+  "age": 43,
+  "lifespan": 88,
+  "ruler": false
+ },
+ {
+  "id": "chinchun",
+  "name": "진춘",
+  "faction": "silla",
+  "tier": 2,
+  "histAppear": 660,
+  "histRetire": 670,
+  "role": "general",
+  "stats": {
+   "lead": 49,
+   "war": 49,
+   "int": 42,
+   "pol": 41,
+   "chr": 42
+  },
+  "skills": [
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "삼국사기",
+  "note": "백제 정벌에 종군",
+  "age": 45,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_019",
+  "name": "사윤충",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 47,
+   "war": 36,
+   "int": 75,
+   "pol": 80,
+   "chr": 51
+  },
+  "skills": [
+   "census"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 30,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_023",
+  "name": "사택윤충",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 58,
+   "war": 40,
+   "int": 80,
+   "pol": 80,
+   "chr": 79
+  },
+  "skills": [
+   "diplomacy",
+   "strategy"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 3,
+  "lifespan": 85,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_027",
+  "name": "연동",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 71,
+   "war": 80,
+   "int": 54,
+   "pol": 62,
+   "chr": 58
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 21,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_034",
+  "name": "부여여신",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "royal",
+  "stats": {
+   "lead": 65,
+   "war": 58,
+   "int": 61,
+   "pol": 73,
+   "chr": 80
+  },
+  "skills": [
+   "conquest"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 28,
+  "lifespan": 49,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_033",
+  "name": "은동",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 77,
+   "war": 58,
+   "int": 30,
+   "pol": 40,
+   "chr": 40
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 26,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_025",
+  "name": "국차",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 75,
+   "war": 75,
+   "int": 73,
+   "pol": 63,
+   "chr": 73
+  },
+  "skills": [
+   "forced_march",
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -3,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_024",
+  "name": "해근수",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "artisan",
+  "stats": {
+   "lead": 26,
+   "war": 41,
+   "int": 58,
+   "pol": 54,
+   "chr": 73
+  },
+  "skills": [
+   "architecture"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 30,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_030",
+  "name": "협근자",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 18,
+   "war": 20,
+   "int": 73,
+   "pol": 47,
+   "chr": 53
+  },
+  "skills": [
+   "culture"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 5,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_020",
+  "name": "목협충",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 69,
+   "int": 43,
+   "pol": 41,
+   "chr": 45
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -1,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_029",
+  "name": "백곤",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 69,
+   "war": 61,
+   "int": 36,
+   "pol": 38,
+   "chr": 35
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -11,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_026",
+  "name": "목광",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 67,
+   "war": 68,
+   "int": 46,
+   "pol": 34,
+   "chr": 43
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 33,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_022",
+  "name": "연여신",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 15,
+   "war": 8,
+   "int": 64,
+   "pol": 51,
+   "chr": 46
+  },
+  "skills": [
+   "medicine"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -10,
+  "lifespan": 86,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_028",
+  "name": "사택맹",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 48,
+   "war": 63,
+   "int": 31,
+   "pol": 39,
+   "chr": 46
+  },
+  "skills": [
+   "valor"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 29,
+  "lifespan": 62,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_031",
+  "name": "해만치",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 17,
+   "war": 8,
+   "int": 63,
+   "pol": 36,
+   "chr": 44
+  },
+  "skills": [
+   "culture"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 35,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_021",
+  "name": "백은상",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 47,
+   "war": 31,
+   "int": 56,
+   "pol": 62,
+   "chr": 44
+  },
+  "skills": [
+   "strategy"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 40,
+  "lifespan": 82,
+  "ruler": false
+ },
+ {
+  "id": "fic_ba_032",
+  "name": "목협윤충",
+  "faction": "baekje",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "royal",
+  "stats": {
+   "lead": 52,
+   "war": 57,
+   "int": 61,
+   "pol": 45,
+   "chr": 56
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 10,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_043",
+  "name": "월청예",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 71,
+   "war": 80,
+   "int": 63,
+   "pol": 51,
+   "chr": 69
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 5,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_045",
+  "name": "아구형",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 72,
+   "int": 59,
+   "pol": 48,
+   "chr": 64
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 36,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_049",
+  "name": "탈청예",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 80,
+   "int": 57,
+   "pol": 60,
+   "chr": 55
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 36,
+  "lifespan": 51,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_052",
+  "name": "탈수",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 43,
+   "war": 53,
+   "int": 65,
+   "pol": 80,
+   "chr": 66
+  },
+  "skills": [
+   "strategy"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 26,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_056",
+  "name": "탈실",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 80,
+   "int": 61,
+   "pol": 60,
+   "chr": 61
+  },
+  "skills": [
+   "archery",
+   "forced_march"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 33,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_061",
+  "name": "김수",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 66,
+   "war": 45,
+   "int": 80,
+   "pol": 80,
+   "chr": 64
+  },
+  "skills": [
+   "law",
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -3,
+  "lifespan": 76,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_062",
+  "name": "탈우",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 80,
+   "int": 68,
+   "pol": 70,
+   "chr": 67
+  },
+  "skills": [
+   "navy",
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 33,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_064",
+  "name": "이설지",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 72,
+   "int": 57,
+   "pol": 45,
+   "chr": 46
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 33,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_053",
+  "name": "단광",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 32,
+   "war": 23,
+   "int": 78,
+   "pol": 66,
+   "chr": 73
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 29,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_039",
+  "name": "도라",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 35,
+   "war": 30,
+   "int": 77,
+   "pol": 72,
+   "chr": 64
+  },
+  "skills": [
+   "census"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 23,
+  "lifespan": 75,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_059",
+  "name": "탈광",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 54,
+   "war": 77,
+   "int": 55,
+   "pol": 42,
+   "chr": 39
+  },
+  "skills": [
+   "rearguard"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 28,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_057",
+  "name": "아탈",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 65,
+   "war": 73,
+   "int": 56,
+   "pol": 58,
+   "chr": 48
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 3,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_065",
+  "name": "도이나",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 69,
+   "int": 56,
+   "pol": 57,
+   "chr": 50
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": -15,
+  "lifespan": 83,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_040",
+  "name": "도아라",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 58,
+   "war": 71,
+   "int": 51,
+   "pol": 41,
+   "chr": 53
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 20,
+  "lifespan": 59,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_058",
+  "name": "월실",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 51,
+   "war": 34,
+   "int": 70,
+   "pol": 49,
+   "chr": 44
+  },
+  "skills": [
+   "writing"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 32,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_050",
+  "name": "월거칠",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 68,
+   "war": 66,
+   "int": 44,
+   "pol": 38,
+   "chr": 64
+  },
+  "skills": [
+   "siege_defense"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 22,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_054",
+  "name": "김고순",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 8,
+   "war": 19,
+   "int": 68,
+   "pol": 44,
+   "chr": 53
+  },
+  "skills": [
+   "culture"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 31,
+  "lifespan": 69,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_041",
+  "name": "월혜",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 58,
+   "war": 67,
+   "int": 47,
+   "pol": 37,
+   "chr": 41
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -4,
+  "lifespan": 67,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_051",
+  "name": "아거칠",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 65,
+   "war": 56,
+   "int": 42,
+   "pol": 30,
+   "chr": 38
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 29,
+  "lifespan": 57,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_055",
+  "name": "도해",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 57,
+   "war": 64,
+   "int": 45,
+   "pol": 41,
+   "chr": 36
+  },
+  "skills": [
+   "valor"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": -15,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_060",
+  "name": "아설지",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 26,
+   "war": 25,
+   "int": 63,
+   "pol": 48,
+   "chr": 47
+  },
+  "skills": [
+   "census"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -4,
+  "lifespan": 71,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_063",
+  "name": "탈이나",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "artisan",
+  "stats": {
+   "lead": 8,
+   "war": 8,
+   "int": 58,
+   "pol": 33,
+   "chr": 60
+  },
+  "skills": [
+   "craft"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 33,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_046",
+  "name": "하해",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 56,
+   "int": 39,
+   "pol": 50,
+   "chr": 45
+  },
+  "skills": [
+   "forced_march"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 20,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_047",
+  "name": "이탈",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 59,
+   "int": 26,
+   "pol": 14,
+   "chr": 36
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 24,
+  "lifespan": 57,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_042",
+  "name": "김이나",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "artisan",
+  "stats": {
+   "lead": 11,
+   "war": 8,
+   "int": 57,
+   "pol": 34,
+   "chr": 58
+  },
+  "skills": [
+   "architecture"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 36,
+  "lifespan": 63,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_044",
+  "name": "김도설",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 17,
+   "war": 13,
+   "int": 56,
+   "pol": 48,
+   "chr": 50
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 11,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "fic_ga_048",
+  "name": "월사물",
+  "faction": "gaya",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 55,
+   "war": 56,
+   "int": 32,
+   "pol": 30,
+   "chr": 34
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": 29,
+  "lifespan": 57,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_001",
+  "name": "다추발",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 80,
+   "war": 80,
+   "int": 63,
+   "pol": 52,
+   "chr": 65
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -14,
+  "lifespan": 74,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_002",
+  "name": "을사문",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "royal",
+  "stats": {
+   "lead": 76,
+   "war": 72,
+   "int": 80,
+   "pol": 80,
+   "chr": 80
+  },
+  "skills": [
+   "insight",
+   "diplomacy"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 31,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_009",
+  "name": "창남무",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 73,
+   "war": 80,
+   "int": 56,
+   "pol": 54,
+   "chr": 53
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 36,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_004",
+  "name": "을다우",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "monk",
+  "stats": {
+   "lead": 30,
+   "war": 34,
+   "int": 71,
+   "pol": 60,
+   "chr": 79
+  },
+  "skills": [
+   "culture"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 42,
+  "lifespan": 84,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_007",
+  "name": "환사문",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 66,
+   "war": 79,
+   "int": 49,
+   "pol": 48,
+   "chr": 57
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 23,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_006",
+  "name": "대묵거",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "royal",
+  "stats": {
+   "lead": 53,
+   "war": 44,
+   "int": 57,
+   "pol": 75,
+   "chr": 59
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 27,
+  "lifespan": 78,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_017",
+  "name": "해두지",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 67,
+   "war": 73,
+   "int": 27,
+   "pol": 44,
+   "chr": 38
+  },
+  "skills": [
+   "raid"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 40,
+  "lifespan": 73,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_010",
+  "name": "고보연",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 70,
+   "int": 55,
+   "pol": 53,
+   "chr": 58
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -14,
+  "lifespan": 62,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_005",
+  "name": "소보연",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 69,
+   "war": 71,
+   "int": 60,
+   "pol": 58,
+   "chr": 49
+  },
+  "skills": [
+   "siege"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 41,
+  "lifespan": 79,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_014",
+  "name": "연마루",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 50,
+   "war": 71,
+   "int": 50,
+   "pol": 39,
+   "chr": 37
+  },
+  "skills": [
+   "archery"
+  ],
+  "loyalty": "ambitious",
+  "source": "가상",
+  "note": "",
+  "age": -2,
+  "lifespan": 68,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_008",
+  "name": "목돌고",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 60,
+   "war": 70,
+   "int": 38,
+   "pol": 50,
+   "chr": 41
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 19,
+  "lifespan": 61,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_018",
+  "name": "을남무",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 41,
+   "war": 16,
+   "int": 65,
+   "pol": 70,
+   "chr": 46
+  },
+  "skills": [
+   "governance"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": -12,
+  "lifespan": 86,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_003",
+  "name": "우비류",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 28,
+   "war": 15,
+   "int": 67,
+   "pol": 63,
+   "chr": 44
+  },
+  "skills": [
+   "diplomacy"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 30,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_016",
+  "name": "고자유",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "royal",
+  "stats": {
+   "lead": 46,
+   "war": 31,
+   "int": 51,
+   "pol": 66,
+   "chr": 59
+  },
+  "skills": [
+   "insight"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 38,
+  "lifespan": 82,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_011",
+  "name": "소재사",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 54,
+   "war": 64,
+   "int": 42,
+   "pol": 33,
+   "chr": 54
+  },
+  "skills": [
+   "spear"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 11,
+  "lifespan": 77,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_013",
+  "name": "방비류",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "royal",
+  "stats": {
+   "lead": 50,
+   "war": 47,
+   "int": 60,
+   "pol": 63,
+   "chr": 55
+  },
+  "skills": [
+   "buddhism"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 33,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_015",
+  "name": "온수성",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 61,
+   "war": 62,
+   "int": 50,
+   "pol": 39,
+   "chr": 43
+  },
+  "skills": [
+   "cavalry"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 34,
+  "lifespan": 66,
+  "ruler": false
+ },
+ {
+  "id": "fic_go_012",
+  "name": "을평성",
+  "faction": "goguryeo",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 59,
+   "war": 61,
+   "int": 53,
+   "pol": 43,
+   "chr": 49
+  },
+  "skills": [
+   "valor"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 41,
+  "lifespan": 70,
+  "ruler": false
+ },
+ {
+  "id": "fic_si_038",
+  "name": "거문노",
+  "faction": "silla",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 73,
+   "war": 69,
+   "int": 44,
+   "pol": 52,
+   "chr": 40
+  },
+  "skills": [
+   "ambush"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 27,
+  "lifespan": 65,
+  "ruler": false
+ },
+ {
+  "id": "fic_si_037",
+  "name": "배설원",
+  "faction": "silla",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 72,
+   "war": 61,
+   "int": 26,
+   "pol": 31,
+   "chr": 50
+  },
+  "skills": [
+   "fortify"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 28,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "fic_si_035",
+  "name": "설계자",
+  "faction": "silla",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "general",
+  "stats": {
+   "lead": 64,
+   "war": 66,
+   "int": 54,
+   "pol": 52,
+   "chr": 68
+  },
+  "skills": [
+   "forced_march"
+  ],
+  "loyalty": "loyal",
+  "source": "가상",
+  "note": "",
+  "age": 34,
+  "lifespan": 72,
+  "ruler": false
+ },
+ {
+  "id": "fic_si_036",
+  "name": "박이사",
+  "faction": "silla",
+  "tier": 3,
+  "histAppear": null,
+  "histRetire": null,
+  "role": "civil",
+  "stats": {
+   "lead": 32,
+   "war": 26,
+   "int": 62,
+   "pol": 62,
+   "chr": 36
+  },
+  "skills": [
+   "law"
+  ],
+  "loyalty": "mercenary",
+  "source": "가상",
+  "note": "",
+  "age": 41,
+  "lifespan": 67,
+  "ruler": false
+ }
+]

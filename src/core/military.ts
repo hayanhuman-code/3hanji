@@ -834,7 +834,7 @@ export function castleDefensePower(state: GameState, castleId: CastleId): number
   // 도성 방어(신라) — 금성은 좀처럼 떨어지지 않는다.
   const capitalBonus = def.type === 'capital' && traits.includes('capital_defense') ? 1.25 : 1;
   // 변경 방어(고구려) — 산성 등급 거점의 성벽이 더 두껍다.
-  if (def.type === 'mountain_fortress' && traits.includes('frontier_defense')) wallBonus *= 1.1;
+  if (def.type === 'fort' && traits.includes('frontier_defense')) wallBonus *= 1.1;
   return base * wallBonus * terrainBonus * capitalBonus;
 }
 

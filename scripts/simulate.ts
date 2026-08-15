@@ -123,6 +123,18 @@ for (const f of playable) {
 }
 console.log('─'.repeat(58));
 
+// 판이 실제로 움직였는지 — 거점이 그대로면 승률보다 먼저 이것부터 봐야 한다.
+console.log('\n시작 → 평균 최종 거점');
+for (const f of playable) {
+  const start = scenario.ownership[f.id]?.length ?? 0;
+  const end = results.reduce((s, r) => s + (r.finalCastles[f.id] ?? 0), 0) / RUNS;
+  const peak = Math.max(...results.map((r) => r.finalCastles[f.id] ?? 0));
+  console.log(
+    `  ${f.name.padEnd(4)} ${String(start).padStart(3)} → ${end.toFixed(1).padStart(5)}  (최대 ${peak})`
+  );
+}
+console.log('');
+
 const decided = results.filter((r) => r.kind !== 'timeout');
 const avgTurns = decided.length
   ? (decided.reduce((s, r) => s + r.turns, 0) / decided.length).toFixed(1)

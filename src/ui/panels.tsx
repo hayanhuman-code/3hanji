@@ -18,6 +18,7 @@ import {
 } from '../core/data';
 import { CHINA_ID, CHINA_NAME } from '../core/diplomacy';
 import { B, SKILLS, conscriptCost, loyaltyFactor, maxTroops } from '../core/formulas';
+
 import { stockCap, validateCommand } from '../core/domestic';
 import { foresightHints } from '../core/events';
 import {
@@ -33,6 +34,14 @@ import { victoryStatus } from '../core/victory';
 import type { Command, DevKey, GameState, OfficerState } from '../core/types';
 import { fmt, fmtTroops } from '../core/util';
 import { useGame } from './store';
+
+const ROLE_LABEL: Record<string, string> = {
+  general: '무장',
+  civil: '문관',
+  royal: '왕족',
+  monk: '승려',
+  artisan: '장인',
+};
 
 const DEV_LABEL: Record<DevKey, string> = {
   agri: '농업',
@@ -70,6 +79,7 @@ function OfficerChip({
   onClick?: () => void;
 }) {
   const def = officerDef(officer.id);
+  // 이름 옆에 역할을 적어 두면 76 거점에 300명을 흩어 놓아도 누가 무엇을 하는 사람인지 보인다.
   const g = officer.growth ?? {};
   const s = def.stats;
   return (
@@ -80,14 +90,17 @@ function OfficerChip({
         cursor: onClick ? 'pointer' : 'default',
       }}
       onClick={onClick}
-      title={def.note ?? ''}
+      title={[def.note, def.source && `출전: ${def.source}`].filter(Boolean).join('\n')}
     >
       <div className="portrait">{def.name.slice(0, 1)}</div>
       <div style={{ minWidth: 0, flex: 1 }}>
         <div className="row between">
-          <b>{def.name}</b>
+          <b>
+            {def.name}
+            {def.ruler && ' 王'}
+          </b>
           <span className="faint" style={{ fontSize: 11 }}>
-            {officer.acted ? '행동함' : officer.armyId ? '출진 중' : '대기'}
+            {ROLE_LABEL[def.role] ?? ''} · {officer.acted ? '행동함' : officer.armyId ? '출진 중' : '대기'}
           </span>
         </div>
         <div className="stats">
@@ -144,7 +157,7 @@ export function CastlePanel({ state, onMarch }: { state: GameState; onMarch: () 
   };
 
   const typeLabel =
-    { capital: '도성', major: '대성', mountain_fortress: '산성', port: '항구' }[def.type] ?? def.type;
+    { capital: '도성', major: '대성', fort: '산성', port: '항구' }[def.type] ?? def.type;
 
   return (
     <div className="stack">

@@ -201,6 +201,35 @@ export const SKILLS: Record<string, { name: string; desc: string }> = {
   resolve: { name: '결사', desc: '병력 열세일수록 전군 공격력 상승 (최대 +40%)' },
   tang_diplomacy: { name: '대당외교', desc: '중국 왕조 상대 외교 판정 +25' },
   culture: { name: '문예', desc: '배치 거점 민심 +3/턴, 등용 판정 +10' },
+
+  /* --- 300명 명부와 함께 들어온 특기 --- *
+   * 뜻이 같은 것은 build-officers.ts 의 SKILL_ALIAS 가 위쪽 id 로 모아 준다.
+   * 아래는 겹치지 않아 새로 등록한 것들이다.
+   * 계산에 반영된 것에는 수치를 적었고, 나머지는 아직 인물 카드에만 나오는
+   * 설명이다 — 효과는 단계적으로 붙인다(docs/backlog.md). */
+  valor: { name: '용맹', desc: '근접 병종(보병·장창·기병) 공격력 +12%' },
+  spear: { name: '창術', desc: '장창 계열 공격력 +15%' },
+  governance: { name: '통치', desc: '개발 명령 효과 +30%' },
+  conquest: { name: '정복', desc: '적 거점을 칠 때 전군 사기 +6' },
+  ambush: { name: '매복', desc: '숲·산악에서 공격력 +15%' },
+  rearguard: { name: '전투 후퇴', desc: '패주 시 병력 손실 감소' },
+  raid: { name: '약탈', desc: '적지에서 병량을 얻는다' },
+  law: { name: '율령', desc: '귀족회의 판정에 유리' },
+  reform: { name: '개혁', desc: '제도 반포 비용 감소' },
+  relief: { name: '구휼', desc: '기근 시 민심 하락 완화' },
+  census: { name: '호구', desc: '징병 가능 인원 증가' },
+  insurgency: { name: '봉기', desc: '점령지에서 반란을 일으킨다' },
+  rebellion: { name: '반역', desc: '충성도가 낮을 때 이탈 위험이 크다' },
+  founding: { name: '건국', desc: '나라를 세운 사람' },
+  duel: { name: '일기토', desc: '장수 간 단기 접전에 강하다' },
+  defect: { name: '내응', desc: '적진에서 호응한다' },
+  figurehead: { name: '허수아비', desc: '이름뿐인 자리' },
+  loyalty: { name: '충절', desc: '어떤 경우에도 배신하지 않는다' },
+  popularize: { name: '전파', desc: '가르침을 널리 편다' },
+  politics: { name: '정략', desc: '조정 안의 세력 다툼에 능하다' },
+  recovery: { name: '수복', desc: '잃은 땅을 되찾는 데 능하다' },
+  redemption: { name: '속죄', desc: '한 번의 잘못을 목숨으로 갚는다' },
+  rescue: { name: '구원', desc: '위태로운 아군을 건진다' },
 };
 
 /**
@@ -253,8 +282,10 @@ export function developGain(
   // 상한에 가까울수록 체감한다.
   const room = (max - cur) / Math.max(1, max);
   const diminish = B.developDiminish + (1 - B.developDiminish) * room;
-  // 성곽은 축성 특기, 그 외는 정치가 주 능력.
-  const skillBonus = key === 'wall' && hasSkill(officer, 'fortify') ? 1.5 : 1;
+  // 성곽은 축성 특기, 그 외는 정치가 주 능력. 통치는 항목을 가리지 않는다.
+  const skillBonus =
+    (key === 'wall' && hasSkill(officer, 'fortify') ? 1.5 : 1) *
+    (hasSkill(officer, 'governance') ? 1.3 : 1);
   const gain =
     B.developBase * (officer.stats.pol / 100) * loyaltyFactor(castle.loyalty) * diminish * skillBonus;
   return Math.min(max - cur, Math.max(1, gain));
@@ -449,6 +480,13 @@ export function computeDamage(i: DamageInput): number {
     if (hasSkill(ao, 'cav') && atkUnit.class === 'cavalry') atk *= 1.15;
     if (hasSkill(ao, 'archery') && atkUnit.class === 'archer') atk *= 1.15;
     if (hasSkill(ao, 'naval') && atkUnit.class === 'navy') atk *= 1.2;
+    if (hasSkill(ao, 'spear') && atkUnit.class === 'spear') atk *= 1.15;
+    // 용맹 — 병종을 가리지 않는 대신 맞붙어 싸우는 계열에만 붙는다.
+    if (hasSkill(ao, 'valor') && ['infantry', 'spear', 'cavalry'].includes(atkUnit.class))
+      atk *= 1.12;
+    // 매복 — 몸을 숨길 수 있는 지형에서만.
+    if (hasSkill(ao, 'ambush') && ['forest', 'mountain', 'hill'].includes(i.attackerTerrain))
+      atk *= 1.15;
     if (
       hasSkill(ao, 'flood_attack') &&
       (i.defenderTerrain === 'river' || i.defenderTerrain === 'mudflat')

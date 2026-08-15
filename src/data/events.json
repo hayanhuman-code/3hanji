@@ -40,7 +40,7 @@
     "faction": "goguryeo",
     "trigger": {
       "year": 642,
-      "condition": "serves(yeon_gaesomun, goguryeo)"
+      "condition": "serves(yeongaesomun, goguryeo)"
     },
     "once": true,
     "quote": "이에 여러 대인과 함께 왕을 시해하고 몸을 잘라 도랑에 버렸다.",
@@ -60,7 +60,7 @@
       {
         "text": "왕이 먼저 연개소문을 친다",
         "effects": [
-          "kill:yeon_gaesomun",
+          "kill:yeongaesomun",
           "council:+15",
           "loyalty_all:-6",
           "gold:-1200"
@@ -77,7 +77,7 @@
     "trigger": {
       "yearFrom": 642,
       "yearTo": 644,
-      "condition": "flag(chunchu_mission) AND alive(kim_chunchu) AND NOT war(silla, goguryeo)"
+      "condition": "flag(chunchu_mission) AND alive(kimchunchu) AND NOT war(silla, goguryeo)"
     },
     "once": true,
     "quote": "「마목현과 죽령은 본디 우리 땅이다. 돌려주지 않으면 돌아가지 못하리라.」",
@@ -148,7 +148,7 @@
     "trigger": {
       "yearFrom": 648,
       "yearTo": 660,
-      "condition": "alive(kim_chunchu) AND war(silla, baekje)"
+      "condition": "alive(kimchunchu) AND war(silla, baekje)"
     },
     "once": true,
     "quote": "「신의 나라가 대국을 섬긴 지 오래인데, 백제가 길을 막아 조회할 수 없나이다.」",
@@ -186,7 +186,7 @@
     "faction": "silla",
     "trigger": {
       "year": 647,
-      "condition": "serves(bidam, silla) AND alive(seondeok)"
+      "condition": "serves(bipam, silla) AND alive(seondeok)"
     },
     "once": true,
     "quote": "「여주(女主)는 나라를 잘 다스릴 수 없다.」 하고 군사를 일으켰다.",
@@ -196,7 +196,7 @@
       {
         "text": "허수아비에 불을 붙여 연에 띄운다 — 김유신의 계책",
         "effects": [
-          "kill:bidam",
+          "kill:bipam",
           "council:+12",
           "loyalty_all:-4",
           "gold:-1500"

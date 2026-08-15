@@ -1,194 +1,2937 @@
 [
   {
-    "id": "yodong",
-    "name": "요동성",
+    "id": "jolbon",
+    "name": "졸본",
     "type": "major",
-    "region": "요동",
-    "position": { "x": 150, "y": 120 },
-    "neighbors": ["ansi", "gungnae"],
+    "region": "북변",
+    "position": {
+      "x": 856.8,
+      "y": 813.3
+    },
+    "neighbors": [
+      "gungnae",
+      "pyeong",
+      "yodong"
+    ],
+    "routes": {
+      "land": [
+        "gungnae",
+        "pyeong",
+        "yodong"
+      ],
+      "sea": []
+    },
     "terrain": "plain",
-    "base": { "agri": 45, "commerce": 40, "wall": 70, "barracks": 65 },
-    "maxDev": { "agri": 80, "commerce": 70, "wall": 95, "barracks": 90 },
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
     "special": null
-  },
-  {
-    "id": "ansi",
-    "name": "안시성",
-    "type": "mountain_fortress",
-    "region": "요동",
-    "position": { "x": 205, "y": 195 },
-    "neighbors": ["yodong", "ogol"],
-    "terrain": "mountain",
-    "base": { "agri": 30, "commerce": 20, "wall": 90, "barracks": 50 },
-    "maxDev": { "agri": 60, "commerce": 40, "wall": 100, "barracks": 80 },
-    "special": "siege_defense_bonus"
-  },
-  {
-    "id": "ogol",
-    "name": "오골성",
-    "type": "mountain_fortress",
-    "region": "압록",
-    "position": { "x": 288, "y": 240 },
-    "neighbors": ["ansi", "gungnae", "pyeongyang"],
-    "terrain": "mountain",
-    "base": { "agri": 32, "commerce": 25, "wall": 78, "barracks": 55 },
-    "maxDev": { "agri": 62, "commerce": 45, "wall": 98, "barracks": 82 },
-    "special": "siege_defense_bonus"
   },
   {
     "id": "gungnae",
     "name": "국내성",
     "type": "major",
     "region": "압록",
-    "position": { "x": 362, "y": 152 },
-    "neighbors": ["yodong", "ogol", "pyeongyang"],
+    "position": {
+      "x": 949.8,
+      "y": 837.5
+    },
+    "neighbors": [
+      "buyeo",
+      "chaekseong",
+      "jolbon",
+      "namso",
+      "pyeong",
+      "sinseong"
+    ],
+    "routes": {
+      "land": [
+        "buyeo",
+        "chaekseong",
+        "jolbon",
+        "namso",
+        "pyeong",
+        "sinseong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 58,
+      "commerce": 49,
+      "wall": 64,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 92,
+      "commerce": 84,
+      "wall": 88,
+      "barracks": 90
+    },
+    "special": null
+  },
+  {
+    "id": "yodong",
+    "name": "요동성",
+    "type": "major",
+    "region": "요동",
+    "position": {
+      "x": 616.1,
+      "y": 815.7
+    },
+    "neighbors": [
+      "ansi",
+      "baekam",
+      "gaemo",
+      "jolbon",
+      "musunra",
+      "sinseong"
+    ],
+    "routes": {
+      "land": [
+        "ansi",
+        "baekam",
+        "gaemo",
+        "jolbon",
+        "musunra",
+        "sinseong"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": null
+  },
+  {
+    "id": "ansi",
+    "name": "안시성",
+    "type": "fort",
+    "region": "요동",
+    "position": {
+      "x": 568.3,
+      "y": 876.3
+    },
+    "neighbors": [
+      "baekam",
+      "bisa",
+      "geonan",
+      "ogol",
+      "yodong"
+    ],
+    "routes": {
+      "land": [
+        "baekam",
+        "bisa",
+        "geonan",
+        "ogol",
+        "yodong"
+      ],
+      "sea": []
+    },
     "terrain": "mountain",
-    "base": { "agri": 40, "commerce": 45, "wall": 80, "barracks": 70 },
-    "maxDev": { "agri": 65, "commerce": 75, "wall": 100, "barracks": 92 },
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
     "special": "siege_defense_bonus"
   },
   {
-    "id": "pyeongyang",
-    "name": "평양성",
-    "type": "capital",
-    "region": "패수",
-    "position": { "x": 350, "y": 332 },
-    "neighbors": ["ogol", "gungnae", "gwanmi", "hanseong"],
-    "terrain": "plain",
-    "base": { "agri": 62, "commerce": 60, "wall": 85, "barracks": 75 },
-    "maxDev": { "agri": 95, "commerce": 90, "wall": 100, "barracks": 100 },
-    "special": "granary"
+    "id": "bisa",
+    "name": "비사성",
+    "type": "port",
+    "region": "요동",
+    "position": {
+      "x": 442.3,
+      "y": 1129.5
+    },
+    "neighbors": [
+      "ansi",
+      "geonan",
+      "pyeongwon",
+      "seoanpyeong"
+    ],
+    "routes": {
+      "land": [
+        "ansi",
+        "geonan"
+      ],
+      "sea": [
+        "pyeongwon",
+        "seoanpyeong"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
   },
   {
-    "id": "gwanmi",
-    "name": "관미성",
-    "type": "port",
-    "region": "임진",
-    "position": { "x": 396, "y": 452 },
-    "neighbors": ["pyeongyang", "hanseong"],
-    "terrain": "coast",
-    "base": { "agri": 35, "commerce": 55, "wall": 70, "barracks": 45 },
-    "maxDev": { "agri": 60, "commerce": 90, "wall": 90, "barracks": 70 },
-    "special": "trade_hub"
+    "id": "chaekseong",
+    "name": "책성",
+    "type": "fort",
+    "region": "북변",
+    "position": {
+      "x": 1395.5,
+      "y": 565.4
+    },
+    "neighbors": [
+      "buyeo",
+      "gungnae",
+      "okjeo"
+    ],
+    "routes": {
+      "land": [
+        "buyeo",
+        "gungnae",
+        "okjeo"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 40,
+      "commerce": 26,
+      "wall": 80,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 68,
+      "commerce": 49,
+      "wall": 96,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "pyeong",
+    "name": "평양성",
+    "type": "capital",
+    "region": "평양",
+    "position": {
+      "x": 903.7,
+      "y": 1147.8
+    },
+    "neighbors": [
+      "daehaeng",
+      "gungnae",
+      "hanseong",
+      "jolbon",
+      "nampyeong",
+      "ogol",
+      "paesu",
+      "salsu",
+      "seoanpyeong"
+    ],
+    "routes": {
+      "land": [
+        "daehaeng",
+        "gungnae",
+        "hanseong",
+        "jolbon",
+        "nampyeong",
+        "ogol",
+        "paesu",
+        "salsu",
+        "seoanpyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 70,
+      "commerce": 66,
+      "wall": 78,
+      "barracks": 72
+    },
+    "maxDev": {
+      "agri": 100,
+      "commerce": 99,
+      "wall": 96,
+      "barracks": 100
+    },
+    "special": "granary"
   },
   {
     "id": "hanseong",
     "name": "한성",
-    "type": "capital",
+    "type": "major",
     "region": "한강",
-    "position": { "x": 458, "y": 446 },
-    "neighbors": ["pyeongyang", "gwanmi", "ungjin", "gugwon", "samnyeon"],
+    "position": {
+      "x": 1065.1,
+      "y": 1364
+    },
+    "neighbors": [
+      "chiljung",
+      "daebang",
+      "danghang",
+      "gugwon",
+      "hanganggu",
+      "imjon",
+      "maeso",
+      "michuhol",
+      "mokji",
+      "pyeong",
+      "ungjin",
+      "usu"
+    ],
+    "routes": {
+      "land": [
+        "chiljung",
+        "daebang",
+        "danghang",
+        "gugwon",
+        "hanganggu",
+        "imjon",
+        "maeso",
+        "michuhol",
+        "mokji",
+        "pyeong",
+        "ungjin",
+        "usu"
+      ],
+      "sea": []
+    },
     "terrain": "river",
-    "base": { "agri": 65, "commerce": 62, "wall": 72, "barracks": 65 },
-    "maxDev": { "agri": 100, "commerce": 95, "wall": 95, "barracks": 95 },
+    "base": {
+      "agri": 58,
+      "commerce": 49,
+      "wall": 64,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 92,
+      "commerce": 84,
+      "wall": 88,
+      "barracks": 90
+    },
     "special": "granary"
+  },
+  {
+    "id": "danghang",
+    "name": "당항성",
+    "type": "port",
+    "region": "한강",
+    "position": {
+      "x": 1029.1,
+      "y": 1428
+    },
+    "neighbors": [
+      "deokmul",
+      "hanseong",
+      "paesu",
+      "ungjin"
+    ],
+    "routes": {
+      "land": [
+        "hanseong",
+        "ungjin"
+      ],
+      "sea": [
+        "deokmul",
+        "paesu"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
   },
   {
     "id": "gugwon",
     "name": "국원성",
-    "type": "major",
-    "region": "중원",
-    "position": { "x": 522, "y": 532 },
-    "neighbors": ["hanseong", "ungjin", "samnyeon", "siljik"],
+    "type": "fort",
+    "region": "한강",
+    "position": {
+      "x": 1162.1,
+      "y": 1443.6
+    },
+    "neighbors": [
+      "geumseong",
+      "gyerim",
+      "hanseong",
+      "haseulla",
+      "samnyeon",
+      "sangju",
+      "seongju",
+      "silji",
+      "uiseong",
+      "usu"
+    ],
+    "routes": {
+      "land": [
+        "geumseong",
+        "gyerim",
+        "hanseong",
+        "haseulla",
+        "samnyeon",
+        "sangju",
+        "seongju",
+        "silji",
+        "uiseong",
+        "usu"
+      ],
+      "sea": []
+    },
     "terrain": "river",
-    "base": { "agri": 48, "commerce": 45, "wall": 65, "barracks": 55 },
-    "maxDev": { "agri": 80, "commerce": 75, "wall": 90, "barracks": 85 },
+    "base": {
+      "agri": 40,
+      "commerce": 26,
+      "wall": 80,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 68,
+      "commerce": 49,
+      "wall": 96,
+      "barracks": 82
+    },
     "special": "iron_mine"
+  },
+  {
+    "id": "silji",
+    "name": "실직주",
+    "type": "fort",
+    "region": "영동",
+    "position": {
+      "x": 1304.3,
+      "y": 1367.4
+    },
+    "neighbors": [
+      "geumseong",
+      "gugwon",
+      "haseulla"
+    ],
+    "routes": {
+      "land": [
+        "geumseong",
+        "gugwon",
+        "haseulla"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "geumseong",
+    "name": "금성",
+    "type": "capital",
+    "region": "경상",
+    "position": {
+      "x": 1320,
+      "y": 1603.6
+    },
+    "neighbors": [
+      "apdok",
+      "changnyeong",
+      "daegu",
+      "daeya",
+      "gammun",
+      "geumgwan",
+      "gugwon",
+      "sangju",
+      "sapryang",
+      "silji",
+      "ulsan"
+    ],
+    "routes": {
+      "land": [
+        "apdok",
+        "changnyeong",
+        "daegu",
+        "daeya",
+        "gammun",
+        "geumgwan",
+        "gugwon",
+        "sangju",
+        "sapryang",
+        "silji",
+        "ulsan"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 66,
+      "commerce": 64,
+      "wall": 80,
+      "barracks": 72
+    },
+    "maxDev": {
+      "agri": 100,
+      "commerce": 97,
+      "wall": 98,
+      "barracks": 100
+    },
+    "special": "granary"
   },
   {
     "id": "ungjin",
     "name": "웅진",
     "type": "major",
     "region": "금강",
-    "position": { "x": 432, "y": 572 },
-    "neighbors": ["hanseong", "gugwon", "sabi", "samnyeon"],
-    "terrain": "mountain",
-    "base": { "agri": 50, "commerce": 48, "wall": 82, "barracks": 60 },
-    "maxDev": { "agri": 80, "commerce": 80, "wall": 100, "barracks": 88 },
-    "special": "siege_defense_bonus"
+    "position": {
+      "x": 1068.8,
+      "y": 1522.7
+    },
+    "neighbors": [
+      "danghang",
+      "gwansan",
+      "hanseong",
+      "imjon",
+      "mokji",
+      "sabi",
+      "tanhyeon"
+    ],
+    "routes": {
+      "land": [
+        "danghang",
+        "gwansan",
+        "hanseong",
+        "imjon",
+        "mokji",
+        "sabi",
+        "tanhyeon"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "granary"
   },
   {
     "id": "sabi",
     "name": "사비",
     "type": "capital",
     "region": "금강",
-    "position": { "x": 412, "y": 642 },
-    "neighbors": ["ungjin", "gibeolpo", "daeya"],
+    "position": {
+      "x": 1044.5,
+      "y": 1548.2
+    },
+    "neighbors": [
+      "balla",
+      "daeya",
+      "gosaburi",
+      "hwangsan",
+      "iksan",
+      "ungjin",
+      "ungjingu",
+      "wansan"
+    ],
+    "routes": {
+      "land": [
+        "balla",
+        "daeya",
+        "gosaburi",
+        "hwangsan",
+        "iksan",
+        "ungjin",
+        "ungjingu",
+        "wansan"
+      ],
+      "sea": []
+    },
     "terrain": "plain",
-    "base": { "agri": 60, "commerce": 65, "wall": 75, "barracks": 62 },
-    "maxDev": { "agri": 95, "commerce": 100, "wall": 95, "barracks": 92 },
+    "base": {
+      "agri": 66,
+      "commerce": 64,
+      "wall": 80,
+      "barracks": 72
+    },
+    "maxDev": {
+      "agri": 100,
+      "commerce": 97,
+      "wall": 98,
+      "barracks": 100
+    },
+    "special": "granary"
+  },
+  {
+    "id": "daeya",
+    "name": "대야성",
+    "type": "fort",
+    "region": "경상",
+    "position": {
+      "x": 1197.5,
+      "y": 1648.4
+    },
+    "neighbors": [
+      "amak",
+      "changnyeong",
+      "daegaya",
+      "geumseong",
+      "hwangsan",
+      "iksan",
+      "sabi",
+      "sangju",
+      "tanhyeon",
+      "wansan"
+    ],
+    "routes": {
+      "land": [
+        "amak",
+        "changnyeong",
+        "daegaya",
+        "geumseong",
+        "hwangsan",
+        "iksan",
+        "sabi",
+        "sangju",
+        "tanhyeon",
+        "wansan"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "daegaya",
+    "name": "대가야",
+    "type": "major",
+    "region": "가야",
+    "position": {
+      "x": 1207.4,
+      "y": 1624.5
+    },
+    "neighbors": [
+      "aragaya",
+      "daeya",
+      "geumgwan",
+      "goseong",
+      "seongju"
+    ],
+    "routes": {
+      "land": [
+        "aragaya",
+        "daeya",
+        "geumgwan",
+        "goseong",
+        "seongju"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 58,
+      "commerce": 49,
+      "wall": 64,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 92,
+      "commerce": 84,
+      "wall": 88,
+      "barracks": 90
+    },
+    "special": "iron_mine"
+  },
+  {
+    "id": "geumgwan",
+    "name": "금관",
+    "type": "capital",
+    "region": "가야",
+    "position": {
+      "x": 1285.8,
+      "y": 1695
+    },
+    "neighbors": [
+      "aragaya",
+      "daegaya",
+      "geumseong",
+      "goseong",
+      "nakdonggu",
+      "samul",
+      "sapryang",
+      "taksun",
+      "tamna"
+    ],
+    "routes": {
+      "land": [
+        "aragaya",
+        "daegaya",
+        "geumseong",
+        "goseong",
+        "nakdonggu",
+        "samul",
+        "taksun"
+      ],
+      "sea": [
+        "sapryang",
+        "tamna"
+      ]
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 70,
+      "commerce": 66,
+      "wall": 78,
+      "barracks": 72
+    },
+    "maxDev": {
+      "agri": 100,
+      "commerce": 99,
+      "wall": 96,
+      "barracks": 100
+    },
+    "special": "iron_mine"
+  },
+  {
+    "id": "tamna",
+    "name": "탐라",
+    "type": "port",
+    "region": "탐라",
+    "position": {
+      "x": 1006.5,
+      "y": 1958.5
+    },
+    "neighbors": [
+      "chimmi",
+      "geumgwan"
+    ],
+    "routes": {
+      "land": [],
+      "sea": [
+        "chimmi",
+        "geumgwan"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
     "special": "trade_hub"
+  },
+  {
+    "id": "sinseong",
+    "name": "신성",
+    "type": "fort",
+    "region": "북변",
+    "position": {
+      "x": 700,
+      "y": 728.9
+    },
+    "neighbors": [
+      "gaemo",
+      "gungnae",
+      "namso",
+      "yodong"
+    ],
+    "routes": {
+      "land": [
+        "gaemo",
+        "gungnae",
+        "namso",
+        "yodong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "ogol",
+    "name": "오골성",
+    "type": "fort",
+    "region": "압록",
+    "position": {
+      "x": 714.2,
+      "y": 937.6
+    },
+    "neighbors": [
+      "ansi",
+      "bakjak",
+      "pyeong",
+      "salsu"
+    ],
+    "routes": {
+      "land": [
+        "ansi",
+        "bakjak",
+        "pyeong",
+        "salsu"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "buyeo",
+    "name": "부여성",
+    "type": "fort",
+    "region": "북변",
+    "position": {
+      "x": 837.1,
+      "y": 353
+    },
+    "neighbors": [
+      "chaekseong",
+      "gungnae"
+    ],
+    "routes": {
+      "land": [
+        "chaekseong",
+        "gungnae"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "haseulla",
+    "name": "하슬라",
+    "type": "fort",
+    "region": "영동",
+    "position": {
+      "x": 1271,
+      "y": 1324.8
+    },
+    "neighbors": [
+      "gugwon",
+      "sapryang",
+      "silji",
+      "usanguk"
+    ],
+    "routes": {
+      "land": [
+        "gugwon",
+        "sapryang",
+        "silji"
+      ],
+      "sea": [
+        "usanguk"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 26,
+      "commerce": 30,
+      "wall": 82,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 54,
+      "commerce": 53,
+      "wall": 98,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "iksan",
+    "name": "익산",
+    "type": "major",
+    "region": "호남",
+    "position": {
+      "x": 1051.6,
+      "y": 1598.1
+    },
+    "neighbors": [
+      "balla",
+      "daeya",
+      "sabi",
+      "wansan"
+    ],
+    "routes": {
+      "land": [
+        "balla",
+        "daeya",
+        "sabi",
+        "wansan"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "granary"
+  },
+  {
+    "id": "aragaya",
+    "name": "아라가야",
+    "type": "major",
+    "region": "가야",
+    "position": {
+      "x": 1227.9,
+      "y": 1691.5
+    },
+    "neighbors": [
+      "amak",
+      "changnyeong",
+      "daegaya",
+      "geumgwan",
+      "taksun"
+    ],
+    "routes": {
+      "land": [
+        "amak",
+        "changnyeong",
+        "daegaya",
+        "geumgwan",
+        "taksun"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "iron_mine"
+  },
+  {
+    "id": "nampyeong",
+    "name": "남평양",
+    "type": "major",
+    "region": "평양",
+    "position": {
+      "x": 889.8,
+      "y": 1275.6
+    },
+    "neighbors": [
+      "daebang",
+      "okjeo",
+      "paesu",
+      "pyeong"
+    ],
+    "routes": {
+      "land": [
+        "daebang",
+        "okjeo",
+        "paesu",
+        "pyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": null
+  },
+  {
+    "id": "daebang",
+    "name": "대방",
+    "type": "major",
+    "region": "평양",
+    "position": {
+      "x": 904.3,
+      "y": 1224.1
+    },
+    "neighbors": [
+      "hanseong",
+      "nampyeong"
+    ],
+    "routes": {
+      "land": [
+        "hanseong",
+        "nampyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": null
+  },
+  {
+    "id": "gaemo",
+    "name": "개모성",
+    "type": "fort",
+    "region": "요동",
+    "position": {
+      "x": 636.8,
+      "y": 775
+    },
+    "neighbors": [
+      "sinseong",
+      "yodong"
+    ],
+    "routes": {
+      "land": [
+        "sinseong",
+        "yodong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "sangju",
+    "name": "상주",
+    "type": "major",
+    "region": "경상",
+    "position": {
+      "x": 1192,
+      "y": 1525
+    },
+    "neighbors": [
+      "apdok",
+      "daeya",
+      "gammun",
+      "geumseong",
+      "gugwon",
+      "gyerim",
+      "uiseong"
+    ],
+    "routes": {
+      "land": [
+        "apdok",
+        "daeya",
+        "gammun",
+        "geumseong",
+        "gugwon",
+        "gyerim",
+        "uiseong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 58,
+      "commerce": 49,
+      "wall": 64,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 92,
+      "commerce": 84,
+      "wall": 88,
+      "barracks": 90
+    },
+    "special": "granary"
+  },
+  {
+    "id": "sapryang",
+    "name": "삽량주",
+    "type": "fort",
+    "region": "경상",
+    "position": {
+      "x": 1317.5,
+      "y": 1677.4
+    },
+    "neighbors": [
+      "geumgwan",
+      "geumseong",
+      "haseulla",
+      "ulsan"
+    ],
+    "routes": {
+      "land": [
+        "geumseong",
+        "haseulla",
+        "ulsan"
+      ],
+      "sea": [
+        "geumgwan"
+      ]
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "apdok",
+    "name": "압독",
+    "type": "fort",
+    "region": "경상",
+    "position": {
+      "x": 1264.2,
+      "y": 1609
+    },
+    "neighbors": [
+      "daegu",
+      "geumseong",
+      "sangju"
+    ],
+    "routes": {
+      "land": [
+        "daegu",
+        "geumseong",
+        "sangju"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "changnyeong",
+    "name": "창녕",
+    "type": "fort",
+    "region": "경상",
+    "position": {
+      "x": 1236,
+      "y": 1651.4
+    },
+    "neighbors": [
+      "aragaya",
+      "daegu",
+      "daeya",
+      "geumseong"
+    ],
+    "routes": {
+      "land": [
+        "aragaya",
+        "daegu",
+        "daeya",
+        "geumseong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 40,
+      "commerce": 26,
+      "wall": 80,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 68,
+      "commerce": 49,
+      "wall": 96,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "wansan",
+    "name": "완산",
+    "type": "major",
+    "region": "호남",
+    "position": {
+      "x": 1074.6,
+      "y": 1615.2
+    },
+    "neighbors": [
+      "daeya",
+      "iksan",
+      "sabi"
+    ],
+    "routes": {
+      "land": [
+        "daeya",
+        "iksan",
+        "sabi"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "granary"
+  },
+  {
+    "id": "balla",
+    "name": "발라",
+    "type": "major",
+    "region": "호남",
+    "position": {
+      "x": 1024.3,
+      "y": 1732.6
+    },
+    "neighbors": [
+      "chimmi",
+      "gosaburi",
+      "iksan",
+      "sabi"
+    ],
+    "routes": {
+      "land": [
+        "chimmi",
+        "gosaburi",
+        "iksan",
+        "sabi"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "granary"
+  },
+  {
+    "id": "tanhyeon",
+    "name": "탄현",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1105.5,
+      "y": 1565.9
+    },
+    "neighbors": [
+      "daeya",
+      "ungjin"
+    ],
+    "routes": {
+      "land": [
+        "daeya",
+        "ungjin"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "goseong",
+    "name": "고성",
+    "type": "major",
+    "region": "가야",
+    "position": {
+      "x": 1218.7,
+      "y": 1736
+    },
+    "neighbors": [
+      "daegaya",
+      "geumgwan",
+      "samul"
+    ],
+    "routes": {
+      "land": [
+        "daegaya",
+        "geumgwan",
+        "samul"
+      ],
+      "sea": []
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 44,
+      "commerce": 53,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 78,
+      "commerce": 88,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": null
+  },
+  {
+    "id": "seongju",
+    "name": "성주",
+    "type": "fort",
+    "region": "가야",
+    "position": {
+      "x": 1208.8,
+      "y": 1596.5
+    },
+    "neighbors": [
+      "daegaya",
+      "gugwon"
+    ],
+    "routes": {
+      "land": [
+        "daegaya",
+        "gugwon"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "iron_mine"
+  },
+  {
+    "id": "seoanpyeong",
+    "name": "서안평",
+    "type": "port",
+    "region": "압록",
+    "position": {
+      "x": 742.9,
+      "y": 984.9
+    },
+    "neighbors": [
+      "bakjak",
+      "bisa",
+      "pyeong"
+    ],
+    "routes": {
+      "land": [
+        "bakjak",
+        "pyeong"
+      ],
+      "sea": [
+        "bisa"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
+  },
+  {
+    "id": "baekam",
+    "name": "백암성",
+    "type": "fort",
+    "region": "요동",
+    "position": {
+      "x": 636,
+      "y": 816.1
+    },
+    "neighbors": [
+      "ansi",
+      "yodong"
+    ],
+    "routes": {
+      "land": [
+        "ansi",
+        "yodong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "geonan",
+    "name": "건안성",
+    "type": "fort",
+    "region": "요동",
+    "position": {
+      "x": 521.9,
+      "y": 941.2
+    },
+    "neighbors": [
+      "ansi",
+      "bisa",
+      "musunra",
+      "pyeongwon"
+    ],
+    "routes": {
+      "land": [
+        "ansi",
+        "bisa",
+        "musunra",
+        "pyeongwon"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "namso",
+    "name": "남소성",
+    "type": "fort",
+    "region": "북변",
+    "position": {
+      "x": 823.6,
+      "y": 754.6
+    },
+    "neighbors": [
+      "gungnae",
+      "sinseong"
+    ],
+    "routes": {
+      "land": [
+        "gungnae",
+        "sinseong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "usu",
+    "name": "우수주",
+    "type": "fort",
+    "region": "한강",
+    "position": {
+      "x": 1134.6,
+      "y": 1310.7
+    },
+    "neighbors": [
+      "dongye",
+      "gugwon",
+      "hanseong"
+    ],
+    "routes": {
+      "land": [
+        "dongye",
+        "gugwon",
+        "hanseong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "okjeo",
+    "name": "옥저",
+    "type": "fort",
+    "region": "동북",
+    "position": {
+      "x": 1103,
+      "y": 1012
+    },
+    "neighbors": [
+      "chaekseong",
+      "dongye",
+      "nampyeong"
+    ],
+    "routes": {
+      "land": [
+        "chaekseong",
+        "dongye",
+        "nampyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 26,
+      "commerce": 30,
+      "wall": 82,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 54,
+      "commerce": 53,
+      "wall": 98,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "dongye",
+    "name": "동예",
+    "type": "fort",
+    "region": "동북",
+    "position": {
+      "x": 1095.9,
+      "y": 1125.3
+    },
+    "neighbors": [
+      "okjeo",
+      "usu"
+    ],
+    "routes": {
+      "land": [
+        "okjeo",
+        "usu"
+      ],
+      "sea": []
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 26,
+      "commerce": 30,
+      "wall": 82,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 54,
+      "commerce": 53,
+      "wall": 98,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "ulsan",
+    "name": "울산",
+    "type": "port",
+    "region": "경상",
+    "position": {
+      "x": 1334.1,
+      "y": 1647.1
+    },
+    "neighbors": [
+      "geumseong",
+      "nakdonggu",
+      "sapryang"
+    ],
+    "routes": {
+      "land": [
+        "geumseong",
+        "sapryang"
+      ],
+      "sea": [
+        "nakdonggu"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "iron_mine"
+  },
+  {
+    "id": "uiseong",
+    "name": "의성",
+    "type": "fort",
+    "region": "경상",
+    "position": {
+      "x": 1256.2,
+      "y": 1531.3
+    },
+    "neighbors": [
+      "gugwon",
+      "sangju"
+    ],
+    "routes": {
+      "land": [
+        "gugwon",
+        "sangju"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "gammun",
+    "name": "감문",
+    "type": "fort",
+    "region": "경상",
+    "position": {
+      "x": 1187.5,
+      "y": 1566.3
+    },
+    "neighbors": [
+      "geumseong",
+      "sangju"
+    ],
+    "routes": {
+      "land": [
+        "geumseong",
+        "sangju"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "usanguk",
+    "name": "우산국",
+    "type": "port",
+    "region": "영동",
+    "position": {
+      "x": 1505.5,
+      "y": 1351.7
+    },
+    "neighbors": [
+      "haseulla"
+    ],
+    "routes": {
+      "land": [],
+      "sea": [
+        "haseulla"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
+  },
+  {
+    "id": "daegu",
+    "name": "대구",
+    "type": "major",
+    "region": "경상",
+    "position": {
+      "x": 1247.2,
+      "y": 1602.4
+    },
+    "neighbors": [
+      "apdok",
+      "changnyeong",
+      "geumseong"
+    ],
+    "routes": {
+      "land": [
+        "apdok",
+        "changnyeong",
+        "geumseong"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "granary"
+  },
+  {
+    "id": "samnyeon",
+    "name": "삼년산성",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1140.8,
+      "y": 1514.9
+    },
+    "neighbors": [
+      "gugwon",
+      "gwansan"
+    ],
+    "routes": {
+      "land": [
+        "gugwon",
+        "gwansan"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "gwansan",
+    "name": "관산성",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1123.8,
+      "y": 1541.9
+    },
+    "neighbors": [
+      "samnyeon",
+      "ungjin"
+    ],
+    "routes": {
+      "land": [
+        "samnyeon",
+        "ungjin"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "gyerim",
+    "name": "계립령",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1177.3,
+      "y": 1475.5
+    },
+    "neighbors": [
+      "gugwon",
+      "sangju"
+    ],
+    "routes": {
+      "land": [
+        "gugwon",
+        "sangju"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "michuhol",
+    "name": "미추홀",
+    "type": "port",
+    "region": "한강",
+    "position": {
+      "x": 1010.5,
+      "y": 1372.5
+    },
+    "neighbors": [
+      "deokmul",
+      "hanganggu",
+      "hanseong"
+    ],
+    "routes": {
+      "land": [
+        "hanganggu",
+        "hanseong"
+      ],
+      "sea": [
+        "deokmul"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
+  },
+  {
+    "id": "gosaburi",
+    "name": "고사부리",
+    "type": "fort",
+    "region": "호남",
+    "position": {
+      "x": 1040.8,
+      "y": 1654.3
+    },
+    "neighbors": [
+      "balla",
+      "jusan",
+      "sabi"
+    ],
+    "routes": {
+      "land": [
+        "balla",
+        "jusan",
+        "sabi"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "imjon",
+    "name": "임존성",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1033.9,
+      "y": 1489.6
+    },
+    "neighbors": [
+      "hanseong",
+      "ungjin"
+    ],
+    "routes": {
+      "land": [
+        "hanseong",
+        "ungjin"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "mokji",
+    "name": "목지국",
+    "type": "major",
+    "region": "금강",
+    "position": {
+      "x": 1071.1,
+      "y": 1469.7
+    },
+    "neighbors": [
+      "hanseong",
+      "ungjin"
+    ],
+    "routes": {
+      "land": [
+        "hanseong",
+        "ungjin"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 54,
+      "commerce": 47,
+      "wall": 66,
+      "barracks": 60
+    },
+    "maxDev": {
+      "agri": 88,
+      "commerce": 82,
+      "wall": 90,
+      "barracks": 90
+    },
+    "special": "granary"
+  },
+  {
+    "id": "chimmi",
+    "name": "침미다례",
+    "type": "fort",
+    "region": "호남",
+    "position": {
+      "x": 1012.3,
+      "y": 1800.6
+    },
+    "neighbors": [
+      "balla",
+      "tamna"
+    ],
+    "routes": {
+      "land": [
+        "balla"
+      ],
+      "sea": [
+        "tamna"
+      ]
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "amak",
+    "name": "아막성",
+    "type": "fort",
+    "region": "호남",
+    "position": {
+      "x": 1104.9,
+      "y": 1676.3
+    },
+    "neighbors": [
+      "aragaya",
+      "daeya"
+    ],
+    "routes": {
+      "land": [
+        "aragaya",
+        "daeya"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "hwangsan",
+    "name": "황산벌",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1074.5,
+      "y": 1562.3
+    },
+    "neighbors": [
+      "daeya",
+      "sabi"
+    ],
+    "routes": {
+      "land": [
+        "daeya",
+        "sabi"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 36,
+      "commerce": 24,
+      "wall": 82,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 64,
+      "commerce": 47,
+      "wall": 98,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "taksun",
+    "name": "탁순국",
+    "type": "fort",
+    "region": "가야",
+    "position": {
+      "x": 1260.6,
+      "y": 1696.1
+    },
+    "neighbors": [
+      "aragaya",
+      "geumgwan",
+      "nakdonggu"
+    ],
+    "routes": {
+      "land": [
+        "aragaya",
+        "geumgwan",
+        "nakdonggu"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "samul",
+    "name": "사물국",
+    "type": "fort",
+    "region": "가야",
+    "position": {
+      "x": 1189.9,
+      "y": 1741.5
+    },
+    "neighbors": [
+      "geumgwan",
+      "goseong"
+    ],
+    "routes": {
+      "land": [
+        "geumgwan",
+        "goseong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": null
+  },
+  {
+    "id": "musunra",
+    "name": "무려라",
+    "type": "fort",
+    "region": "요동",
+    "position": {
+      "x": 454.6,
+      "y": 792
+    },
+    "neighbors": [
+      "geonan",
+      "yodong",
+      "yosu"
+    ],
+    "routes": {
+      "land": [
+        "geonan",
+        "yodong",
+        "yosu"
+      ],
+      "sea": []
+    },
+    "terrain": "plain",
+    "base": {
+      "agri": 36,
+      "commerce": 24,
+      "wall": 82,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 64,
+      "commerce": 47,
+      "wall": 98,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "yosu",
+    "name": "요수진",
+    "type": "port",
+    "region": "요동",
+    "position": {
+      "x": 508.6,
+      "y": 830.6
+    },
+    "neighbors": [
+      "musunra",
+      "pyeongwon"
+    ],
+    "routes": {
+      "land": [
+        "musunra",
+        "pyeongwon"
+      ],
+      "sea": []
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": null
+  },
+  {
+    "id": "bakjak",
+    "name": "박작성",
+    "type": "fort",
+    "region": "압록",
+    "position": {
+      "x": 753,
+      "y": 990.8
+    },
+    "neighbors": [
+      "ogol",
+      "seoanpyeong"
+    ],
+    "routes": {
+      "land": [
+        "ogol",
+        "seoanpyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 40,
+      "commerce": 26,
+      "wall": 80,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 68,
+      "commerce": 49,
+      "wall": 96,
+      "barracks": 82
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "daehaeng",
+    "name": "대행성",
+    "type": "fort",
+    "region": "평양",
+    "position": {
+      "x": 835.3,
+      "y": 1173.1
+    },
+    "neighbors": [
+      "paesu",
+      "pyeong"
+    ],
+    "routes": {
+      "land": [
+        "paesu",
+        "pyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 40,
+      "commerce": 26,
+      "wall": 80,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 68,
+      "commerce": 49,
+      "wall": 96,
+      "barracks": 82
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "salsu",
+    "name": "살수",
+    "type": "fort",
+    "region": "평양",
+    "position": {
+      "x": 919.7,
+      "y": 1040.4
+    },
+    "neighbors": [
+      "ogol",
+      "pyeong"
+    ],
+    "routes": {
+      "land": [
+        "ogol",
+        "pyeong"
+      ],
+      "sea": []
+    },
+    "terrain": "river",
+    "base": {
+      "agri": 40,
+      "commerce": 26,
+      "wall": 80,
+      "barracks": 52
+    },
+    "maxDev": {
+      "agri": 68,
+      "commerce": 49,
+      "wall": 96,
+      "barracks": 82
+    },
+    "special": null
+  },
+  {
+    "id": "pyeongwon",
+    "name": "평곽",
+    "type": "port",
+    "region": "요동",
+    "position": {
+      "x": 506.4,
+      "y": 899.6
+    },
+    "neighbors": [
+      "bisa",
+      "geonan",
+      "yosu"
+    ],
+    "routes": {
+      "land": [
+        "geonan",
+        "yosu"
+      ],
+      "sea": [
+        "bisa"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
+  },
+  {
+    "id": "chiljung",
+    "name": "칠중성",
+    "type": "fort",
+    "region": "한강",
+    "position": {
+      "x": 1038.2,
+      "y": 1305.9
+    },
+    "neighbors": [
+      "cheonseong",
+      "hanseong",
+      "maeso"
+    ],
+    "routes": {
+      "land": [
+        "cheonseong",
+        "hanseong",
+        "maeso"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "maeso",
+    "name": "매소성",
+    "type": "fort",
+    "region": "한강",
+    "position": {
+      "x": 1057.1,
+      "y": 1320.1
+    },
+    "neighbors": [
+      "chiljung",
+      "hanseong"
+    ],
+    "routes": {
+      "land": [
+        "chiljung",
+        "hanseong"
+      ],
+      "sea": []
+    },
+    "terrain": "mountain",
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
+    "special": "siege_defense_bonus"
+  },
+  {
+    "id": "cheonseong",
+    "name": "천성",
+    "type": "port",
+    "region": "한강",
+    "position": {
+      "x": 1015.5,
+      "y": 1328.3
+    },
+    "neighbors": [
+      "chiljung",
+      "hanganggu"
+    ],
+    "routes": {
+      "land": [
+        "chiljung",
+        "hanganggu"
+      ],
+      "sea": []
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": null
   },
   {
     "id": "gibeolpo",
     "name": "기벌포",
     "type": "port",
-    "region": "서해",
-    "position": { "x": 388, "y": 704 },
-    "neighbors": ["sabi", "daeya", "geumgwan"],
+    "region": "금강",
+    "position": {
+      "x": 1022.8,
+      "y": 1586.9
+    },
+    "neighbors": [
+      "deokmul",
+      "jusan",
+      "ungjingu"
+    ],
+    "routes": {
+      "land": [
+        "jusan",
+        "ungjingu"
+      ],
+      "sea": [
+        "deokmul"
+      ]
+    },
     "terrain": "coast",
-    "base": { "agri": 38, "commerce": 58, "wall": 60, "barracks": 48 },
-    "maxDev": { "agri": 65, "commerce": 95, "wall": 82, "barracks": 72 },
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
     "special": "trade_hub"
   },
   {
-    "id": "samnyeon",
-    "name": "삼년산성",
-    "type": "mountain_fortress",
-    "region": "중원",
-    "position": { "x": 556, "y": 592 },
-    "neighbors": ["hanseong", "gugwon", "ungjin", "daeya", "geumseong"],
-    "terrain": "mountain",
-    "base": { "agri": 34, "commerce": 28, "wall": 88, "barracks": 58 },
-    "maxDev": { "agri": 62, "commerce": 50, "wall": 100, "barracks": 85 },
-    "special": "siege_defense_bonus"
-  },
-  {
-    "id": "siljik",
-    "name": "실직주",
+    "id": "ungjingu",
+    "name": "웅진구",
     "type": "port",
-    "region": "동해",
-    "position": { "x": 668, "y": 468 },
-    "neighbors": ["gugwon", "geumseong"],
+    "region": "금강",
+    "position": {
+      "x": 1041.2,
+      "y": 1557.1
+    },
+    "neighbors": [
+      "deokmul",
+      "gibeolpo",
+      "sabi"
+    ],
+    "routes": {
+      "land": [
+        "gibeolpo",
+        "sabi"
+      ],
+      "sea": [
+        "deokmul"
+      ]
+    },
     "terrain": "coast",
-    "base": { "agri": 36, "commerce": 44, "wall": 58, "barracks": 45 },
-    "maxDev": { "agri": 62, "commerce": 80, "wall": 82, "barracks": 70 },
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
     "special": "trade_hub"
   },
   {
-    "id": "daeya",
-    "name": "대야성",
-    "type": "mountain_fortress",
-    "region": "낙동",
-    "position": { "x": 622, "y": 692 },
-    "neighbors": ["sabi", "gibeolpo", "samnyeon", "geumseong", "geumgwan"],
+    "id": "deokmul",
+    "name": "덕물도",
+    "type": "port",
+    "region": "한강",
+    "position": {
+      "x": 970.2,
+      "y": 1409.9
+    },
+    "neighbors": [
+      "danghang",
+      "gibeolpo",
+      "hanganggu",
+      "michuhol",
+      "ungjingu"
+    ],
+    "routes": {
+      "land": [],
+      "sea": [
+        "danghang",
+        "gibeolpo",
+        "hanganggu",
+        "michuhol",
+        "ungjingu"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
+  },
+  {
+    "id": "jusan",
+    "name": "주류성",
+    "type": "fort",
+    "region": "금강",
+    "position": {
+      "x": 1030,
+      "y": 1592.7
+    },
+    "neighbors": [
+      "gibeolpo",
+      "gosaburi"
+    ],
+    "routes": {
+      "land": [
+        "gibeolpo",
+        "gosaburi"
+      ],
+      "sea": []
+    },
     "terrain": "mountain",
-    "base": { "agri": 42, "commerce": 34, "wall": 84, "barracks": 62 },
-    "maxDev": { "agri": 70, "commerce": 58, "wall": 100, "barracks": 88 },
+    "base": {
+      "agri": 22,
+      "commerce": 16,
+      "wall": 92,
+      "barracks": 54
+    },
+    "maxDev": {
+      "agri": 50,
+      "commerce": 39,
+      "wall": 100,
+      "barracks": 84
+    },
     "special": "siege_defense_bonus"
   },
   {
-    "id": "geumseong",
-    "name": "금성",
-    "type": "capital",
-    "region": "서라벌",
-    "position": { "x": 742, "y": 656 },
-    "neighbors": ["samnyeon", "daeya", "geumgwan", "siljik"],
-    "terrain": "plain",
-    "base": { "agri": 58, "commerce": 55, "wall": 80, "barracks": 68 },
-    "maxDev": { "agri": 92, "commerce": 90, "wall": 100, "barracks": 98 },
-    "special": "granary"
+    "id": "paesu",
+    "name": "패수",
+    "type": "port",
+    "region": "평양",
+    "position": {
+      "x": 866.3,
+      "y": 1189.1
+    },
+    "neighbors": [
+      "daehaeng",
+      "danghang",
+      "nampyeong",
+      "pyeong"
+    ],
+    "routes": {
+      "land": [
+        "daehaeng",
+        "nampyeong",
+        "pyeong"
+      ],
+      "sea": [
+        "danghang"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
   },
   {
-    "id": "geumgwan",
-    "name": "금관성",
+    "id": "hanganggu",
+    "name": "한강구",
     "type": "port",
-    "region": "낙동",
-    "position": { "x": 694, "y": 762 },
-    "neighbors": ["daeya", "geumseong", "gibeolpo"],
+    "region": "한강",
+    "position": {
+      "x": 1004.4,
+      "y": 1357.9
+    },
+    "neighbors": [
+      "cheonseong",
+      "deokmul",
+      "hanseong",
+      "michuhol"
+    ],
+    "routes": {
+      "land": [
+        "cheonseong",
+        "hanseong",
+        "michuhol"
+      ],
+      "sea": [
+        "deokmul"
+      ]
+    },
     "terrain": "coast",
-    "base": { "agri": 44, "commerce": 60, "wall": 66, "barracks": 52 },
-    "maxDev": { "agri": 72, "commerce": 92, "wall": 88, "barracks": 78 },
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
+    "special": "trade_hub"
+  },
+  {
+    "id": "nakdonggu",
+    "name": "낙동강구",
+    "type": "port",
+    "region": "가야",
+    "position": {
+      "x": 1297.3,
+      "y": 1709.3
+    },
+    "neighbors": [
+      "geumgwan",
+      "taksun",
+      "ulsan"
+    ],
+    "routes": {
+      "land": [
+        "geumgwan",
+        "taksun"
+      ],
+      "sea": [
+        "ulsan"
+      ]
+    },
+    "terrain": "coast",
+    "base": {
+      "agri": 32,
+      "commerce": 63,
+      "wall": 60,
+      "barracks": 46
+    },
+    "maxDev": {
+      "agri": 58,
+      "commerce": 100,
+      "wall": 83,
+      "barracks": 72
+    },
     "special": "iron_mine"
   }
 ]

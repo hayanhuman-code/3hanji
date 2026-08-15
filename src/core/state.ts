@@ -12,6 +12,7 @@ import {
   castleDef,
   factionDef,
   officerDef,
+  officerWindow,
   scenarioDef,
 } from './data';
 import { B } from './formulas';
@@ -26,6 +27,7 @@ import type {
   GameOptions,
   GameState,
   LogEntry,
+  OfficerDef,
   OfficerId,
   OfficerState,
   Relation,
@@ -143,10 +145,14 @@ export function createGame(config: NewGameConfig): GameState {
 
   /* --- 인물 --- */
   const deadAtStart = new Set(scenario.dead ?? []);
+  const spread = makeSpreader(scenario);
   const officers: Record<OfficerId, OfficerState> = {};
   for (const def of OFFICERS) {
-    const active = def.birth + 15 <= year && def.death >= year && !deadAtStart.has(def.id);
+    const win = officerWindow(def, scenario);
+    const active = win !== null && win.appear <= year && win.retire >= year && !deadAtStart.has(def.id);
     if (!active) {
+      // 이 시나리오의 명부에 없는 인물(win === null)은 처음부터 없는 사람으로 둔다.
+      const gone = win === null || win.retire < year || deadAtStart.has(def.id);
       officers[def.id] = {
         id: def.id,
         faction: null,
@@ -154,8 +160,8 @@ export function createGame(config: NewGameConfig): GameState {
         armyId: null,
         loyalty: 70,
         acted: false,
-        // 아직 태어나지 않았거나 이미 죽은 인물. 등장 연도가 되면 turn.ts 가 깨운다.
-        status: def.death < year || deadAtStart.has(def.id) ? 'dead' : 'free',
+        // 아직 나이가 안 찼으면 'free' 로 두었다가 등장 연도에 turn.ts 가 깨운다.
+        status: gone ? 'dead' : 'free',
         hidden: true,
       };
       continue;
@@ -172,7 +178,7 @@ export function createGame(config: NewGameConfig): GameState {
       faction = castles[placed].owner;
       hidden = faction === null;
     } else if (def.faction && factions[def.faction]?.alive) {
-      location = capitalOf(scenario, def.faction) ?? scenario.ownership[def.faction]?.[0] ?? null;
+      location = spread(def.faction, def);
       faction = def.faction;
       hidden = false;
     } else if (def.home && castles[def.home]) {
@@ -247,17 +253,45 @@ function estimateTroops(type: string): number {
       return 12000;
     case 'major':
       return 8000;
-    case 'mountain_fortress':
+    case 'fort':
       return 7000;
     default:
       return 5000;
   }
 }
 
-function capitalOf(scenario: ScenarioDef, faction: FactionId): CastleId | null {
-  const owned = scenario.ownership[faction] ?? [];
-  const cap = owned.find((c) => castleDef(c).type === 'capital');
-  return cap ?? owned[0] ?? null;
+/**
+ * 배치가 명시되지 않은 인물을 세력 영토에 흩는 배분기.
+ *
+ * 전부 도성에 몰아넣으면 76 거점 판에서 한 성에 60 명이 서고 나머지는 텅 빈다.
+ * 등급이 높은 인물이 큰 성에 가도록 거점을 등급순으로 늘어놓고 차례로 채운다.
+ *
+ * 상태를 한 판 안에서만 들고 있어야 한다 — 모듈 전역에 두면 시뮬레이터가
+ * 한 프로세스에서 수백 판을 돌릴 때 배치가 판마다 달라진다.
+ */
+function makeSpreader(scenario: ScenarioDef): (f: FactionId, def: OfficerDef) => CastleId | null {
+  const order = new Map<string, CastleId[]>();
+  const cursor = new Map<string, number>();
+  const rank: Record<string, number> = { capital: 0, major: 1, fort: 2, port: 3 };
+
+  return (faction, def) => {
+    let list = order.get(faction);
+    if (!list) {
+      list = [...(scenario.ownership[faction] ?? [])].sort(
+        (a, b) =>
+          (rank[castleDef(a).type] ?? 9) - (rank[castleDef(b).type] ?? 9) || a.localeCompare(b)
+      );
+      order.set(faction, list);
+    }
+    if (list.length === 0) return null;
+    // 1급은 앞쪽(도성·대성)에서만 돌린다. 이름난 장수가 변방 초소에 앉지 않도록.
+    const top = def.tier === 1;
+    const span = top ? Math.max(1, Math.ceil(list.length / 3)) : list.length;
+    const key = `${faction}|${top}`;
+    const i = cursor.get(key) ?? 0;
+    cursor.set(key, i + 1);
+    return list[i % span];
+  };
 }
 
 /* ================================================================== *

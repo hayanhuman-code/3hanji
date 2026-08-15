@@ -3,9 +3,20 @@
     "id": "goguryeo",
     "name": "고구려",
     "color": "#2F6F4E",
-    "traits": ["conquest_state", "heavy_cavalry", "frontier_defense"],
-    "council": { "type": "jega", "support": 55 },
-    "personality": { "aggression": 0.85, "expansion": 0.8, "diplomacy": 0.3 },
+    "traits": [
+      "conquest_state",
+      "heavy_cavalry",
+      "frontier_defense"
+    ],
+    "council": {
+      "type": "jega",
+      "support": 55
+    },
+    "personality": {
+      "aggression": 0.85,
+      "expansion": 0.8,
+      "diplomacy": 0.3
+    },
     "playable": true,
     "blurb": "요동에서 패수까지 걸친 정복 국가. 개마무사의 돌파력으로 남북 어디로든 밀어붙일 수 있다.",
     "strength": "개마무사·맥궁병, 넓은 영토와 요동 방어선",
@@ -15,9 +26,20 @@
     "id": "baekje",
     "name": "백제",
     "color": "#8C3B3B",
-    "traits": ["maritime_trade", "dual_diplomacy", "wa_alliance"],
-    "council": { "type": "jeongsaam", "support": 60 },
-    "personality": { "aggression": 0.6, "expansion": 0.6, "diplomacy": 0.75 },
+    "traits": [
+      "maritime_trade",
+      "dual_diplomacy",
+      "wa_alliance"
+    ],
+    "council": {
+      "type": "jeongsaam",
+      "support": 60
+    },
+    "personality": {
+      "aggression": 0.6,
+      "expansion": 0.6,
+      "diplomacy": 0.75
+    },
     "playable": true,
     "blurb": "바다를 낀 교역 국가. 수군과 교역 수입으로 국력을 벌지만 영토의 종심이 얕다.",
     "strength": "수군·교역 수입, 왜와의 특수 동맹",
@@ -27,9 +49,20 @@
     "id": "silla",
     "name": "신라",
     "color": "#C9A227",
-    "traits": ["hwarang", "diplomacy_flex", "capital_defense"],
-    "council": { "type": "hwabaek", "support": 65 },
-    "personality": { "aggression": 0.45, "expansion": 0.55, "diplomacy": 0.9 },
+    "traits": [
+      "hwarang",
+      "diplomacy_flex",
+      "capital_defense"
+    ],
+    "council": {
+      "type": "hwabaek",
+      "support": 65
+    },
+    "personality": {
+      "aggression": 0.45,
+      "expansion": 0.55,
+      "diplomacy": 0.9
+    },
     "playable": true,
     "blurb": "가장 늦게 일어선 후발 주자. 초기 국력은 최약이지만 화랑도와 외교로 역전을 노린다.",
     "strength": "화랑도의 장수 육성, 금성 방어 보정, 외교 유연성",
@@ -39,10 +72,20 @@
     "id": "gaya",
     "name": "가야",
     "color": "#4A6FA5",
-    "traits": ["iron_monopoly", "confederacy"],
-    "council": { "type": "none", "support": 40 },
-    "personality": { "aggression": 0.35, "expansion": 0.3, "diplomacy": 0.6 },
-    "playable": false,
+    "traits": [
+      "iron_monopoly",
+      "confederacy"
+    ],
+    "council": {
+      "type": "none",
+      "support": 40
+    },
+    "personality": {
+      "aggression": 0.35,
+      "expansion": 0.3,
+      "diplomacy": 0.6
+    },
+    "playable": true,
     "blurb": "철의 연맹체. 중앙집권이 불가능해 늘 양강 사이에서 압박받는다.",
     "strength": "철 생산 독점과 제련 기술",
     "weakness": "중앙집권 불가, 양강 사이의 압박"

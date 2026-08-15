@@ -24,7 +24,7 @@ export const SEASONS = ['봄', '여름', '가을', '겨울'] as const;
 export type Season = 0 | 1 | 2 | 3;
 
 /** 전략맵 거점 등급 */
-export type CastleType = 'capital' | 'major' | 'mountain_fortress' | 'port';
+export type CastleType = 'capital' | 'major' | 'fort' | 'port';
 
 /** 전략맵 거점 지형 (전투맵 생성의 기반이 된다) */
 export type StrategicTerrain = 'plain' | 'mountain' | 'river' | 'coast';
@@ -65,10 +65,15 @@ export interface CastleDef {
   name: string;
   type: CastleType;
   region: string;
-  /** 전략맵 SVG 좌표 (0~1000 정규화 공간) */
+  /** 전략맵 SVG 좌표 (mapdata.json 과 같은 1760×2049 공간) */
   position: { x: number; y: number };
-  /** 인접 거점 — 군대 이동 그래프의 간선 */
+  /** 인접 거점 — 군대 이동 그래프의 간선. routes.land ∪ routes.sea */
   neighbors: CastleId[];
+  /**
+   * 간선의 종류. 육군은 sea 전용 간선을 지날 수 없고,
+   * 원해 항로는 겨울에 닫힌다(military.ts 의 통행 판정 참조).
+   */
+  routes: { land: CastleId[]; sea: CastleId[] };
   terrain: StrategicTerrain;
   base: Record<DevKey, number>;
   maxDev: Record<DevKey, number>;
@@ -76,13 +81,66 @@ export interface CastleDef {
   special?: string | null;
 }
 
+/**
+ * 지도 원본(mapdata.json).
+ * 지리 파이프라인(pipeline/build_map.py)이 실제 경위도를 투영해 만든 것으로,
+ * 모든 값이 SVG path 문자열이다. 게임 규칙은 여기에 의존하지 않고
+ * build-castles.ts 가 뽑아낸 CastleDef 만 본다.
+ */
+export interface MapData {
+  width: number;
+  height: number;
+  /** 해안선(육지 폴리곤) */
+  land: string;
+  islets: string;
+  lakes: string;
+  rivers: Record<string, string>;
+  /** 산맥 — 산 기호가 이어진 선. fill:none 으로 그려야 한다. */
+  ranges: Record<string, string>;
+  castles: Array<{
+    id: CastleId;
+    name: string;
+    type: CastleType;
+    f: FactionId;
+    x: number;
+    y: number;
+    lon: number;
+    lat: number;
+  }>;
+  routes: {
+    land: Array<{ a: CastleId; b: CastleId; d: string }>;
+    sea: Array<{ a: CastleId; b: CastleId; d: string }>;
+  };
+}
+
+/** 인물의 역할. 등용 우선순위와 인물 목록 정렬에 쓴다. */
+export type OfficerRole = 'general' | 'civil' | 'royal' | 'monk' | 'artisan';
+
+/**
+ * 인물 명부는 **두 벌의 창(window)** 을 갖는다.
+ *
+ *  - 역사 시나리오(642·551) → `appear` ~ `retire` (실제 활동 연도)
+ *  - 압축 시나리오(원년)     → `age` ~ `lifespan` (원년 시점 나이와 수명)
+ *
+ * 700년에 걸친 300명을 실제 연표대로 세우면 어느 해에도 20~30명밖에 남지 않아
+ * 76 거점을 채울 수 없다. 그래서 압축 캠페인은 나이를 다시 매겨
+ * 광개토대왕과 김유신을 같은 판에 세운다 (docs/officers.md).
+ * 어느 창을 쓸지는 `ScenarioDef.roster` 가 정한다.
+ */
 export interface OfficerDef {
   id: OfficerId;
   name: string;
   faction: FactionId | null;
-  /** 등장·사망 연도. 시나리오 연도로 자동 필터된다. */
-  birth: number;
-  death: number;
+  tier: 1 | 2 | 3;
+  role: OfficerRole;
+  /** 세력 시작 군주 여부 (압축 캠페인에서 세력당 1명) */
+  ruler: boolean;
+  /** 역사 모드 등장·퇴장 연도. null 이면 역사 시나리오에 나오지 않는다. */
+  appear: number | null;
+  retire: number | null;
+  /** 압축 모드 원년 나이와 사망 나이. null 이면 압축 시나리오에 나오지 않는다. */
+  age: number | null;
+  lifespan: number | null;
   stats: {
     lead: number; // 통솔
     war: number; // 무력
@@ -95,6 +153,8 @@ export interface OfficerDef {
   /** 재야 인물이 숨어 있는 거점 (탐색으로 발견) */
   home?: CastleId | null;
   portrait?: string | null;
+  /** 사료 근거 — 인물 카드에 그대로 표시한다 (기획서 §11 고증 대응) */
+  source?: string;
   note?: string;
 }
 
@@ -202,6 +262,12 @@ export interface ScenarioDef {
   startYear: number;
   startSeason: Season;
   desc: string;
+  /**
+   * 인물 명부를 어느 창으로 거를지.
+   * 'historical' — 서기 연도로 (642·551년). 생략 시 기본값.
+   * 'compressed' — 원년 기준 나이로 (700년을 접은 올스타 판).
+   */
+  roster?: 'historical' | 'compressed';
   recommended: FactionId[];
   /** 세력별 거점 소유 */
   ownership: Record<FactionId, CastleId[]>;

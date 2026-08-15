@@ -19,14 +19,18 @@ npm run validate   # JSON 데이터 검증
 npm test           # 스모크 테스트 22종
 npm run simulate   # AI 자동 대전 승률 집계
 npm run build      # 정적 빌드
+
+npm run build:data # 지도·인물 원본에서 castles.json / officers.json 재생성 + 검증
 ```
 
 ---
 
 ## 지금 할 수 있는 것
 
-- 시나리오 2종(642년 「천하삼분의 끝」, 551년 「한강의 주인」) 중 하나를 골라
-  고구려·백제·신라 가운데 한 나라를 맡는다.
+- 시나리오 3종 중 하나를 골라 고구려·백제·신라·가야 가운데 한 나라를 맡는다.
+  - **642년 「천하삼분의 끝」** · **551년 「한강의 주인」** — 실제 경위도로 그린 76 거점 위의 역사 시나리오
+  - **원년 「천하의 모든 이름」** — 700년을 50년으로 접은 압축 캠페인.
+    광개토대왕·근초고왕·진흥왕·김수로가 한 판에 서고, 인물 246명이 동시에 살아 있다.
 - 계절(1년 4턴) 단위로 **내정 · 인사 · 외교 · 군사** 명령을 내리고 턴을 넘긴다.
 - 출진하면 **헥스 전술 전투**가 열린다. 직접 지휘하거나 위임할 수 있다.
 - 산성에 농성하고, 포위로 적의 병량을 말리고, 도하 중인 적을 친다.
@@ -59,8 +63,8 @@ npm run build      # 정적 빌드
 
 ### 아직 없는 것
 
-거점 60개·인물 300명·이벤트 100종의 콘텐츠 양산(Phase 5), 시나리오 1·2·4·IF,
-천도, 일기토·설전, 내응(첩자 공작), 화공, 왜의 백강 파병, 초상화·BGM.
+이벤트 100종, 시나리오 1·2·4·IF, 천도, 일기토·설전, 내응(첩자 공작), 화공,
+왜의 백강 파병, 초상화·BGM. 지도의 줌·팬, 고지도 디자인, 수군 통행 규칙은 진행 중이다.
 자세한 목록과 우선순위는 [백로그](docs/backlog.md)에 있다.
 
 ---
@@ -83,10 +87,15 @@ src/
     battle/             전술 전투 — core 의 나머지를 몰라도 단독 실행된다
       hex.ts battleState.ts battleEngine.ts
   data/                 ★ 밸런싱·콘텐츠 작업 영역. 전부 JSON
-    castles.json officers.json factions.json unitTypes.json
-    institutions.json events.json scenarios/*.json
+    mapdata.json        지도 원본 — 실제 경위도에서 뽑은 해안선·하천·산맥·길 (파이프라인 산물)
+    castles.json        ↑ 에서 build-castles.ts 가 생성. 손으로 고치지 말 것
+    officers.json       source/ 두 벌에서 build-officers.ts 가 생성. 손으로 고치지 말 것
+    source/             생성기의 입력 — officers-300.json · officers-legacy.json
+    factions.json unitTypes.json institutions.json events.json scenarios/*.json
   ui/                   React + Zustand
 scripts/
+  build-castles.ts      지도 원본 → 거점 정의 (인접·지형·개발치·특성을 규칙으로 파생)
+  build-officers.ts     인물 원본 두 벌 → 명부 하나 (역사 창 + 압축 창)
   validate-data.ts      데이터 검증기
   test.ts               스모크 테스트 (의존성 없음)
   simulate.ts           AI 자동 대전
@@ -95,8 +104,9 @@ scripts/
 
 **코드를 건드리지 않고 할 수 있는 일**
 
-- 인물 추가·능력치 조정 → `src/data/officers.json`
-- 거점·지도 → `src/data/castles.json` (좌표는 0~1000 정규화 공간)
+- 인물 추가·능력치 조정 → `src/data/source/officers-legacy.json` 뒤 `npm run build:officers`
+- 거점 수치 미세조정 → `scripts/build-castles.ts` 의 표를 고치고 `npm run build:castles`
+- 지도 자체(해안선·길) → `pipeline/` 의 파이썬 파이프라인
 - 병종·상성 → `src/data/unitTypes.json`
 - 이벤트 추가 → `src/data/events.json` (조건식과 효과는 아래 문법)
 - 시나리오 추가 → `src/data/scenarios/` 에 JSON 하나 + `src/core/data.ts` 에 import 한 줄
@@ -187,8 +197,12 @@ give_castle(yodong, none)         invasion(tang, 60000)      reveal_talent
 이벤트에는 가능한 한 출전(삼국사기·삼국유사 등)을 함께 적어 두었다
 (`src/data/events.json` 의 `source` 항목).
 
-거점 16개는 60개 계획의 축소판이라 한 노드가 넓은 권역을 대표한다. 지명은 실제이되
-인접 관계는 이동 그래프로서의 단순화다.
+거점 76개의 좌표는 실제 경위도를 투영한 것이고 길은 산맥·하천을 피해 그린 것이지만,
+인접 관계는 어디까지나 이동 그래프로서의 단순화다.
+
+**원년 시나리오는 고증이 아니다.** 700년에 걸친 인물을 한 판에 세운 가상 대전이며,
+그렇게 하지 않으면 어느 해를 잘라도 인물이 20~30명밖에 남지 않는다. 실제 활동 연도는
+데이터에 `appear`/`retire` 로 남아 있고, 642·551년 시나리오는 그쪽을 쓴다.
 
 ---
 

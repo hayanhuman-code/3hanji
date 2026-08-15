@@ -5,7 +5,17 @@
  * 계산식은 formulas.ts 에만 있고 여기서는 "누가 무엇을 할 수 있는가"만 다룬다.
  */
 
-import { availableUnits, castleDef, castleName, institutionDef, officerDef, officerName, unitDef } from './data';
+import {
+  availableUnits,
+  castleDef,
+  castleName,
+  institutionDef,
+  officerDef,
+  officerName,
+  officerWindow,
+  scenarioDef,
+  unitDef,
+} from './data';
 import {
   B,
   conscriptCost,
@@ -364,10 +374,12 @@ function doSearch(state: GameState, cmd: SearchCommand, rng: RngCursor): string 
  * (완전한 절차생성 인물은 백로그. 여기서는 데이터에 있는 후세대를 앞당긴다.)
  */
 function growHwarang(state: GameState, castle: string, rng: RngCursor): string | null {
+  const scenario = scenarioDef(state.scenarioId);
   const upcoming = Object.values(state.officers).filter((o) => {
     if (o.status !== 'free' || !o.hidden || o.location !== null) return false;
-    const def = officerDef(o.id);
-    return def.death >= state.year && def.birth + 15 > state.year && def.birth <= state.year;
+    const win = officerWindow(officerDef(o.id), scenario);
+    // 등장이 코앞(5년 이내)인 후세대만 앞당긴다.
+    return win !== null && win.appear > state.year && win.appear - state.year <= 5;
   });
   const pick = rng.pick(upcoming);
   if (!pick) return null;

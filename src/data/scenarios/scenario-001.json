@@ -1,14 +1,14 @@
 {
-  "id": "s551",
-  "name": "한강의 주인",
-  "startYear": 551,
+  "id": "s001",
+  "name": "원년(元年) — 천하의 모든 이름",
+  "startYear": 1,
   "startSeason": 0,
-  "desc": "나제동맹이 고구려에게서 한강을 되찾았다. 하류는 백제가, 상류는 신라가 가졌다. 이 동맹은 두 해를 더 가지 못한다.",
-  "roster": "historical",
+  "desc": "광개토대왕과 김유신, 근초고왕과 김수로가 한 판에 선다. 700년의 인물을 50년으로 접은 가상 대전이다. 서기 연표를 쓰지 않으므로 역사 이벤트도 없다.",
+  "roster": "compressed",
   "recommended": [
+    "goguryeo",
     "baekje",
     "silla",
-    "goguryeo",
     "gaya"
   ],
   "ownership": {
@@ -37,42 +37,43 @@
       "salsu",
       "seoanpyeong",
       "sinseong",
+      "usu",
       "yodong",
       "yosu"
     ],
     "silla": [
       "apdok",
       "changnyeong",
+      "cheonseong",
       "chiljung",
       "daegu",
+      "danghang",
       "deokmul",
       "gammun",
       "geumseong",
       "gugwon",
       "gwansan",
       "gyerim",
+      "hanganggu",
+      "hanseong",
       "haseulla",
       "maeso",
       "samnyeon",
       "sangju",
       "sapryang",
       "silji",
+      "tamna",
       "uiseong",
       "ulsan",
-      "usanguk",
-      "usu"
+      "usanguk"
     ],
     "baekje": [
       "amak",
       "balla",
-      "cheonseong",
       "chimmi",
       "daeya",
-      "danghang",
       "gibeolpo",
       "gosaburi",
-      "hanganggu",
-      "hanseong",
       "hwangsan",
       "iksan",
       "imjon",
@@ -80,7 +81,6 @@
       "michuhol",
       "mokji",
       "sabi",
-      "tamna",
       "tanhyeon",
       "ungjin",
       "ungjingu",
@@ -98,78 +98,55 @@
     ]
   },
   "placement": {
-    "go_heul": "gungnae",
-    "seongwang": "sabi",
-    "buyeo_chang": "hanseong",
-    "wang_hyorin": "sabi",
-    "gyeomik": "sabi",
+    "gwanggaeto": "pyeong",
+    "geunchogo": "sabi",
     "jinheung": "geumseong",
-    "geochilbu": "gugwon",
-    "isabu": "geumseong",
-    "kimmuryeok": "gugwon",
-    "gyeongdeung": "geumgwan",
-    "ureuk": "gugwon",
-    "yangwon": "pyeong",
-    "chugun": "gungnae",
-    "godeokgwan": "daehaeng",
-    "pyeongwon_wang": "pyeong"
+    "suro": "geumgwan"
   },
   "resources": {
     "goguryeo": {
-      "grain": 22000,
-      "gold": 6800,
-      "iron": 900,
-      "cause": 12
+      "grain": 30000,
+      "gold": 9000,
+      "iron": 1100,
+      "cause": 20
     },
     "baekje": {
-      "grain": 26000,
-      "gold": 10500,
-      "iron": 1000,
-      "cause": 30
+      "grain": 24000,
+      "gold": 9500,
+      "iron": 900,
+      "cause": 20
     },
     "silla": {
-      "grain": 21000,
-      "gold": 7600,
-      "iron": 880,
-      "cause": 22
+      "grain": 27000,
+      "gold": 8600,
+      "iron": 1000,
+      "cause": 20
     },
     "gaya": {
-      "grain": 11000,
-      "gold": 5200,
-      "iron": 1400,
-      "cause": 10
+      "grain": 13000,
+      "gold": 6000,
+      "iron": 1800,
+      "cause": 20
     }
-  },
-  "troops": {
-    "pyeong": 12000,
-    "gungnae": 9000,
-    "yodong": 10000,
-    "sabi": 13000,
-    "ungjin": 10000,
-    "hanseong": 11000,
-    "geumseong": 12000,
-    "gugwon": 9000,
-    "geumgwan": 8000,
-    "daegaya": 7000
   },
   "relations": [
     {
-      "a": "baekje",
-      "b": "silla",
-      "status": "alliance",
-      "trust": 60
-    },
-    {
       "a": "goguryeo",
       "b": "baekje",
-      "status": "war",
-      "trust": -80
+      "status": "peace",
+      "trust": -20
     },
     {
       "a": "goguryeo",
       "b": "silla",
-      "status": "war",
-      "trust": -60
+      "status": "peace",
+      "trust": -10
+    },
+    {
+      "a": "baekje",
+      "b": "silla",
+      "status": "peace",
+      "trust": -20
     },
     {
       "a": "gaya",
@@ -181,17 +158,10 @@
       "a": "gaya",
       "b": "baekje",
       "status": "peace",
-      "trust": 30
+      "trust": 20
     }
   ],
   "factionMods": {
-    "goguryeo": {
-      "councilSupport": 40,
-      "personality": {
-        "aggression": 0.55
-      },
-      "note": "안원왕 말년의 왕위 다툼과 북방 압박으로 조정이 흔들린다."
-    },
     "gaya": {
       "councilSupport": 45,
       "autonomy": 60,
@@ -202,21 +172,5 @@
       "note": "연맹체라 한 목소리를 내지 못한다. 대신 철과 바다를 쥐고 있다."
     }
   },
-  "events": [
-    "daeya_grudge",
-    "yeon_coup",
-    "chunchu_goguryeo",
-    "yeoje_alliance",
-    "nadang_alliance",
-    "bidam_rebellion",
-    "hwangryongsa",
-    "tang_expedition",
-    "hangang_betrayal",
-    "gwansanseong",
-    "good_harvest",
-    "famine",
-    "plague",
-    "flood",
-    "wandering_talent"
-  ]
+  "events": []
 }

@@ -16,7 +16,16 @@
  */
 
 import { runFactionAI } from './ai';
-import { castleDef, castleName, eventDef, factionName, officerDef, officerName, scenarioDef } from './data';
+import {
+  castleDef,
+  castleName,
+  eventDef,
+  factionName,
+  officerDef,
+  officerName,
+  officerWindow,
+  scenarioDef,
+} from './data';
 import { driftRelations } from './diplomacy';
 import { checkEvents, pickAIChoice, resolveEventChoice } from './events';
 import { B, castleIncome, fieldUpkeep, garrisonUpkeep, hasSkill } from './formulas';
@@ -437,11 +446,14 @@ function advanceCalendar(state: GameState, rng: RngCursor): void {
 
 /** 해가 바뀌면 인물이 등장하고 죽는다. */
 function onNewYear(state: GameState, rng: RngCursor): void {
+  const scenario = scenarioDef(state.scenarioId);
   for (const o of Object.values(state.officers)) {
     const def = officerDef(o.id);
+    const win = officerWindow(def, scenario);
+    if (!win) continue; // 이 시나리오의 명부에 없는 인물
 
     // 사망
-    if (o.status !== 'dead' && state.year > def.death) {
+    if (o.status !== 'dead' && state.year > win.retire) {
       const wasActive = o.status === 'active';
       const faction = o.faction;
       removeOfficerFromWorld(state, o.id);
@@ -453,8 +465,8 @@ function onNewYear(state: GameState, rng: RngCursor): void {
       continue;
     }
 
-    // 등장 — 15세가 되는 해에 세상에 나온다.
-    if (o.status === 'free' && o.hidden && def.birth + 15 === state.year && def.death >= state.year) {
+    // 등장 — 성인이 되는 해에 세상에 나온다.
+    if (o.status === 'free' && o.hidden && win.appear === state.year && win.retire >= state.year) {
       if (def.faction && state.factions[def.faction]?.alive) {
         // 시나리오가 정해 둔 자리가 아직 자기 세력 땅이면 거기로, 아니면 도성으로 간다.
         const planned = scenarioDef(state.scenarioId).placement?.[o.id];

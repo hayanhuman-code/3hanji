@@ -5,7 +5,7 @@
  * 조건 평가는 dsl.ts 가, 효과 적용은 effects.ts 가 담당한다. 여기서는 흐름만 다룬다.
  */
 
-import { EVENTS, eventDef, factionName, tryOfficerDef } from './data';
+import { EVENTS, eventDef, factionName, scenarioDef, tryOfficerDef } from './data';
 import { evaluate, type DslContext, type DslValue } from './dsl';
 import { applyEffects } from './effects';
 import type { RngCursor } from './rng';
@@ -95,9 +95,17 @@ export function makeContext(state: GameState, actor: FactionId): DslContext {
   };
 }
 
-/** 이 시나리오/옵션에서 활성인 이벤트 목록 */
+/**
+ * 이 시나리오/옵션에서 활성인 이벤트 목록.
+ *
+ * 시나리오가 `events` 를 명시하면 그 목록만 쓴다. 압축 캠페인처럼
+ * 서기 연표를 쓰지 않는 판에서 역사 이벤트가 끼어들지 않게 하기 위해서다
+ * (빈 배열 = 이벤트 없음).
+ */
 export function activeEvents(state: GameState): EventDef[] {
-  return EVENTS.filter((e) => state.options.historicalEvents || !e.historical);
+  const allowed = scenarioDef(state.scenarioId).events;
+  const pool = allowed ? EVENTS.filter((e) => allowed.includes(e.id)) : EVENTS;
+  return pool.filter((e) => state.options.historicalEvents || !e.historical);
 }
 
 function triggerMatches(state: GameState, e: EventDef, actor: FactionId, rng: RngCursor): boolean {

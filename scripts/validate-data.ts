@@ -13,9 +13,13 @@ import {
   EVENTS,
   FACTIONS,
   INSTITUTIONS,
+  MAP,
   OFFICERS,
   SCENARIOS,
   UNIT_TYPES,
+  officerWindow,
+  officersAliveIn,
+  routePath,
 } from '../src/core/data';
 import { KNOWN_EFFECTS, parseEffect } from '../src/core/effects';
 import { SKILLS } from '../src/core/formulas';
@@ -53,12 +57,26 @@ checkDuplicates('castles', CASTLES.map((c) => c.id));
 for (const c of CASTLES) {
   const w = `castles/${c.id}`;
   if (!c.name) err(w, 'name 이 비어 있습니다');
-  if (!['capital', 'major', 'mountain_fortress', 'port'].includes(c.type))
+  if (!['capital', 'major', 'fort', 'port'].includes(c.type))
     err(w, `알 수 없는 type: ${c.type}`);
   if (!['plain', 'mountain', 'river', 'coast'].includes(c.terrain))
     err(w, `알 수 없는 terrain: ${c.terrain}`);
-  if (c.position.x < 0 || c.position.x > 1000 || c.position.y < 0 || c.position.y > 1000)
-    err(w, `position 이 0~1000 범위를 벗어납니다 (${c.position.x}, ${c.position.y})`);
+  if (c.position.x < 0 || c.position.x > MAP.width || c.position.y < 0 || c.position.y > MAP.height)
+    err(w, `position 이 지도 밖입니다 (${c.position.x}, ${c.position.y})`);
+
+  // 육로/수로 구분은 통행 판정의 근거다. 합집합이 neighbors 와 어긋나면 안 된다.
+  const union = new Set([...c.routes.land, ...c.routes.sea]);
+  if (union.size !== c.neighbors.length || c.neighbors.some((n) => !union.has(n)))
+    err(w, 'neighbors 가 routes.land ∪ routes.sea 와 다릅니다 (build-castles.ts 를 다시 돌리세요)');
+  for (const nb of c.routes.land) {
+    const other = CASTLES.find((x) => x.id === nb);
+    if (other && !other.routes.land.includes(c.id)) err(w, `육로가 비대칭입니다: ${nb}`);
+  }
+  for (const nb of c.routes.sea) {
+    const other = CASTLES.find((x) => x.id === nb);
+    if (other && !other.routes.sea.includes(c.id)) err(w, `수로가 비대칭입니다: ${nb}`);
+    if (!routePath(c.id, nb)) err(w, `수로에 지도 경로가 없습니다: ${nb}`);
+  }
 
   for (const nb of c.neighbors) {
     if (!castleIds.has(nb)) {
@@ -117,7 +135,21 @@ for (const o of OFFICERS) {
   const w = `officers/${o.id}`;
   if (!o.name) err(w, 'name 이 비어 있습니다');
   if (o.faction && !factionIds.has(o.faction)) err(w, `없는 세력: ${o.faction}`);
-  if (o.birth >= o.death) err(w, `birth(${o.birth}) 가 death(${o.death}) 이상입니다`);
+  if (o.appear !== null && o.retire !== null && o.appear >= o.retire)
+    err(w, `appear(${o.appear}) 가 retire(${o.retire}) 이상입니다`);
+  if ((o.appear === null) !== (o.retire === null)) err(w, 'appear 와 retire 는 함께 있거나 함께 없어야 합니다');
+  if ((o.age === null) !== (o.lifespan === null)) err(w, 'age 와 lifespan 은 함께 있거나 함께 없어야 합니다');
+  if (o.appear === null && o.age === null) err(w, '역사 창도 압축 창도 없어 어떤 시나리오에도 등장하지 않습니다');
+  if (o.age !== null && o.lifespan !== null && o.age >= o.lifespan)
+    err(w, `age(${o.age}) 가 lifespan(${o.lifespan}) 이상입니다`);
+  if (![1, 2, 3].includes(o.tier)) err(w, `알 수 없는 tier: ${o.tier}`);
+  if (!['general', 'civil', 'royal', 'monk', 'artisan'].includes(o.role))
+    err(w, `알 수 없는 role: ${o.role}`);
+  // 등급 상한 — 손으로 공들여 지정한 1급이 항상 정점에 서야 한다 (docs/officers.md).
+  const cap = o.tier === 1 ? 100 : o.tier === 2 ? 88 : 80;
+  for (const [key, v] of Object.entries(o.stats)) {
+    if (typeof v === 'number' && v > cap) warn(w, `${o.tier}급 상한 ${cap} 초과: stats.${key}=${v}`);
+  }
   for (const [key, v] of Object.entries(o.stats)) {
     if (typeof v !== 'number' || v < 1 || v > 100) err(w, `stats.${key} 는 1~100 이어야 합니다 (${v})`);
   }
@@ -214,7 +246,8 @@ for (const s of SCENARIOS) {
     if (!officerIds.has(oid)) err(w, `없는 인물 배치: ${oid}`);
     if (!castleIds.has(cid)) err(w, `없는 배치 거점: ${cid}`);
     const def = OFFICERS.find((o) => o.id === oid);
-    if (def && (def.birth + 15 > s.startYear || def.death < s.startYear))
+    const win = def ? officerWindow(def, s) : null;
+    if (def && (win === null || win.appear > s.startYear || win.retire < s.startYear))
       warn(w, `${oid} 은(는) ${s.startYear}년에 활동하지 않아 배치가 무시됩니다`);
   }
   for (const oid of s.dead ?? []) if (!officerIds.has(oid)) err(w, `없는 인물(dead): ${oid}`);
@@ -246,15 +279,15 @@ for (const s of SCENARIOS) {
   if (s.startSeason < 0 || s.startSeason > 3) err(w, `startSeason 은 0~3 이어야 합니다`);
 
   // 시작 세력에 인물이 하나도 없으면 게임이 진행되지 않는다.
+  const rosterAtStart = officersAliveIn(s.startYear, s).filter((o) => !(s.dead ?? []).includes(o.id));
   for (const faction of Object.keys(s.ownership)) {
-    const has = OFFICERS.some(
-      (o) =>
-        o.birth + 15 <= s.startYear &&
-        o.death >= s.startYear &&
-        !(s.dead ?? []).includes(o.id) &&
-        (o.faction === faction || s.placement?.[o.id] !== undefined)
+    const owned = new Set(s.ownership[faction] ?? []);
+    const mine = rosterAtStart.filter(
+      (o) => o.faction === faction || owned.has(s.placement?.[o.id] ?? '')
     );
-    if (!has) err(w, `${faction} 에 ${s.startYear}년 시점의 인물이 한 명도 없습니다`);
+    if (mine.length === 0) err(w, `${faction} 에 ${s.startYear}년 시점의 인물이 한 명도 없습니다`);
+    else if (mine.length < 3)
+      warn(w, `${faction} 의 ${s.startYear}년 인물이 ${mine.length}명뿐입니다`);
   }
 }
 

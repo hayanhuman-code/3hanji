@@ -5,8 +5,7 @@
  * 실제 위성 지형 대신 프로토타입에서는 지역 윤곽을 단순화한 배경을 쓴다.
  */
 
-import { useMemo } from 'react';
-import { CASTLES, castleDef, factionColor, factionName, officerName } from '../core/data';
+import { CASTLES, MAP, ROUTES, castleDef, factionColor, factionName, officerName } from '../core/data';
 import { armyTroops } from '../core/state';
 import { riversFrozen } from '../core/formulas';
 import type { GameState } from '../core/types';
@@ -20,74 +19,69 @@ interface Props {
   marchTargets?: Set<string> | null;
 }
 
+/**
+ * 좌표계는 mapdata.json 과 같은 1760×2049 공간이다.
+ * 거점이 실제로 놓인 범위만 잘라 낸다(요서~우산국, 부여성~탐라).
+ * 줌·팬과 실제 지형선은 다음 단계에서 붙인다.
+ */
+const VIEW_BOX = '400 300 1170 1720';
+
 const CASTLE_SHAPE: Record<string, number> = {
-  capital: 15,
-  major: 12,
-  mountain_fortress: 12,
-  port: 11,
+  capital: 13,
+  major: 11,
+  fort: 10,
+  port: 10,
 };
 
-export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) {
-  // 인접선은 한 번만 계산하면 된다 (거점 그래프는 고정).
-  const edges = useMemo(() => {
-    const seen = new Set<string>();
-    const out: Array<{ a: (typeof CASTLES)[number]; b: (typeof CASTLES)[number] }> = [];
-    for (const c of CASTLES) {
-      for (const nb of c.neighbors) {
-        const key = c.id < nb ? `${c.id}|${nb}` : `${nb}|${c.id}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        const other = CASTLES.find((x) => x.id === nb);
-        if (other) out.push({ a: c, b: other });
-      }
-    }
-    return out;
-  }, []);
+/** 76 거점의 이름을 다 쓰면 겹친다. 등급이 높은 것과 선택한 것만 쓴다. */
+const NAMED_TYPES = new Set(['capital', 'major']);
 
+export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) {
   const frozen = riversFrozen(state.season);
   const armies = Object.values(state.armies);
 
   return (
-    <svg viewBox="60 60 760 760" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox={VIEW_BOX} preserveAspectRatio="xMidYMid meet">
       <defs>
         <radialGradient id="glow" cx="50%" cy="50%">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </radialGradient>
-        <filter id="soft">
-          <feGaussianBlur stdDeviation="2.4" />
-        </filter>
       </defs>
 
-      {/* 지역 윤곽 — 요동·한반도를 아주 성기게 암시한다 */}
-      <g opacity="0.5" fill="none" stroke="#2b2219" strokeWidth="1.5">
-        <path d="M110 90 Q 210 60 320 110 T 430 250 Q 470 330 430 420" />
-        <path d="M430 420 Q 400 520 440 620 T 420 760 Q 560 810 700 790 T 790 640 Q 760 520 690 470 T 560 430 Q 480 430 430 420" />
+      {/* 해안선·하천 — 실제 지리에서 뽑은 윤곽 */}
+      <g pointerEvents="none">
+        <path d={MAP.land} fill="#1b1712" stroke="#3a3026" strokeWidth="1.6" />
+        <path d={MAP.islets} fill="#1b1712" stroke="#3a3026" strokeWidth="1.2" />
+        <path d={MAP.lakes} fill="#141c20" stroke="#2c3a40" strokeWidth="1" />
+        {Object.entries(MAP.rivers).map(([name, d]) => (
+          <path key={name} d={d} fill="none" stroke="#33454c" strokeWidth="1.6" />
+        ))}
+        {Object.entries(MAP.ranges).map(([name, d]) => (
+          <path key={name} d={d} fill="none" stroke="#4a3f31" strokeWidth="1.2" />
+        ))}
       </g>
 
       {/* 계절 표시 */}
-      <text x="800" y="96" textAnchor="end" fill="#7d715c" fontSize="15" fontFamily="serif">
+      <text x="1540" y="360" textAnchor="end" fill="#7d715c" fontSize="26" fontFamily="serif">
         {state.year}년 {['봄', '여름', '가을', '겨울'][state.season]}
         {frozen ? ' · 강이 얼었다' : ''}
       </text>
 
-      {/* 인접선 */}
-      <g>
-        {edges.map(({ a, b }) => {
-          const oa = state.castles[a.id]?.owner;
-          const ob = state.castles[b.id]?.owner;
+      {/* 길 — 육로와 수로. 지도 파이프라인이 지형을 피해 그린 곡선을 그대로 쓴다. */}
+      <g fill="none" pointerEvents="none">
+        {ROUTES.map((r) => {
+          const oa = state.castles[r.a]?.owner;
+          const ob = state.castles[r.b]?.owner;
           const same = oa && oa === ob;
           return (
-            <line
-              key={`${a.id}-${b.id}`}
-              x1={a.position.x}
-              y1={a.position.y}
-              x2={b.position.x}
-              y2={b.position.y}
-              stroke={same ? factionColor(oa) : '#3a2f24'}
-              strokeOpacity={same ? 0.45 : 0.7}
-              strokeWidth={same ? 2 : 1.2}
-              strokeDasharray={same ? undefined : '3 4'}
+            <path
+              key={`${r.a}-${r.b}`}
+              d={r.d}
+              stroke={same ? factionColor(oa) : r.sea ? '#3d5a63' : '#4a3d2e'}
+              strokeOpacity={same ? 0.5 : 0.8}
+              strokeWidth={r.sea ? 1.6 : 2.4}
+              strokeDasharray={r.sea ? '2 7' : undefined}
             />
           );
         })}
@@ -111,18 +105,18 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
                   x2={next.position.x}
                   y2={next.position.y}
                   stroke={factionColor(army.faction)}
-                  strokeWidth="2"
-                  strokeDasharray="5 4"
+                  strokeWidth="3"
+                  strokeDasharray="7 5"
                   opacity="0.85"
                 />
               )}
               <polygon
-                points={`${x},${y - 8} ${x + 7},${y + 5} ${x - 7},${y + 5}`}
+                points={`${x},${y - 11} ${x + 9},${y + 7} ${x - 9},${y + 7}`}
                 fill={factionColor(army.faction)}
                 stroke="#14100d"
                 strokeWidth="1.2"
               />
-              <text x={x} y={y + 17} textAnchor="middle" fontSize="9.5" fill="#b8a888">
+              <text x={x} y={y + 24} textAnchor="middle" fontSize="16" fill="#b8a888">
                 {officerName(army.commander)} {fmtTroops(armyTroops(army))}
               </text>
             </g>
@@ -153,7 +147,7 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
               )}
 
               {/* 등급별 모양: 도성=이중원, 산성=삼각, 항구=마름모, 대성=원 */}
-              {def.type === 'mountain_fortress' ? (
+              {def.type === 'fort' ? (
                 <polygon
                   points={`${def.position.x},${def.position.y - r} ${def.position.x + r},${def.position.y + r * 0.8} ${def.position.x - r},${def.position.y + r * 0.8}`}
                   fill={color}
@@ -202,44 +196,48 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
                 />
               )}
 
-              <text
-                x={def.position.x}
-                y={def.position.y - r - 7}
-                textAnchor="middle"
-                fontSize="13"
-                fontFamily="serif"
-                fill="#e8dcc4"
-                stroke="#100d0a"
-                strokeWidth="3"
-                paintOrder="stroke"
-              >
-                {def.name}
-              </text>
-              <text
-                x={def.position.x}
-                y={def.position.y + r + 15}
-                textAnchor="middle"
-                fontSize="10.5"
-                fill="#b8a888"
-                stroke="#100d0a"
-                strokeWidth="2.6"
-                paintOrder="stroke"
-              >
-                {c.owner ? fmtTroops(c.troops) : '무주공산'}
-              </text>
+              {(NAMED_TYPES.has(def.type) || isSel || isTarget) && (
+                <>
+                  <text
+                    x={def.position.x}
+                    y={def.position.y - r - 8}
+                    textAnchor="middle"
+                    fontSize="19"
+                    fontFamily="serif"
+                    fill="#e8dcc4"
+                    stroke="#100d0a"
+                    strokeWidth="4"
+                    paintOrder="stroke"
+                  >
+                    {def.name}
+                  </text>
+                  <text
+                    x={def.position.x}
+                    y={def.position.y + r + 20}
+                    textAnchor="middle"
+                    fontSize="16"
+                    fill="#b8a888"
+                    stroke="#100d0a"
+                    strokeWidth="3.4"
+                    paintOrder="stroke"
+                  >
+                    {c.owner ? fmtTroops(c.troops) : '무주공산'}
+                  </text>
+                </>
+              )}
             </g>
           );
         })}
       </g>
 
       {/* 범례 */}
-      <g transform="translate(80, 762)">
+      <g transform="translate(430, 1985)">
         {Object.values(state.factions)
           .filter((f) => f.alive)
           .map((f, i) => (
-            <g key={f.id} transform={`translate(${i * 92}, 0)`}>
-              <rect width="10" height="10" y="-9" fill={factionColor(f.id)} rx="2" />
-              <text x="15" y="0" fontSize="12" fill="#b8a888">
+            <g key={f.id} transform={`translate(${i * 130}, 0)`}>
+              <rect width="16" height="16" y="-14" fill={factionColor(f.id)} rx="2" />
+              <text x="22" y="0" fontSize="19" fill="#b8a888">
                 {factionName(f.id)}
               </text>
             </g>

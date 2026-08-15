@@ -1,0 +1,545 @@
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ji:#DDD0B2; --ji-deep:#CFC09C; --ji-edge:#B5A47E;
+    --hae:#B9C3BC;
+    --meok:#241F1A; --meok-mid:#554C40; --meok-thin:#8A7E6C; --meok-cap:#5A5143;
+    --jinsa:#A83232;
+    --su:#4E7480; --su-ice:#CBD3CD;
+    --panel:rgba(221,208,178,.96);
+  }
+  *{box-sizing:border-box}
+
+  .sh{
+    position:relative; overflow:hidden;
+    font-family:'Noto Serif KR','Batang',serif; color:var(--meok);
+    background:var(--hae); border:1px solid var(--ji-edge);
+    height:78vh; min-height:540px;
+    user-select:none; -webkit-user-select:none;
+  }
+
+  .sh-stage{position:absolute; inset:0; cursor:grab; touch-action:none}
+  .sh-stage.drag{cursor:grabbing}
+  .sh-svg{width:100%; height:100%; display:block}
+
+  /* ── 공통 창 ── */
+  .win{
+    position:absolute; background:var(--panel);
+    border:1.5px solid var(--meok); box-shadow:3px 4px 0 rgba(36,31,26,.18);
+    z-index:5;
+  }
+  .win-hd{display:flex;align-items:center;gap:8px;padding:6px 10px;
+    border-bottom:1px solid var(--meok-thin);cursor:move;touch-action:none}
+  .win-hd b{flex:1;font-size:10.5px;letter-spacing:.28em;font-weight:600;color:var(--meok-cap)}
+  .win-x{width:18px;height:18px;flex:none;padding:0;line-height:1;background:transparent;
+    border:1px solid var(--meok-thin);color:var(--meok);font-family:inherit;font-size:11px;cursor:pointer}
+  .win-x:hover{background:var(--meok);color:var(--ji)}
+
+  /* ── 국력 표시줄 ── */
+  #shTop{top:10px;left:10px;right:10px;display:flex;align-items:stretch}
+  #shTop .brand{padding:7px 13px;border-right:1px solid var(--meok-thin);
+    display:flex;align-items:baseline;gap:8px}
+  #shTop .brand b{font-size:16px;font-weight:900;letter-spacing:.24em}
+  #shTop .brand i{font-style:normal;font-size:8px;color:var(--meok-mid);letter-spacing:.3em}
+  #shTop .when{padding:7px 13px;border-right:1px solid var(--meok-thin);
+    display:flex;align-items:baseline;gap:8px;min-width:112px}
+  #shTop .yr{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600}
+  #shTop .ss{font-size:11.5px;letter-spacing:.2em}
+  #shTop .res{display:flex;flex:1;min-width:0}
+  #shTop .res>div{flex:1;min-width:0;padding:5px 11px;border-right:1px solid rgba(138,126,108,.35)}
+  #shTop dt{font-size:8px;letter-spacing:.24em;color:var(--meok-cap)}
+  #shTop dd{margin:1px 0 0;font-family:'JetBrains Mono',monospace;font-size:13.5px;
+    font-weight:600;font-variant-numeric:tabular-nums}
+  #shTop .turn{padding:0 20px;background:var(--meok);color:var(--ji);border:none;
+    font-family:inherit;font-size:11.5px;letter-spacing:.2em;font-weight:600;cursor:pointer}
+  #shTop .turn:hover{background:var(--jinsa)}
+
+  /* ── 거점 상태창 ── */
+  #shCastle{top:62px;right:10px;width:246px}
+  #shCastle .bd{padding:12px 13px 11px}
+  .c-nm{font-size:22px;font-weight:900;letter-spacing:.07em;line-height:1.1}
+  .c-mt{margin-top:4px;font-size:10.5px;color:var(--meok-mid);letter-spacing:.08em}
+  .c-no{margin-top:7px;font-size:10.5px;line-height:1.6;color:var(--meok-mid)}
+  .c-ow{display:inline-block;margin-top:9px;padding:2px 9px 3px;font-size:10.5px;
+    letter-spacing:.2em}
+  .c-devs{padding:10px 13px 11px;border-top:1px solid var(--meok-thin)}
+  .c-dev{margin-bottom:8px}.c-dev:last-child{margin-bottom:0}
+  .c-dh{display:flex;justify-content:space-between;align-items:baseline;
+    font-size:10.5px;letter-spacing:.12em;margin-bottom:3px}
+  .c-dh em{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;
+    color:var(--meok-mid);font-variant-numeric:tabular-nums}
+  .c-tr{height:6px;background:var(--ji-deep);border:1px solid var(--meok-thin);position:relative}
+  .c-fi{position:absolute;inset:0 auto 0 0;background:var(--meok);transition:width .35s ease}
+  .c-cp{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--jinsa)}
+  .c-cmds{padding:10px 13px 12px;border-top:1px solid var(--meok-thin)}
+  .c-gr{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .c-btn{font-family:inherit;font-size:11.5px;letter-spacing:.06em;padding:8px 3px;
+    background:transparent;color:var(--meok);border:1px solid var(--meok);cursor:pointer;
+    transition:background .15s,color .15s}
+  .c-btn:hover:not(:disabled){background:var(--meok);color:var(--ji)}
+  .c-btn:disabled{opacity:.28;cursor:not-allowed}
+  .c-hint{margin:8px 0 0;font-size:9.5px;line-height:1.55;color:var(--meok-cap)}
+
+  /* ── 사초 ── */
+  #shLogWin{left:10px;bottom:10px;width:288px}
+  #shLogWin .bd{max-height:116px;overflow-y:auto;padding:9px 12px 10px}
+  #shLogWin p{margin:0 0 5px;font-size:10.5px;line-height:1.6;color:var(--meok-mid);
+    padding-left:10px;position:relative;animation:fin .35s ease}
+  #shLogWin p::before{content:'\00B7';position:absolute;left:1px;color:var(--jinsa)}
+  #shLogWin p:first-child{color:var(--meok)}
+  @keyframes fin{from{opacity:0;transform:translateY(-3px)}to{opacity:1}}
+
+  /* ── 범례 ── */
+  #shLgd{right:10px;bottom:10px}
+  #shLgd .bd{display:flex;flex-wrap:wrap}
+  #shLgd .lg{display:flex;align-items:center;gap:6px;padding:7px 11px;
+    border-right:1px solid rgba(138,126,108,.35);font-size:10.5px;letter-spacing:.12em}
+  #shLgd .lg:last-child{border-right:none}
+  #shLgd .sw{width:10px;height:10px;flex:none}
+  #shLgd em{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:10px;color:var(--meok-cap)}
+
+  /* ── 줌 ── */
+  #shZoom{left:10px;top:62px;width:38px}
+  #shZoom .bd{display:flex;flex-direction:column}
+  #shZoom button{height:33px;background:transparent;border:none;
+    border-bottom:1px solid var(--meok-thin);color:var(--meok);
+    font-family:inherit;font-size:15px;cursor:pointer}
+  #shZoom button:last-child{border-bottom:none;font-size:9px;letter-spacing:.08em}
+  #shZoom button:hover{background:var(--meok);color:var(--ji)}
+  #shZoomLv{padding:5px 0;text-align:center;font-family:'JetBrains Mono',monospace;
+    font-size:9px;color:var(--meok-cap);border-bottom:1px solid var(--meok-thin)}
+
+  /* ── SVG ── */
+  .land{fill:var(--ji);stroke:var(--meok);stroke-width:1.1;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+  .lake{fill:#A9B5AD;stroke:var(--su);stroke-width:.8;vector-effect:non-scaling-stroke}
+  .river{fill:none;stroke:var(--su);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+    opacity:.85;vector-effect:non-scaling-stroke;transition:stroke .5s}
+  .river.ice{stroke:var(--su-ice);stroke-dasharray:4 3}
+  .peak{fill:none;stroke:var(--meok);stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round;
+    opacity:.78;vector-effect:non-scaling-stroke}
+  .road-bed{fill:none;stroke:var(--ji-deep);stroke-width:4.5;stroke-linecap:round;
+    stroke-linejoin:round;opacity:.85;vector-effect:non-scaling-stroke}
+  .road{fill:none;stroke:var(--meok-mid);stroke-width:1.4;stroke-dasharray:5 3.5;
+    stroke-linecap:round;stroke-linejoin:round;opacity:.7;vector-effect:non-scaling-stroke}
+  .searoad{fill:none;stroke:var(--su);stroke-width:1.5;stroke-dasharray:1.5 5;
+    stroke-linecap:round;opacity:.72;vector-effect:non-scaling-stroke}
+  .searoad.closed{stroke:var(--jinsa);opacity:.4;stroke-dasharray:1.5 8}
+  .node{cursor:pointer}
+  .node .hit{fill:transparent}
+  .node .gl{stroke:var(--meok);stroke-width:1.4}
+  .node:hover .gl{stroke-width:2.2}
+  .node.sel .gl{stroke:var(--jinsa);stroke-width:2.6}
+  .node:focus-visible{outline:none}
+  .node:focus-visible .gl{stroke:var(--jinsa);stroke-width:2.6}
+  .lbl{font-family:'Noto Serif KR',serif;font-size:11px;fill:var(--meok);text-anchor:middle;
+    paint-order:stroke;stroke:var(--ji);stroke-width:2.8;stroke-linejoin:round}
+  .lbl.cap{font-size:12.5px;font-weight:900}
+  .sea{font-family:'Noto Serif KR',serif;font-size:26px;fill:var(--su);opacity:.42;letter-spacing:.42em}
+
+  @media (max-width:760px){
+    .sh{height:74vh}
+    #shTop .brand{display:none}
+    #shTop .res>div:nth-child(3),#shTop .res>div:nth-child(4){display:none}
+    #shCastle{width:214px;top:56px}
+    #shLogWin{width:196px}
+    #shLgd{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="sh" id="shRoot">
+  <div class="sh-stage" id="shStage">
+    <svg class="sh-svg" id="shSvg" role="img" aria-label="삼국시대 전략 지도"></svg>
+  </div>
+
+  <div class="win" id="shTop">
+    <div class="brand"><b>三韓志</b><i>SAMHANJI</i></div>
+    <div class="when"><span class="yr" id="shY">642</span><span class="ss" id="shS">봄</span></div>
+    <div class="res">
+      <div><dt>穀 곡물</dt><dd id="shG">0</dd></div>
+      <div><dt>財 재화</dt><dd id="shD">0</dd></div>
+      <div><dt>鐵 철</dt><dd id="shI">0</dd></div>
+      <div><dt>兵 병력</dt><dd id="shT">0</dd></div>
+      <div><dt>船 수군</dt><dd id="shN">0</dd></div>
+    </div>
+    <button class="turn" id="shEn">턴 종료 &#9656;</button>
+  </div>
+
+  <div class="win" id="shZoom"><div class="bd">
+    <button id="shZin" aria-label="확대">&#43;</button>
+    <div id="shZoomLv">100%</div>
+    <button id="shZout" aria-label="축소">&#8722;</button>
+    <button id="shZfit" aria-label="전체 보기">전체</button>
+  </div></div>
+
+  <div class="win" id="shCastle">
+    <div class="win-hd"><b>거점</b><button class="win-x" id="shCx" aria-label="닫기">&#215;</button></div>
+    <div class="bd">
+      <div class="c-nm" id="shNm">&#8212;</div>
+      <div class="c-mt" id="shMt"></div>
+      <div class="c-no" id="shNo">지도에서 거점을 고르세요.</div>
+      <div class="c-ow" id="shOw" style="display:none"></div>
+    </div>
+    <div class="c-devs" id="shDv"></div>
+    <div class="c-cmds">
+      <div class="c-gr">
+        <button class="c-btn" data-d="agri">농업 개발</button>
+        <button class="c-btn" data-d="comm">상업 개발</button>
+        <button class="c-btn" data-d="wall">성곽 수축</button>
+        <button class="c-btn" data-d="army">병영 확충</button>
+        <button class="c-btn" data-d="navy" id="shNavyBtn"
+                style="grid-column:1/-1">병선 건조</button>
+      </div>
+      <p class="c-hint" id="shHt"></p>
+    </div>
+  </div>
+
+  <div class="win" id="shLogWin">
+    <div class="win-hd"><b>사초 史草</b><button class="win-x" id="shLx" aria-label="닫기">&#215;</button></div>
+    <div class="bd" id="shLg"></div>
+  </div>
+
+  <div class="win" id="shLgd"><div class="bd" id="shLdb"></div></div>
+</div>
+
+<script>
+(function(){
+const MAP = /*__MAPDATA__*/;
+
+const F={goguryeo:{n:'고구려',c:'#26485C',fg:'#F2EADA'},
+         baekje:{n:'백제',c:'#73315A',fg:'#F2EADA'},
+         silla:{n:'신라',c:'#A8862B',fg:'#241F1A'},
+         gaya:{n:'가야',c:'#4A6B5A',fg:'#F2EADA'}};
+const ME='goguryeo';
+const SS=['봄','여름','가을','겨울'];
+const DV=[{k:'agri',l:'농업',h:'農'},{k:'comm',l:'상업',h:'商'},
+          {k:'wall',l:'성곽',h:'城'},{k:'army',l:'병영',h:'兵'},
+          {k:'navy',l:'병선',h:'船'}];
+const KIND={capital:'도성',major:'대성',fort:'산성',port:'항구'};
+const RANK={capital:3,major:2,port:1,fort:0};
+
+const S={y:642,s:0,res:{grain:9200,gold:5600,iron:380},sel:null,
+  log:['선덕여왕 11년. 백제가 대야성을 취하니 신라가 당에 사신을 보냈다.']};
+const V={k:1,tx:0,ty:0,minK:0.2,maxK:6};
+
+const $=i=>document.getElementById(i);
+const C=id=>MAP.castles.find(c=>c.id===id);
+const mine=()=>MAP.castles.filter(c=>c.f===ME);
+
+function buildStatic(){
+  // 육로: 노반(밑선)+파선(윗선) 두 겹으로 '길'처럼 보이게
+  const landBed=MAP.routes.land.map(function(r){
+    return '<path class="road-bed" d="'+r.d+'"/>';}).join('');
+  const landTop=MAP.routes.land.map(function(r){
+    return '<path class="road" d="'+r.d+'"/>';}).join('');
+  const seaRd=MAP.routes.sea.map(function(r){
+    return '<path class="searoad" data-a="'+r.a+'" data-b="'+r.b+'" d="'+r.d+'"/>';}).join('');
+  const rivers=Object.keys(MAP.rivers).map(function(n){
+    return '<path class="river" data-r="'+n+'" d="'+MAP.rivers[n]+'"/>';
+  }).join('');
+  const ranges=Object.keys(MAP.ranges).map(function(n){
+    return '<path class="peak" d="'+MAP.ranges[n]+'"/>';
+  }).join('');
+  const infl=MAP.castles.map(function(c){
+    const r=c.type==='capital'?125:c.type==='major'?96:76;
+    return '<circle cx="'+c.x+'" cy="'+c.y+'" r="'+r+'" fill="'+F[c.f].c+'"/>';
+  }).join('');
+
+  $('shSvg').innerHTML=
+    '<defs><clipPath id="shLandC"><path d="'+MAP.land+'"/><path d="'+MAP.islets+'"/></clipPath>'+
+    '<filter id="shBlurF"><feGaussianBlur stdDeviation="30"/></filter></defs>'+
+    '<g id="shWorld">'+
+    '<path class="land" d="'+MAP.land+'"/>'+
+    '<g clip-path="url(#shLandC)" filter="url(#shBlurF)" opacity=".30">'+infl+'</g>'+
+    '<path class="land" d="'+MAP.land+'" fill="none"/>'+
+    '<path class="land" d="'+MAP.islets+'"/>'+
+    '<path class="lake" d="'+MAP.lakes+'"/>'+
+    '<g>'+ranges+'</g><g>'+rivers+'</g>'+
+    '<text class="sea" x="'+(MAP.w*0.10)+'" y="'+(MAP.h*0.72)+'">西海</text>'+
+    '<text class="sea" x="'+(MAP.w*0.90)+'" y="'+(MAP.h*0.52)+'" transform="rotate(90 '+(MAP.w*0.90)+' '+(MAP.h*0.52)+')">東海</text>'+
+    '<g>'+landBed+'</g><g>'+landTop+'</g><g>'+seaRd+'</g><g id="shNodes"></g></g>';
+  buildNodes();
+}
+
+function glyphPath(c){
+  const k=F[c.f].c;
+  if(c.type==='capital') return '<rect class="gl" x="-5.5" y="-5.5" width="11" height="11" fill="'+k+'"/><rect class="gl" x="-9" y="-9" width="18" height="18" fill="none"/>';
+  if(c.type==='fort')    return '<path class="gl" d="M 0 -7.5 L 7 5 L -7 5 Z" fill="'+k+'"/>';
+  if(c.type==='port')    return '<path class="gl" d="M 0 -7.5 L 6.5 0 L 0 7.5 L -6.5 0 Z" fill="'+k+'"/>';
+  return '<circle class="gl" cx="0" cy="0" r="6" fill="'+k+'"/>';
+}
+function labelSpans(c){
+  const cap=c.type==='capital', st=cap?12.5:11, ox=c.lp==='l'?-14:14;
+  return c.name.split('').map(function(ch,i){
+    return '<tspan x="'+ox+'" dy="'+(i?st:0)+'">'+ch+'</tspan>';
+  }).join('');
+}
+function buildNodes(){
+  $('shNodes').innerHTML=MAP.castles.map(function(c){
+    return '<g class="node" data-id="'+c.id+'" tabindex="0" role="button" aria-label="'+c.name+'">'+
+      '<circle class="hit" cx="0" cy="0" r="12"/>'+glyphPath(c)+
+      '<text class="lbl'+(c.type==='capital'?' cap':'')+'" y="-2">'+labelSpans(c)+'</text></g>';
+  }).join('');
+  Array.prototype.forEach.call($('shNodes').querySelectorAll('.node'),function(n){
+    n.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();select(n.getAttribute('data-id'));}
+    });
+  });
+  placeNodes();
+}
+
+/* 노드는 화면상 크기 일정 유지 + 축척별 라벨 단계 노출 */
+function placeNodes(){
+  const inv=1/V.k;
+  const lvl = V.k<0.42 ? 3 : V.k<0.68 ? 2 : V.k<1.0 ? 1 : 0;
+  Array.prototype.forEach.call($('shNodes').querySelectorAll('.node'),function(n){
+    const c=C(n.getAttribute('data-id'));
+    n.setAttribute('transform','translate('+c.x+','+c.y+') scale('+inv+')');
+    n.querySelector('.lbl').style.display = (RANK[c.type]>=lvl) ? '' : 'none';
+  });
+}
+function applyView(){
+  $('shWorld').setAttribute('transform','translate('+V.tx+','+V.ty+') scale('+V.k+')');
+  $('shZoomLv').textContent=Math.round(V.k*100)+'%';
+  placeNodes();
+}
+
+function stageSize(){const r=$('shStage').getBoundingClientRect();return[r.width,r.height];}
+function clampView(){
+  const s=stageSize(),w=s[0],h=s[1];
+  const mw=MAP.w*V.k, mh=MAP.h*V.k;
+  V.tx = mw<=w ? (w-mw)/2 : Math.min(0,Math.max(w-mw,V.tx));
+  V.ty = mh<=h ? (h-mh)/2 : Math.min(0,Math.max(h-mh,V.ty));
+}
+function zoomAt(px,py,factor){
+  const nk=Math.max(V.minK,Math.min(V.maxK,V.k*factor));
+  const r=nk/V.k;
+  V.tx = px-(px-V.tx)*r;
+  V.ty = py-(py-V.ty)*r;
+  V.k=nk; clampView(); applyView();
+}
+function fit(){
+  const s=stageSize(),w=s[0],h=s[1];
+  V.k=Math.min(w/MAP.w,h/MAP.h)*0.98;
+  V.minK=V.k*0.92;
+  V.tx=(w-MAP.w*V.k)/2; V.ty=(h-MAP.h*V.k)/2;
+  applyView();
+}
+function centerOn(c){
+  const s=stageSize(),w=s[0],h=s[1];
+  V.k=Math.max(V.k,0.62);
+  V.tx=w/2-c.x*V.k; V.ty=h/2-c.y*V.k;
+  clampView(); applyView();
+}
+
+const stage=$('shStage');
+let dragging=false,dragMoved=false,lx=0,ly=0,lastDist=0,downNode=null;
+const pointers={};
+function pcount(){return Object.keys(pointers).length;}
+
+stage.addEventListener('pointerdown',function(e){
+  downNode = e.target.closest ? e.target.closest('.node') : null;
+  pointers[e.pointerId]={x:e.clientX,y:e.clientY};
+  if(pcount()===1){dragging=true;dragMoved=false;lx=e.clientX;ly=e.clientY;stage.classList.add('drag');}
+  try{stage.setPointerCapture(e.pointerId);}catch(err){}
+});
+stage.addEventListener('pointermove',function(e){
+  if(!pointers[e.pointerId])return;
+  pointers[e.pointerId]={x:e.clientX,y:e.clientY};
+  if(pcount()===2){
+    const ks=Object.keys(pointers), p0=pointers[ks[0]], p1=pointers[ks[1]];
+    const d=Math.hypot(p0.x-p1.x,p0.y-p1.y);
+    if(lastDist){
+      const r=stage.getBoundingClientRect();
+      zoomAt((p0.x+p1.x)/2-r.left,(p0.y+p1.y)/2-r.top,d/lastDist);
+    }
+    lastDist=d; dragMoved=true; return;
+  }
+  if(!dragging)return;
+  const dx=e.clientX-lx, dy=e.clientY-ly;
+  if(Math.abs(dx)>3||Math.abs(dy)>3) dragMoved=true;
+  V.tx+=dx; V.ty+=dy; lx=e.clientX; ly=e.clientY;
+  clampView(); applyView();
+});
+function endPtr(e){
+  if(e.type==='pointerup' && !dragMoved && downNode){
+    select(downNode.getAttribute('data-id'));
+  }
+  downNode=null;
+  delete pointers[e.pointerId];
+  if(pcount()<2)lastDist=0;
+  if(pcount()===0){dragging=false;stage.classList.remove('drag');}
+}
+stage.addEventListener('pointerup',endPtr);
+stage.addEventListener('pointercancel',endPtr);
+stage.addEventListener('wheel',function(e){
+  e.preventDefault();
+  const r=stage.getBoundingClientRect();
+  zoomAt(e.clientX-r.left,e.clientY-r.top, e.deltaY<0?1.16:1/1.16);
+},{passive:false});
+stage.addEventListener('dblclick',function(e){
+  const r=stage.getBoundingClientRect();
+  zoomAt(e.clientX-r.left,e.clientY-r.top,1.8);
+});
+
+$('shZin').onclick =function(){const s=stageSize();zoomAt(s[0]/2,s[1]/2,1.35);};
+$('shZout').onclick=function(){const s=stageSize();zoomAt(s[0]/2,s[1]/2,1/1.35);};
+$('shZfit').onclick=fit;
+
+/* 창 이동 */
+function draggable(win){
+  const hd=win.querySelector('.win-hd'); if(!hd)return;
+  let sx,sy,ox,oy,on=false;
+  hd.addEventListener('pointerdown',function(e){
+    if(e.target.classList.contains('win-x'))return;
+    on=true; sx=e.clientX; sy=e.clientY;
+    const r=win.getBoundingClientRect(), pr=$('shRoot').getBoundingClientRect();
+    ox=r.left-pr.left; oy=r.top-pr.top;
+    win.style.left=ox+'px'; win.style.top=oy+'px';
+    win.style.right='auto'; win.style.bottom='auto';
+    try{hd.setPointerCapture(e.pointerId);}catch(err){}
+    e.stopPropagation();
+  });
+  hd.addEventListener('pointermove',function(e){
+    if(!on)return;
+    win.style.left=(ox+e.clientX-sx)+'px';
+    win.style.top =(oy+e.clientY-sy)+'px';
+  });
+  hd.addEventListener('pointerup',function(){on=false;});
+}
+Array.prototype.forEach.call(document.querySelectorAll('.win'),draggable);
+$('shCx').onclick=function(){$('shCastle').style.display='none';};
+$('shLx').onclick=function(){$('shLogWin').style.display='none';};
+
+function ensureVisible(c){
+  const s=stageSize(),w=s[0],h=s[1];
+  const sx=V.tx+c.x*V.k, sy=V.ty+c.y*V.k;
+  const m=70;
+  if(sx<m||sx>w-m||sy<m||sy>h-m){
+    V.tx=w/2-c.x*V.k; V.ty=h/2-c.y*V.k;
+    clampView(); applyView();
+  }
+}
+function select(id){
+  S.sel=id;
+  ensureVisible(C(id));
+  Array.prototype.forEach.call($('shNodes').querySelectorAll('.node'),function(n){
+    n.classList.toggle('sel',n.getAttribute('data-id')===id);
+  });
+  $('shCastle').style.display='';
+  drawCastle();
+}
+function drawCastle(){
+  if(!S.sel)return;
+  const c=C(S.sel),f=F[c.f],own=(c.f===ME);
+  $('shNm').textContent=c.name;
+  $('shMt').textContent=KIND[c.type]+' · 주둔 '+(c.army*42).toLocaleString()+'명';
+  $('shNo').textContent=c.note;
+  const o=$('shOw'); o.style.display='inline-block'; o.textContent=f.n;
+  o.style.background=f.c; o.style.color=f.fg;
+  $('shDv').innerHTML=DV.filter(function(d){return c[d.k]!==undefined;}).map(function(d){
+    const v=c[d.k],m=c.cap[d.k];
+    return '<div class="c-dev"><div class="c-dh"><span>'+d.h+' '+d.l+'</span><em>'+v+' / '+m+'</em></div>'+
+      '<div class="c-tr"><div class="c-fi" style="width:'+v+'%"></div>'+
+      '<div class="c-cp" style="left:'+m+'%"></div></div></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.c-btn'),function(b){
+    const d=b.getAttribute('data-d');
+    if(d==='navy'){
+      b.style.display = (c.navy!==undefined) ? '' : 'none';
+      b.disabled=!own||c.navy>=c.cap.navy||S.res.gold<180;
+      b.textContent='병선 건조 (재화 180)';
+      return;
+    }
+    b.disabled=!own||c[d]>=c.cap[d]||S.res.gold<100;
+  });
+  $('shHt').textContent=own
+    ? '명령 1회에 재화 100 소모. 붉은 선은 개발 한계입니다.'
+    : f.n+'의 거점입니다. 내정 명령을 내릴 수 없습니다.';
+}
+function drawTop(){
+  $('shY').textContent=S.y; $('shS').textContent=SS[S.s];
+  $('shG').textContent=S.res.grain.toLocaleString();
+  $('shD').textContent=S.res.gold.toLocaleString();
+  $('shI').textContent=S.res.iron.toLocaleString();
+  $('shT').textContent=mine().reduce(function(s,c){return s+c.army*42;},0).toLocaleString();
+  $('shN').textContent=mine().reduce(function(s,c){return s+(c.navy||0);},0).toLocaleString()+'척';
+  const ice=(SS[S.s]==='겨울');
+  Array.prototype.forEach.call($('shSvg').querySelectorAll('.river'),function(p){
+    const n=p.getAttribute('data-r');
+    p.classList.toggle('ice',ice&&['Yalu','Taedong','Han','Namhan','Tumen'].indexOf(n)>=0);
+  });
+  // 겨울 풍랑 — 원해 항로 폐쇄
+  const CLOSED=['usanguk','tamna','deokmul'];
+  Array.prototype.forEach.call($('shSvg').querySelectorAll('.searoad'),function(p){
+    const shut = ice && (CLOSED.indexOf(p.getAttribute('data-a'))>=0
+                      || CLOSED.indexOf(p.getAttribute('data-b'))>=0);
+    p.classList.toggle('closed',shut);
+  });
+}
+function drawLegend(){
+  $('shLdb').innerHTML=Object.keys(F).map(function(k){
+    const n=MAP.castles.filter(function(c){return c.f===k;}).length;
+    return '<div class="lg"><span class="sw" style="background:'+F[k].c+'"></span>'+F[k].n+'<em>'+n+'</em></div>';
+  }).join('');
+}
+function drawLog(){
+  $('shLg').innerHTML=S.log.slice(0,10).map(function(t){return '<p>'+t+'</p>';}).join('');
+}
+function say(t){S.log.unshift(t);drawLog();$('shLogWin').style.display='';}
+
+Array.prototype.forEach.call(document.querySelectorAll('.c-btn'),function(b){
+  b.addEventListener('click',function(){
+    const c=C(S.sel),d=b.getAttribute('data-d');
+    if(!c||c.f!==ME||c[d]===undefined||c[d]>=c.cap[d])return;
+    const price=(d==='navy')?180:100;
+    if(S.res.gold<price)return;
+    S.res.gold-=price;
+    const g=(d==='navy')
+      ? Math.min(2+Math.floor(Math.random()*3),c.cap[d]-c[d])
+      : Math.min(6+Math.floor(Math.random()*5),c.cap[d]-c[d]);
+    c[d]+=g;
+    let lab=''; DV.forEach(function(x){if(x.k===d)lab=x.l;});
+    say(d==='navy'
+      ? c.name+'에서 병선 '+g+'척을 새로 지었다.'
+      : c.name+'에 '+lab+' 개발을 명하니 '+g+'만큼 나아졌다.');
+    drawTop(); drawCastle();
+  });
+});
+
+$('shEn').addEventListener('click',function(){
+  S.s++; if(S.s>3){S.s=0;S.y++;}
+  const s=SS[S.s],ms=mine();
+  const grain=ms.reduce(function(t,c){return t+c.agri*8;},0);
+  const gold =ms.reduce(function(t,c){return t+c.comm*6;},0);
+  const up   =ms.reduce(function(t,c){return t+c.army*(s==='겨울'?16:10);},0);
+  if(s==='가을'){const h=Math.round(grain*1.8);S.res.grain+=h;
+    say('가을. 추수가 끝나 곡식 '+h.toLocaleString()+'석이 들어왔다.');}
+  else S.res.grain+=grain;
+  S.res.gold+=gold; S.res.grain-=up; S.res.iron+=20;
+  if(s==='겨울') say('겨울. 압록·대동·한강이 얼어 물길이 길이 되었다.');
+  if(s==='봄')   say(S.y+'년 봄. 새 해가 밝았다.');
+  if(s==='여름') say('여름. 장마가 드니 수공을 도모할 만하다.');
+  if(S.res.grain<0){S.res.grain=0;say('군량이 바닥났다. 병사들이 흩어지기 시작한다.');}
+  drawTop(); drawCastle();
+});
+
+window.addEventListener('keydown',function(e){
+  const s=stageSize();
+  if(e.key==='+'||e.key==='='){zoomAt(s[0]/2,s[1]/2,1.3);}
+  else if(e.key==='-'){zoomAt(s[0]/2,s[1]/2,1/1.3);}
+  else if(e.key==='0'){fit();}
+  else if(e.key.indexOf('Arrow')===0){
+    const d=60;
+    if(e.key==='ArrowLeft')V.tx+=d; if(e.key==='ArrowRight')V.tx-=d;
+    if(e.key==='ArrowUp')V.ty+=d;   if(e.key==='ArrowDown')V.ty-=d;
+    clampView(); applyView(); e.preventDefault();
+  }
+});
+window.addEventListener('resize',function(){clampView();applyView();});
+
+buildStatic(); fit(); drawTop(); drawLegend(); drawLog();
+select('pyeong'); centerOn(C('pyeong'));
+})();
+</script>

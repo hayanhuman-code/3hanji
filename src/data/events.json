@@ -1,0 +1,497 @@
+[
+  {
+    "id": "daeya_grudge",
+    "name": "대야성의 원한",
+    "historical": true,
+    "faction": "silla",
+    "trigger": {
+      "year": 642,
+      "condition": "NOT owns(silla, daeya)"
+    },
+    "once": true,
+    "quote": "춘추가 이 말을 듣고 기둥에 기대어 서서 종일 눈도 깜박이지 않았고, 사람이나 물건이 앞을 지나가도 알아보지 못하였다.",
+    "source": "삼국사기 신라본기 선덕왕 11년",
+    "text": "대야성이 떨어지고 도독 김품석과 그 처자가 함께 죽었다. 죽은 딸의 아비 김춘추가 조정에 나와 청한다. 「신이 고구려에 가서 군사를 빌려 백제에 원수를 갚겠나이다.」",
+    "choices": [
+      {
+        "text": "청을 받아들여 김춘추를 고구려로 보낸다",
+        "effects": [
+          "flag:chunchu_mission",
+          "cause:+10",
+          "council:+5"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "원한을 삼키고 국경을 다진다",
+        "effects": [
+          "loyalty_all:-5",
+          "gold:+800",
+          "flag:silla_defensive"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "yeon_coup",
+    "name": "연개소문의 정변",
+    "historical": true,
+    "faction": "goguryeo",
+    "trigger": {
+      "year": 642,
+      "condition": "serves(yeon_gaesomun, goguryeo)"
+    },
+    "once": true,
+    "quote": "이에 여러 대인과 함께 왕을 시해하고 몸을 잘라 도랑에 버렸다.",
+    "source": "삼국사기 고구려본기 영류왕 25년",
+    "text": "천리장성을 감독하던 연개소문이 열병을 구실로 대신들을 불러 모아 베었다. 이제 그는 궁으로 향한다. 왕위는 조카에게 주되, 나라는 자기가 쥐겠다는 것이다.",
+    "choices": [
+      {
+        "text": "대막리지의 독재를 받아들인다",
+        "effects": [
+          "kill:go_geonmu",
+          "council:-25",
+          "flag:yeon_dictatorship",
+          "cause:-10"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "왕이 먼저 연개소문을 친다",
+        "effects": [
+          "kill:yeon_gaesomun",
+          "council:+15",
+          "loyalty_all:-6",
+          "gold:-1200"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "chunchu_goguryeo",
+    "name": "김춘추, 고구려에 가다",
+    "historical": true,
+    "faction": "silla",
+    "trigger": {
+      "yearFrom": 642,
+      "yearTo": 644,
+      "condition": "flag(chunchu_mission) AND alive(kim_chunchu) AND NOT war(silla, goguryeo)"
+    },
+    "once": true,
+    "quote": "「마목현과 죽령은 본디 우리 땅이다. 돌려주지 않으면 돌아가지 못하리라.」",
+    "source": "삼국사기 열전 김유신",
+    "text": "고구려는 군사를 빌려주는 대가로 죽령 이북 땅을 요구하며 김춘추를 별관에 가두었다. 선도해가 술과 함께 귀토지설을 일러 준다. 「토끼가 간을 뭍에 두고 왔다 하였다지요.」",
+    "choices": [
+      {
+        "text": "거짓으로 승낙하고 몸을 빼낸다",
+        "effects": [
+          "trust(goguryeo):-25",
+          "flag:chunchu_returned",
+          "cause:+5"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "죽령 이북을 실제로 넘겨주고 동맹한다",
+        "effects": [
+          "give_castle(gugwon, goguryeo)",
+          "alliance(goguryeo)",
+          "flag:alt_history"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "yeoje_alliance",
+    "name": "여제동맹",
+    "historical": true,
+    "faction": "baekje",
+    "trigger": {
+      "yearFrom": 643,
+      "yearTo": 650,
+      "condition": "war(baekje, silla) AND NOT alliance(baekje, goguryeo)",
+      "chance": 0.6
+    },
+    "once": true,
+    "quote": "백제가 고구려와 화친하고 신라의 당항성을 취하여 조공길을 끊으려 하였다.",
+    "source": "삼국사기 신라본기 선덕왕 12년",
+    "text": "북으로는 대막리지, 남으로는 사비의 조정. 신라의 목을 조를 손이 둘이라면 함께 조르는 편이 낫다. 사신이 압록을 건넌다.",
+    "choices": [
+      {
+        "text": "고구려와 손잡고 신라의 조공길을 끊는다",
+        "effects": [
+          "alliance(goguryeo)",
+          "trust(silla):-30",
+          "cause:+8",
+          "flag:yeoje"
+        ],
+        "aiWeight": 4
+      },
+      {
+        "text": "홀로 싸운다",
+        "effects": [
+          "cause:+3",
+          "council:+5"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "nadang_alliance",
+    "name": "나당동맹",
+    "historical": true,
+    "faction": "silla",
+    "trigger": {
+      "yearFrom": 648,
+      "yearTo": 660,
+      "condition": "alive(kim_chunchu) AND war(silla, baekje)"
+    },
+    "once": true,
+    "quote": "「신의 나라가 대국을 섬긴 지 오래인데, 백제가 길을 막아 조회할 수 없나이다.」",
+    "source": "삼국사기 신라본기 진덕왕 2년",
+    "text": "김춘추가 아들 문왕을 데리고 바다를 건너 장안에 이르렀다. 당 태종은 그를 만나 보고 기꺼워하며 군사를 내기로 약조한다. 다만 대동강 이북은 당의 몫이라 한다.",
+    "choices": [
+      {
+        "text": "약조를 맺는다 — 당의 군사를 빌린다",
+        "effects": [
+          "flag:nadang",
+          "autonomy:-20",
+          "cause:+25",
+          "gold:+2500",
+          "troops_all:+2000",
+          "trust(goguryeo):-40"
+        ],
+        "aiWeight": 4
+      },
+      {
+        "text": "대동강 이북을 내줄 수 없다 — 자력으로 간다",
+        "effects": [
+          "autonomy:+15",
+          "council:+10",
+          "flag:alt_history",
+          "cause:+5"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "bidam_rebellion",
+    "name": "비담의 난",
+    "historical": true,
+    "faction": "silla",
+    "trigger": {
+      "year": 647,
+      "condition": "serves(bidam, silla) AND alive(seondeok)"
+    },
+    "once": true,
+    "quote": "「여주(女主)는 나라를 잘 다스릴 수 없다.」 하고 군사를 일으켰다.",
+    "source": "삼국사기 신라본기 선덕왕 16년",
+    "text": "상대등 비담과 염종이 명활성에 웅거하고, 월성의 왕군과 열흘을 대치한다. 밤에 큰 별이 월성에 떨어지자 비담이 외친다. 「별이 떨어진 곳에 반드시 피가 흐른다!」",
+    "choices": [
+      {
+        "text": "허수아비에 불을 붙여 연에 띄운다 — 김유신의 계책",
+        "effects": [
+          "kill:bidam",
+          "council:+12",
+          "loyalty_all:-4",
+          "gold:-1500"
+        ],
+        "aiWeight": 4
+      },
+      {
+        "text": "비담과 타협하여 상대등의 권한을 넓힌다",
+        "effects": [
+          "council:-20",
+          "flag:alt_history",
+          "loyalty_all:+3"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "hwangryongsa",
+    "name": "황룡사 구층목탑",
+    "historical": true,
+    "faction": "silla",
+    "trigger": {
+      "yearFrom": 645,
+      "yearTo": 655,
+      "condition": "institution(bulgyo) AND gold(silla) >= 3000"
+    },
+    "once": true,
+    "quote": "「구층탑을 세우면 이웃 나라의 항복을 받고 구한(九韓)이 와서 조공할 것입니다.」",
+    "source": "삼국유사 탑상",
+    "text": "자장이 당에서 돌아와 아뢴다. 백제의 장인 아비지를 불러 구층의 탑을 세우자는 것이다. 나라의 재물이 크게 들 것이나, 아홉 층은 아홉 나라를 뜻한다 한다.",
+    "choices": [
+      {
+        "text": "탑을 세운다",
+        "effects": [
+          "gold:-3000",
+          "loyalty_all:+12",
+          "council:+8",
+          "cause:+10",
+          "flag:hwangryongsa"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "재물을 군사에 쓴다",
+        "effects": [
+          "troops_all:+1500"
+        ],
+        "aiWeight": 2
+      }
+    ]
+  },
+  {
+    "id": "tang_expedition",
+    "name": "당 태종의 친정",
+    "historical": true,
+    "faction": "goguryeo",
+    "trigger": {
+      "yearFrom": 645,
+      "yearTo": 650,
+      "condition": "flag(yeon_dictatorship) OR owns(goguryeo, yodong)"
+    },
+    "once": true,
+    "quote": "「요동은 본디 중국의 땅이요, 수(隋)가 네 번 군사를 내었으나 얻지 못하였다.」",
+    "source": "삼국사기 고구려본기 보장왕 4년",
+    "text": "당 태종이 스스로 육군을 거느리고 요하를 건넜다. 개모성이 떨어지고 요동성이 불탔다. 이제 안시성 하나가 대군의 앞을 막고 있다.",
+    "choices": [
+      {
+        "text": "안시성에서 막는다 — 성문을 닫고 농성한다",
+        "effects": [
+          "invasion(tang, 60000)",
+          "flag:ansi_stand",
+          "loyalty_all:-6"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "요동을 비우고 압록 이남에서 맞는다",
+        "effects": [
+          "invasion(tang, 40000)",
+          "give_castle(yodong, none)",
+          "grain:+2000",
+          "council:-10"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "hangang_betrayal",
+    "name": "한강의 배신",
+    "historical": true,
+    "faction": "silla",
+    "trigger": {
+      "year": 553,
+      "condition": "alliance(silla, baekje) AND owns(silla, gugwon)"
+    },
+    "once": true,
+    "quote": "신라가 백제가 차지한 땅을 빼앗아 신주(新州)를 설치하였다.",
+    "source": "삼국사기 신라본기 진흥왕 14년",
+    "text": "고구려를 함께 밀어낸 그 해다. 한강 상류는 신라가, 하류는 백제가 나누어 가졌다. 지금 하류의 백제군은 북쪽만 보고 있다. 등 뒤가 비어 있다.",
+    "choices": [
+      {
+        "text": "동맹을 깨고 한강 하류를 기습한다 — 백제군의 허리를 끊어 놓는다",
+        "effects": [
+          "break_alliance(baekje)",
+          "war(baekje)",
+          "cause:-20",
+          "troops(hanseong):-4000",
+          "loyalty(hanseong):-20",
+          "flag:hangang_seized"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "동맹을 지킨다",
+        "effects": [
+          "trust(baekje):+30",
+          "flag:alt_history",
+          "cause:+10",
+          "council:+5"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "gwansanseong",
+    "name": "관산성의 화살",
+    "historical": true,
+    "faction": "baekje",
+    "trigger": {
+      "yearFrom": 554,
+      "yearTo": 556,
+      "condition": "war(baekje, silla) AND alive(seongwang)"
+    },
+    "once": true,
+    "quote": "왕이 밤에 보병 기병 50인을 거느리고 구천에 이르렀는데, 복병이 일어나 왕이 해를 입었다.",
+    "source": "삼국사기 백제본기 성왕 32년",
+    "text": "태자 창이 관산성에서 신라군과 맞섰다. 성왕이 몸소 위로하러 밤길을 나선다. 호위는 오십 기뿐이다. 구천(狗川)의 갈대밭이 조용하다.",
+    "choices": [
+      {
+        "text": "왕이 몸소 간다 — 역사대로",
+        "effects": [
+          "kill:seongwang",
+          "loyalty_all:-10",
+          "council:-15",
+          "trust(silla):-50",
+          "cause:+15"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "왕을 만류하고 사비로 돌린다",
+        "effects": [
+          "flag:alt_history",
+          "gold:-800",
+          "council:+5"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "good_harvest",
+    "name": "풍년",
+    "historical": false,
+    "trigger": {
+      "condition": "season == 2",
+      "chance": 0.18
+    },
+    "once": false,
+    "text": "올가을 들녘이 누렇다. 창고가 넘쳐 백성이 노래한다.",
+    "choices": [
+      {
+        "text": "창고를 연다",
+        "effects": [
+          "grain:+2500",
+          "loyalty_all:+4"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "famine",
+    "name": "흉년",
+    "historical": false,
+    "trigger": {
+      "condition": "season == 2",
+      "chance": 0.12
+    },
+    "once": false,
+    "quote": "봄에 크게 기근이 들어 백성이 자식을 팔아 먹었다.",
+    "source": "삼국사기",
+    "text": "서리가 일찍 내렸다. 창고를 열어 백성을 먹일 것인가, 군량을 지킬 것인가.",
+    "choices": [
+      {
+        "text": "창고를 열어 진휼한다",
+        "effects": [
+          "grain:-2000",
+          "loyalty_all:+8",
+          "council:-4"
+        ],
+        "aiWeight": 2
+      },
+      {
+        "text": "군량을 지킨다",
+        "effects": [
+          "loyalty_all:-10"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "plague",
+    "name": "역병",
+    "historical": false,
+    "trigger": {
+      "condition": "season == 1",
+      "chance": 0.1
+    },
+    "once": false,
+    "text": "역병이 돌아 군영에서 사람이 쓰러진다. 의원을 풀 것인가.",
+    "choices": [
+      {
+        "text": "의원을 풀고 군영을 나눈다",
+        "effects": [
+          "gold:-1000",
+          "troops_all:-500"
+        ],
+        "aiWeight": 2
+      },
+      {
+        "text": "그대로 둔다",
+        "effects": [
+          "troops_all:-2000",
+          "loyalty_all:-6"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "flood",
+    "name": "장마와 수해",
+    "historical": false,
+    "trigger": {
+      "condition": "season == 1",
+      "chance": 0.14
+    },
+    "once": false,
+    "text": "장마가 길다. 강가의 논이 잠기고 성곽 한쪽이 무너졌다.",
+    "choices": [
+      {
+        "text": "부역을 내어 즉시 수축한다",
+        "effects": [
+          "gold:-900",
+          "loyalty_all:-3"
+        ],
+        "aiWeight": 2
+      },
+      {
+        "text": "가을까지 미룬다",
+        "effects": [
+          "wall_all:-5",
+          "grain:-1200"
+        ],
+        "aiWeight": 1
+      }
+    ]
+  },
+  {
+    "id": "wandering_talent",
+    "name": "재야의 인재",
+    "historical": false,
+    "trigger": {
+      "chance": 0.08
+    },
+    "once": false,
+    "text": "저잣거리에서 글 읽는 소리가 들린다 하여 사람을 보내니, 쓸 만한 자가 있다 한다.",
+    "choices": [
+      {
+        "text": "예를 갖추어 부른다",
+        "effects": [
+          "gold:-400",
+          "reveal_talent"
+        ],
+        "aiWeight": 3
+      },
+      {
+        "text": "지금은 겨를이 없다",
+        "effects": [],
+        "aiWeight": 1
+      }
+    ]
+  }
+]

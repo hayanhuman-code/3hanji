@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      # JSON 오타가 최대 버그 원인이므로 데이터 검증을 가장 먼저 돌린다 (계획서 §8)
+      - name: 데이터 검증
+        run: npm run validate
+      - name: 타입 검사
+        run: npx tsc --noEmit -p tsconfig.json
+      - name: 스모크 테스트
+        run: npm test
+      - name: 빌드
+        run: npm run build
+      # 밸런스가 크게 깨지면(예: 한 세력이 전패) 여기서 눈에 띈다
+      - name: 밸런스 시뮬레이션 (참고용)
+        run: npm run simulate -- 20 s642 120

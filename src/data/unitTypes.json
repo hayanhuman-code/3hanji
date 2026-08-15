@@ -1,0 +1,268 @@
+[
+  {
+    "id": "infantry",
+    "name": "보병",
+    "faction": null,
+    "class": "infantry",
+    "cost": {
+      "gold": 80,
+      "iron": 10
+    },
+    "attack": 32,
+    "defense": 32,
+    "range": 1,
+    "move": 3,
+    "terrain": {
+      "forest": 1.1,
+      "hill": 1.05,
+      "mountain": 1.0,
+      "river": 0.6,
+      "mudflat": 0.7
+    },
+    "counters": {
+      "archer": 1.1,
+      "siege": 1.3
+    },
+    "desc": "어디서나 뽑을 수 있는 기본 병종. 균형 잡혀 있으나 특출난 구석이 없다."
+  },
+  {
+    "id": "archer",
+    "name": "궁병",
+    "faction": null,
+    "class": "archer",
+    "cost": {
+      "gold": 95,
+      "iron": 14
+    },
+    "attack": 34,
+    "defense": 22,
+    "range": 2,
+    "move": 3,
+    "terrain": {
+      "hill": 1.2,
+      "mountain": 1.15,
+      "forest": 0.95,
+      "river": 0.6,
+      "wall": 1.25
+    },
+    "counters": {
+      "spear": 1.3,
+      "infantry": 1.05
+    },
+    "desc": "사거리 2. 성벽 위에서 특히 강하다."
+  },
+  {
+    "id": "cavalry",
+    "name": "기병",
+    "faction": null,
+    "class": "cavalry",
+    "cost": {
+      "gold": 140,
+      "iron": 30
+    },
+    "attack": 44,
+    "defense": 28,
+    "range": 1,
+    "move": 5,
+    "terrain": {
+      "plain": 1.2,
+      "forest": 0.8,
+      "hill": 0.9,
+      "mountain": 0.65,
+      "river": 0.5,
+      "mudflat": 0.5
+    },
+    "counters": {
+      "archer": 1.45,
+      "siege": 1.5,
+      "spear": 0.65
+    },
+    "desc": "평지 돌파와 추격. 산악과 도하에서는 힘을 못 쓴다."
+  },
+  {
+    "id": "spear",
+    "name": "장창보병",
+    "faction": "silla",
+    "class": "spear",
+    "cost": {
+      "gold": 90,
+      "iron": 20
+    },
+    "attack": 28,
+    "defense": 45,
+    "range": 1,
+    "move": 3,
+    "terrain": {
+      "plain": 1.1,
+      "forest": 0.9,
+      "mountain": 0.9,
+      "river": 0.6,
+      "wall": 1.1
+    },
+    "counters": {
+      "cavalry": 2.0,
+      "archer": 0.8
+    },
+    "desc": "신라의 대기병 방어 병종. 개마무사의 돌격을 막아 세우는 유일한 답."
+  },
+  {
+    "id": "gaema",
+    "name": "개마무사",
+    "faction": "goguryeo",
+    "class": "cavalry",
+    "cost": {
+      "gold": 210,
+      "iron": 65
+    },
+    "attack": 56,
+    "defense": 44,
+    "range": 1,
+    "move": 4,
+    "terrain": {
+      "plain": 1.25,
+      "forest": 0.75,
+      "hill": 0.85,
+      "mountain": 0.55,
+      "river": 0.45,
+      "mudflat": 0.4
+    },
+    "counters": {
+      "archer": 1.5,
+      "infantry": 1.25,
+      "siege": 1.5,
+      "spear": 0.62
+    },
+    "desc": "사람과 말이 모두 갑주를 두른 중장기병. 평지에서는 무엇도 정면으로 막지 못한다."
+  },
+  {
+    "id": "maekgung",
+    "name": "맥궁병",
+    "faction": "goguryeo",
+    "class": "archer",
+    "cost": {
+      "gold": 120,
+      "iron": 18
+    },
+    "attack": 38,
+    "defense": 24,
+    "range": 3,
+    "move": 3,
+    "terrain": {
+      "hill": 1.3,
+      "mountain": 1.25,
+      "forest": 1.0,
+      "river": 0.6,
+      "wall": 1.3
+    },
+    "counters": {
+      "spear": 1.35,
+      "infantry": 1.1
+    },
+    "desc": "사거리 3의 장궁. 산성과 능선을 낀 싸움에서 진가를 발휘한다."
+  },
+  {
+    "id": "navy",
+    "name": "수군",
+    "faction": "baekje",
+    "class": "navy",
+    "cost": {
+      "gold": 150,
+      "iron": 25
+    },
+    "attack": 40,
+    "defense": 34,
+    "range": 2,
+    "move": 4,
+    "terrain": {
+      "river": 1.6,
+      "mudflat": 1.4,
+      "plain": 0.85,
+      "hill": 0.7,
+      "mountain": 0.5,
+      "forest": 0.8
+    },
+    "counters": {
+      "infantry": 1.2,
+      "cavalry": 1.3
+    },
+    "naval": true,
+    "desc": "강과 갯벌에서 압도적. 도하 페널티를 받지 않으며 화공을 쓸 수 있다."
+  },
+  {
+    "id": "hwarang",
+    "name": "화랑결사대",
+    "faction": "silla",
+    "class": "infantry",
+    "cost": {
+      "gold": 180,
+      "iron": 35
+    },
+    "attack": 48,
+    "defense": 38,
+    "range": 1,
+    "move": 4,
+    "terrain": {
+      "plain": 1.05,
+      "forest": 1.1,
+      "hill": 1.15,
+      "mountain": 1.1,
+      "river": 0.7
+    },
+    "counters": {
+      "archer": 1.2,
+      "siege": 1.3
+    },
+    "requires": "hwarangdo",
+    "desc": "화랑도가 길러낸 결사대. 주변 아군의 사기를 끌어올린다. (화랑도 제도 반포 필요)"
+  },
+  {
+    "id": "ironclad",
+    "name": "철갑보병",
+    "faction": "gaya",
+    "class": "infantry",
+    "cost": {
+      "gold": 130,
+      "iron": 55
+    },
+    "attack": 34,
+    "defense": 52,
+    "range": 1,
+    "move": 2,
+    "terrain": {
+      "plain": 1.0,
+      "forest": 0.95,
+      "mountain": 0.95,
+      "river": 0.55,
+      "wall": 1.2
+    },
+    "counters": {
+      "cavalry": 1.15,
+      "archer": 1.1
+    },
+    "desc": "가야 제련술로 만든 판갑 보병. 느리지만 좀처럼 무너지지 않는다."
+  },
+  {
+    "id": "ram",
+    "name": "공성병기",
+    "faction": null,
+    "class": "siege",
+    "cost": {
+      "gold": 200,
+      "iron": 70
+    },
+    "attack": 18,
+    "defense": 16,
+    "range": 1,
+    "move": 2,
+    "terrain": {
+      "plain": 1.0,
+      "hill": 0.8,
+      "mountain": 0.6,
+      "river": 0.3,
+      "forest": 0.7
+    },
+    "counters": {},
+    "siege": true,
+    "desc": "충차와 운제. 야전에서는 무력하지만 성벽을 부수는 유일한 수단이다."
+  }
+]

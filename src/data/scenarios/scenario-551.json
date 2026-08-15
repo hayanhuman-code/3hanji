@@ -1,0 +1,134 @@
+{
+  "id": "s551",
+  "name": "한강의 주인",
+  "startYear": 551,
+  "startSeason": 0,
+  "desc": "나제동맹이 북으로 창끝을 돌려 한강을 되찾았다. 하류는 백제가, 상류는 신라가 나누어 가졌다. 이제 남은 물음은 하나다 — 이 땅의 주인은 누구인가. 553년의 선택이 기다린다.",
+  "recommended": [
+    "silla",
+    "baekje"
+  ],
+  "ownership": {
+    "goguryeo": [
+      "yodong",
+      "ansi",
+      "ogol",
+      "gungnae",
+      "pyeongyang",
+      "gwanmi"
+    ],
+    "baekje": [
+      "hanseong",
+      "ungjin",
+      "sabi",
+      "gibeolpo"
+    ],
+    "silla": [
+      "gugwon",
+      "samnyeon",
+      "siljik",
+      "geumseong",
+      "geumgwan",
+      "daeya"
+    ]
+  },
+  "placement": {
+    "go_heul": "gwanmi",
+    "on_dal": "pyeongyang",
+    "wangsanak": "gungnae",
+    "seongwang": "sabi",
+    "buyeo_chang": "hanseong",
+    "wang_hyorin": "gibeolpo",
+    "jinheung": "geumseong",
+    "geochilbu": "gugwon",
+    "isabu": "siljik",
+    "kim_muryeok": "samnyeon",
+    "sadaham": "geumseong",
+    "kim_gugyeong": "geumgwan"
+  },
+  "resources": {
+    "goguryeo": {
+      "grain": 12000,
+      "gold": 4000,
+      "iron": 460,
+      "cause": 16
+    },
+    "baekje": {
+      "grain": 11500,
+      "gold": 5200,
+      "iron": 480,
+      "cause": 26
+    },
+    "silla": {
+      "grain": 10000,
+      "gold": 4200,
+      "iron": 440,
+      "cause": 24
+    }
+  },
+  "troops": {
+    "pyeongyang": 13000,
+    "gungnae": 9000,
+    "yodong": 9000,
+    "ansi": 7000,
+    "ogol": 6500,
+    "gwanmi": 6000,
+    "hanseong": 11000,
+    "ungjin": 11000,
+    "sabi": 13000,
+    "gibeolpo": 7000,
+    "gugwon": 7000,
+    "samnyeon": 8000,
+    "siljik": 6000,
+    "geumseong": 12000,
+    "geumgwan": 6000,
+    "daeya": 8000
+  },
+  "relations": [
+    {
+      "a": "silla",
+      "b": "baekje",
+      "status": "alliance",
+      "trust": 60
+    },
+    {
+      "a": "goguryeo",
+      "b": "silla",
+      "status": "war",
+      "trust": -60
+    },
+    {
+      "a": "goguryeo",
+      "b": "baekje",
+      "status": "war",
+      "trust": -70
+    }
+  ],
+  "factionMods": {
+    "goguryeo": {
+      "councilSupport": 40,
+      "personality": {
+        "aggression": 0.55,
+        "expansion": 0.45,
+        "diplomacy": 0.5
+      },
+      "note": "왕위 다툼과 북방 돌궐의 압박으로 남쪽을 돌볼 여력이 없다. 한강을 잃은 직후다."
+    },
+    "baekje": {
+      "councilSupport": 66,
+      "personality": {
+        "aggression": 0.7,
+        "expansion": 0.7
+      },
+      "note": "성왕이 사비 천도를 마치고 국력을 걸어 한강 하류를 되찾았다."
+    },
+    "silla": {
+      "councilSupport": 70,
+      "personality": {
+        "aggression": 0.6,
+        "expansion": 0.7
+      },
+      "note": "진흥왕의 팽창기. 거칠부가 죽령 이북 열 고을을 손에 넣었다."
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "id": "s642",
+  "name": "천하삼분의 끝",
+  "startYear": 642,
+  "startSeason": 2,
+  "desc": "대야성이 떨어졌다. 김춘추의 딸이 그 성에서 죽었고, 평양에서는 연개소문이 왕을 베었다. 세 나라 모두가 마지막 판을 시작한다.",
+  "recommended": [
+    "silla",
+    "baekje",
+    "goguryeo"
+  ],
+  "ownership": {
+    "goguryeo": [
+      "yodong",
+      "ansi",
+      "ogol",
+      "gungnae",
+      "pyeongyang",
+      "gwanmi"
+    ],
+    "baekje": [
+      "ungjin",
+      "sabi",
+      "gibeolpo",
+      "daeya"
+    ],
+    "silla": [
+      "hanseong",
+      "gugwon",
+      "samnyeon",
+      "siljik",
+      "geumseong",
+      "geumgwan"
+    ]
+  },
+  "placement": {
+    "yeon_gaesomun": "pyeongyang",
+    "go_geonmu": "pyeongyang",
+    "seondohae": "pyeongyang",
+    "yang_manchun": "ansi",
+    "go_yeonsu": "yodong",
+    "go_hyejin": "yodong",
+    "on_sanmun": "gungnae",
+    "uija": "sabi",
+    "gyebaek": "sabi",
+    "seongchung": "sabi",
+    "heungsu": "ungjin",
+    "yunchung": "daeya",
+    "buyeo_yung": "gibeolpo",
+    "heukchi": "ungjin",
+    "boksin": "sabi",
+    "seondeok": "geumseong",
+    "kim_yusin": "samnyeon",
+    "kim_chunchu": "geumseong",
+    "alcheon": "geumseong",
+    "bidam": "geumseong",
+    "jukji": "hanseong",
+    "kim_beommin": "geumgwan",
+    "kim_inmun": "siljik"
+  },
+  "dead": [
+    "kim_pumseok",
+    "jukjuk"
+  ],
+  "resources": {
+    "goguryeo": {
+      "grain": 13000,
+      "gold": 4200,
+      "iron": 520,
+      "cause": 20
+    },
+    "baekje": {
+      "grain": 13500,
+      "gold": 6200,
+      "iron": 560,
+      "cause": 26
+    },
+    "silla": {
+      "grain": 9500,
+      "gold": 3600,
+      "iron": 400,
+      "cause": 14
+    }
+  },
+  "troops": {
+    "pyeongyang": 13000,
+    "gungnae": 9000,
+    "yodong": 11000,
+    "ansi": 8000,
+    "ogol": 7000,
+    "gwanmi": 6000,
+    "sabi": 15000,
+    "ungjin": 11000,
+    "gibeolpo": 7000,
+    "daeya": 11000,
+    "geumseong": 12000,
+    "hanseong": 8000,
+    "gugwon": 6000,
+    "samnyeon": 7000,
+    "siljik": 5000,
+    "geumgwan": 6000
+  },
+  "relations": [
+    {
+      "a": "silla",
+      "b": "baekje",
+      "status": "war",
+      "trust": -70
+    },
+    {
+      "a": "goguryeo",
+      "b": "silla",
+      "status": "peace",
+      "trust": -35
+    },
+    {
+      "a": "goguryeo",
+      "b": "baekje",
+      "status": "peace",
+      "trust": 10
+    }
+  ]
+}

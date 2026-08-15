@@ -1,0 +1,408 @@
+/**
+ * BattleScreen.tsx — 전술 전투 화면 (시스템 상세계획 §4 ⑤)
+ *
+ * 헥스 맵은 Canvas 로 그린다. 이 화면은 전략맵 없이도 뜬다 —
+ * 전투 시뮬레이터(sandbox)와 실제 전투가 같은 컴포넌트를 쓴다.
+ */
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { factionColor, factionName, unitDef } from '../core/data';
+import {
+  attackableUnits,
+  attackableWalls,
+  reachable,
+} from '../core/battle/battleEngine';
+import { livingUnits, sideTroops, type BattleUnit } from '../core/battle/battleState';
+import { hexCorners, hexToPixel, pixelToHex, type Axial } from '../core/battle/hex';
+import type { HexTerrain } from '../core/types';
+import { fmt } from '../core/util';
+import { useGame } from './store';
+
+const TERRAIN_COLOR: Record<HexTerrain, string> = {
+  plain: '#41402f',
+  forest: '#2c4029',
+  hill: '#544733',
+  mountain: '#665640',
+  river: '#28414f',
+  mudflat: '#464034',
+  wall: '#8d8a86',
+  gate: '#a8813f',
+  keep: '#c8a25a',
+};
+
+const TERRAIN_LABEL: Record<HexTerrain, string> = {
+  plain: '평지',
+  forest: '숲',
+  hill: '구릉',
+  mountain: '산악',
+  river: '강',
+  mudflat: '갯벌',
+  wall: '성벽',
+  gate: '성문',
+  keep: '천수',
+};
+
+export function BattleScreen() {
+  const battle = useGame((s) => s.battle);
+  const live = useGame((s) => s.battleIsLive);
+  const revision = useGame((s) => s.revision);
+  const move = useGame((s) => s.battleMove);
+  const attack = useGame((s) => s.battleAttack);
+  const attackWall = useGame((s) => s.battleAttackWall);
+  const endTurn = useGame((s) => s.battleEndTurn);
+  const delegate = useGame((s) => s.battleDelegate);
+  const withdraw = useGame((s) => s.battleWithdraw);
+  const finish = useGame((s) => s.battleFinish);
+  const setScreen = useGame((s) => s.setScreen);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hover, setHover] = useState<Axial | null>(null);
+
+  const myTurn = !!battle && !battle.finished && battle.activeSide === battle.playerSide;
+
+  const selected = battle && selectedId ? battle.units[selectedId] : undefined;
+  const reach = useMemo(() => {
+    if (!battle || !selected || !myTurn || selected.side !== battle.playerSide) return null;
+    return reachable(battle, selected);
+    // revision 이 바뀌면 다시 계산한다.
+  }, [battle, selected, myTurn, revision]);
+
+  const targets = useMemo(() => {
+    if (!battle || !selected || !myTurn) return [];
+    return attackableUnits(battle, selected);
+  }, [battle, selected, myTurn, revision]);
+
+  const wallTargets = useMemo(() => {
+    if (!battle || !selected || !myTurn) return [];
+    return attackableWalls(battle, selected);
+  }, [battle, selected, myTurn, revision]);
+
+  /* --------------------------- 그리기 --------------------------- */
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !battle) return;
+    const parent = canvas.parentElement;
+    if (!parent) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const w = parent.clientWidth;
+    const h = parent.clientHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const hexes = Object.values(battle.hexes);
+    // 맵이 화면에 꽉 차도록 헥스 크기를 정한다.
+    const size = Math.min((w - 24) / (battle.cols * Math.sqrt(3) + 1), (h - 24) / (battle.rows * 1.5 + 1));
+    const pts = hexes.map((hx) => hexToPixel(hx, size));
+    const minX = Math.min(...pts.map((p) => p.x));
+    const minY = Math.min(...pts.map((p) => p.y));
+    const maxX = Math.max(...pts.map((p) => p.x));
+    const maxY = Math.max(...pts.map((p) => p.y));
+    const ox = (w - (maxX - minX)) / 2 - minX;
+    const oy = (h - (maxY - minY)) / 2 - minY;
+
+    const reachKeys = reach ? new Set(reach.keys()) : null;
+    const targetIds = new Set(targets.map((t) => t.id));
+    const wallKeys = new Set(wallTargets.map((t) => `${t.q},${t.r}`));
+
+    for (const hx of hexes) {
+      const p = hexToPixel(hx, size);
+      const cx = p.x + ox;
+      const cy = p.y + oy;
+      const corners = hexCorners(cx, cy, size * 0.94);
+
+      ctx.beginPath();
+      corners.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+      ctx.closePath();
+
+      ctx.fillStyle = TERRAIN_COLOR[hx.terrain];
+      // 무너진 성벽은 흙빛으로 바랜다.
+      if ((hx.terrain === 'wall' || hx.terrain === 'gate') && (hx.wallHp ?? 0) <= 0) {
+        ctx.fillStyle = '#3b342a';
+      }
+      ctx.fill();
+
+      const key = `${hx.q},${hx.r}`;
+      if (reachKeys?.has(key)) {
+        ctx.fillStyle = 'rgba(200,149,47,0.22)';
+        ctx.fill();
+      }
+      if (wallKeys.has(key)) {
+        ctx.fillStyle = 'rgba(176,67,47,0.3)';
+        ctx.fill();
+      }
+
+      const isWall = hx.terrain === 'wall' || hx.terrain === 'gate';
+      ctx.strokeStyle = isWall ? 'rgba(232,220,196,0.55)' : 'rgba(20,16,13,0.75)';
+      ctx.lineWidth = isWall ? 2 : 1;
+      ctx.stroke();
+
+      if (hx.terrain === 'gate' && (hx.wallHp ?? 0) > 0) {
+        ctx.fillStyle = '#2a2018';
+        ctx.font = `${Math.max(8, size * 0.3)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('성문', cx, cy);
+      }
+      if (hx.terrain === 'keep') {
+        ctx.fillStyle = '#2a2018';
+        ctx.font = `${Math.max(8, size * 0.3)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('천수', cx, cy);
+      }
+
+      // 성벽 내구도
+      if ((hx.terrain === 'wall' || hx.terrain === 'gate') && (hx.wallHp ?? 0) > 0) {
+        const ratio = (hx.wallHp ?? 0) / Math.max(1, hx.maxWallHp ?? 1);
+        ctx.fillStyle = '#14100d';
+        ctx.fillRect(cx - size * 0.5, cy + size * 0.55, size, 3.5);
+        ctx.fillStyle = ratio > 0.4 ? '#c8952f' : '#b0432f';
+        ctx.fillRect(cx - size * 0.5, cy + size * 0.55, size * ratio, 3.5);
+      }
+    }
+
+    // 부대
+    for (const u of livingUnits(battle)) {
+      const p = hexToPixel(u, size);
+      const cx = p.x + ox;
+      const cy = p.y + oy;
+      const faction = u.side === 'attacker' ? battle.attackerFaction : battle.defenderFaction;
+      const def = unitDef(u.unitType);
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, size * 0.56, 0, Math.PI * 2);
+      ctx.fillStyle = factionColor(faction);
+      ctx.fill();
+      ctx.lineWidth = u.id === selectedId ? 3 : targetIds.has(u.id) ? 2.5 : 1.5;
+      ctx.strokeStyle =
+        u.id === selectedId ? '#e8dcc4' : targetIds.has(u.id) ? '#b0432f' : 'rgba(20,16,13,0.9)';
+      ctx.stroke();
+
+      ctx.fillStyle = '#f2ead8';
+      ctx.font = `${Math.max(9, size * 0.36)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(def.name.slice(0, 2), cx, cy - size * 0.12);
+      ctx.font = `${Math.max(8, size * 0.3)}px sans-serif`;
+      ctx.fillText(String(Math.round(u.count / 100) / 10) + '천', cx, cy + size * 0.26);
+
+      // 사기 막대
+      ctx.fillStyle = '#14100d';
+      ctx.fillRect(cx - size * 0.5, cy - size * 0.78, size, 3.5);
+      ctx.fillStyle = u.morale > 45 ? '#6f9e5a' : u.morale > 20 ? '#c8952f' : '#b34b3c';
+      ctx.fillRect(cx - size * 0.5, cy - size * 0.78, size * (u.morale / 100), 3.5);
+    }
+
+    // 마우스가 놓인 칸
+    if (hover) {
+      const p = hexToPixel(hover, size);
+      const corners = hexCorners(p.x + ox, p.y + oy, size * 0.94);
+      ctx.beginPath();
+      corners.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(232,220,196,0.6)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+
+    // 클릭 좌표 → 헥스 변환에 필요한 값을 캔버스에 매달아 둔다.
+    (canvas as HTMLCanvasElement & { _tf?: unknown })._tf = { size, ox, oy };
+  }, [battle, revision, selectedId, hover, reach, targets, wallTargets]);
+
+  if (!battle) return null;
+
+  const toHex = (e: React.MouseEvent<HTMLCanvasElement>): Axial | null => {
+    const canvas = canvasRef.current as (HTMLCanvasElement & { _tf?: { size: number; ox: number; oy: number } }) | null;
+    if (!canvas?._tf) return null;
+    const rect = canvas.getBoundingClientRect();
+    const { size, ox, oy } = canvas._tf;
+    return pixelToHex(e.clientX - rect.left - ox, e.clientY - rect.top - oy, size);
+  };
+
+  const onClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const hex = toHex(e);
+    if (!hex) return;
+    const unit = livingUnits(battle).find((u) => u.q === hex.q && u.r === hex.r);
+
+    // 내 부대 고르기
+    if (unit && unit.side === battle.playerSide) {
+      setSelectedId(unit.id);
+      return;
+    }
+    if (!selected || !myTurn || selected.side !== battle.playerSide) return;
+
+    // 적 부대 공격
+    if (unit && targets.some((t) => t.id === unit.id)) {
+      attack(selected.id, unit.id);
+      return;
+    }
+    // 성벽 공격
+    if (wallTargets.some((w) => w.q === hex.q && w.r === hex.r)) {
+      attackWall(selected.id, hex);
+      return;
+    }
+    // 이동
+    if (reach?.has(`${hex.q},${hex.r}`)) {
+      move(selected.id, hex);
+    }
+  };
+
+  const hoverHex = hover ? battle.hexes[`${hover.q},${hover.r}`] : undefined;
+  const mySide = battle.playerSide;
+  const myUnits = mySide ? livingUnits(battle, mySide) : [];
+
+  return (
+    <div className="battle">
+      <div className="battle-head">
+        <h2 style={{ fontSize: 18 }}>
+          {battle.castleName} {battle.siege ? '공방전' : '야전'}
+        </h2>
+        <span className="tag">
+          {battle.turn} / {battle.maxTurns} 합
+        </span>
+        <span className="tag">{['봄', '여름', '가을', '겨울'][battle.season]}</span>
+        {battle.mountainFortress && <span className="tag">산성 보정</span>}
+        <span className="row" style={{ gap: 6 }}>
+          <i
+            style={{
+              width: 10,
+              height: 10,
+              background: factionColor(battle.attackerFaction),
+              display: 'inline-block',
+              borderRadius: 2,
+            }}
+          />
+          {factionName(battle.attackerFaction)} {fmt(sideTroops(battle, 'attacker'))}
+          <span className="faint">vs</span>
+          <i
+            style={{
+              width: 10,
+              height: 10,
+              background: factionColor(battle.defenderFaction),
+              display: 'inline-block',
+              borderRadius: 2,
+            }}
+          />
+          {factionName(battle.defenderFaction)} {fmt(sideTroops(battle, 'defender'))}
+        </span>
+        <div className="spacer" />
+        {!battle.finished && (
+          <>
+            <span className={myTurn ? 'good' : 'muted'}>
+              {myTurn ? '아군 차례' : battle.playerSide ? '적군 차례' : '관전'}
+            </span>
+            <button className="btn small" onClick={endTurn} disabled={!myTurn}>
+              차례 종료
+            </button>
+            <button className="btn small" onClick={delegate}>
+              위임 (자동 진행)
+            </button>
+            <button className="btn small" onClick={withdraw} disabled={!battle.playerSide}>
+              퇴각
+            </button>
+          </>
+        )}
+        {battle.finished && (
+          <button className="btn primary small" onClick={live ? finish : () => setScreen('title')}>
+            {live ? '전략맵으로' : '나가기'}
+          </button>
+        )}
+      </div>
+
+      <div className="battle-canvas-wrap">
+        <canvas
+          ref={canvasRef}
+          onClick={onClick}
+          onMouseMove={(e) => setHover(toHex(e))}
+          onMouseLeave={() => setHover(null)}
+        />
+        <div className="battle-side">
+          {battle.finished && battle.result && (
+            <div className="card" style={{ padding: 12, marginBottom: 10 }}>
+              <h3 style={{ fontSize: 16 }}>
+                {battle.result.winner === 'attacker' ? '공격 측' : '수비 측'} 승리
+              </h3>
+              <p>
+                공격 피해 {fmt(battle.result.attackerLoss)}
+                <br />
+                수비 피해 {fmt(battle.result.defenderLoss)}
+              </p>
+              {battle.result.capturedOfficers.length > 0 && (
+                <p className="faint">사로잡힌 장수 {battle.result.capturedOfficers.length}명</p>
+              )}
+            </div>
+          )}
+
+          {hoverHex && (
+            <div className="faint" style={{ fontSize: 12, marginBottom: 8 }}>
+              {TERRAIN_LABEL[hoverHex.terrain]}
+              {hoverHex.wallHp !== undefined && ` · 내구 ${hoverHex.wallHp}/${hoverHex.maxWallHp}`}
+            </div>
+          )}
+
+          {selected && <UnitCard unit={selected} selected />}
+
+          <div className="section-label" style={{ marginTop: 4 }}>
+            아군 부대 {myUnits.length}
+          </div>
+          {myUnits.map((u) => (
+            <div key={u.id} onClick={() => setSelectedId(u.id)} style={{ cursor: 'pointer' }}>
+              <UnitCard unit={u} selected={u.id === selectedId} />
+            </div>
+          ))}
+
+          <hr className="sep" />
+          <div className="legend">
+            {(Object.keys(TERRAIN_COLOR) as HexTerrain[]).map((t) => (
+              <span key={t}>
+                <i style={{ background: TERRAIN_COLOR[t] }} />
+                {TERRAIN_LABEL[t]}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="battle-log">
+        {battle.log
+          .slice(-60)
+          .reverse()
+          .map((l, i) => (
+            <div key={i}>{l}</div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+function UnitCard({ unit, selected }: { unit: BattleUnit; selected?: boolean }) {
+  const def = unitDef(unit.unitType);
+  return (
+    <div className={`unit-card${selected ? ' sel' : ''}`}>
+      <div className="row between">
+        <b>{def.name}</b>
+        <span className="num">{fmt(unit.count)}</span>
+      </div>
+      {unit.officer && (
+        <div className="faint" style={{ fontSize: 11.5 }}>
+          {unit.officer.name} — 통{unit.officer.stats.lead} 무{unit.officer.stats.war}
+        </div>
+      )}
+      <div className="faint" style={{ fontSize: 11.5 }}>
+        사기 {Math.round(unit.morale)} · 훈련 {Math.round(unit.training)} · 이동 {unit.movesLeft}
+        {unit.acted ? ' · 행동함' : ''}
+      </div>
+      <div className="faint" style={{ fontSize: 11 }}>
+        공 {def.attack} / 방 {def.defense} / 사거리 {def.range}
+        {def.siege ? ' · 공성병기' : ''}
+      </div>
+    </div>
+  );
+}

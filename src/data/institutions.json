@@ -1,0 +1,72 @@
+[
+  {
+    "id": "yullyeong",
+    "name": "율령 반포",
+    "faction": null,
+    "cost": { "gold": 2500 },
+    "requires": null,
+    "councilDC": 58,
+    "effects": ["council:-12", "loyalty_all:-4"],
+    "desc": "관등과 형률을 문서로 못 박는다. 징세 효율 +18%. 다만 제 몫을 빼앗긴 귀족들이 반발한다."
+  },
+  {
+    "id": "bulgyo",
+    "name": "불교 공인",
+    "faction": null,
+    "cost": { "gold": 1800, "cause": 5 },
+    "requires": null,
+    "councilDC": 52,
+    "effects": ["loyalty_all:+8", "council:-8"],
+    "desc": "왕즉불(王卽佛). 전 거점 민심 상승과 매 턴 민심 회복 +1. 전통 귀족의 지지는 깎인다."
+  },
+  {
+    "id": "taehak",
+    "name": "태학 설립",
+    "faction": "goguryeo",
+    "cost": { "gold": 2200 },
+    "requires": null,
+    "councilDC": 45,
+    "effects": ["council:+5"],
+    "desc": "관학을 세워 관리를 기른다. 탐색 성공률 +15%, 등용 판정 +10."
+  },
+  {
+    "id": "baksa",
+    "name": "박사 제도",
+    "faction": "baekje",
+    "cost": { "gold": 2200 },
+    "requires": null,
+    "councilDC": 45,
+    "effects": ["council:+5"],
+    "desc": "오경박사를 두어 학문과 기술을 관장하게 한다. 탐색 성공률 +15%, 상업 수입 +8%."
+  },
+  {
+    "id": "hwarangdo",
+    "name": "화랑도 개편",
+    "faction": "silla",
+    "cost": { "gold": 2000 },
+    "requires": null,
+    "councilDC": 48,
+    "effects": ["council:+5", "loyalty_all:+4"],
+    "desc": "청년 조직을 국가 인재풀로 바꾼다. 탐색 시 성장형 인재가 나타나고, 화랑결사대를 징병할 수 있다."
+  },
+  {
+    "id": "gunje",
+    "name": "군제 개편",
+    "faction": null,
+    "cost": { "gold": 3000 },
+    "requires": "institution(yullyeong)",
+    "councilDC": 55,
+    "effects": ["council:-6"],
+    "desc": "당(幢)과 정(停)을 정비한다. 징병 비용 -15%, 훈련 효율 +25%. (율령 반포 이후)"
+  },
+  {
+    "id": "chochang",
+    "name": "조창 정비",
+    "faction": null,
+    "cost": { "gold": 1600 },
+    "requires": null,
+    "councilDC": 40,
+    "effects": [],
+    "desc": "조운로와 창고를 손본다. 거점 비축 병량 상한 +40%, 병량 수송 손실 없음."
+  }
+]

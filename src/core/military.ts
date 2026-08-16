@@ -39,6 +39,19 @@ import { clamp, findPath, sum } from './util';
  * 출진
  * ------------------------------------------------------------------ */
 
+/**
+ * 그 거점에 군대를 들이려면 먼저 선전포고를 해야 하는가.
+ *
+ * 화면과 규칙이 같은 답을 내야 한다. 예전에는 지도가 「길이 이어지는 곳」을 전부
+ * 후보로 밝혀 놓아, 화평 중인 나라의 성까지 골라 편성을 다 마친 뒤에야
+ * 「전쟁 상태가 아닙니다」를 만났다. 밝히기 전에 여기서 먼저 묻는다.
+ */
+export function needsDeclaration(state: GameState, faction: FactionId, castle: CastleId): boolean {
+  const to = state.castles[castle];
+  if (!to || !to.owner || to.owner === faction) return false;
+  return !atWar(state, faction, to.owner);
+}
+
 export function validateMarch(state: GameState, cmd: MarchCommand): string | null {
   const from = state.castles[cmd.from];
   const to = state.castles[cmd.target];

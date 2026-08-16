@@ -20,8 +20,10 @@ import {
   canPass,
   findMarchPath,
   nearestFriendlyCastle,
+  needsDeclaration,
   retreatArmy,
   seaClosed,
+  validateMarch,
 } from '../src/core/military';
 import { atWar } from '../src/core/state';
 import { T, contrast, textOn } from '../src/ui/tokens';
@@ -568,6 +570,52 @@ test('봄이 오면 같은 길이 다시 열린다', () => {
     canPass(g, 'baekje', 'chimmi', 'tamna', infantry),
     '봄인데도 항로가 닫혀 있습니다'
   );
+});
+
+/* ------------------------------------------------------------------ *
+ * 선전포고
+ *
+ * 지도가 밝히는 후보와 규칙이 허락하는 곳이 같아야 한다. 예전에는 「길이
+ * 이어지는 곳」을 전부 밝혀 놓아, 화평 중인 나라의 성까지 고른 뒤 편성을 다
+ * 마치고서야 「전쟁 상태가 아닙니다」를 만났다.
+ * ------------------------------------------------------------------ */
+
+test('화평 중인 나라의 성은 출진 후보가 아니다', () => {
+  const g = createGame({ scenarioId: 's642', playerFaction: 'goguryeo', seed: 7 });
+  // 642년의 고구려와 백제는 화평이다 (연개소문의 해 — 백제는 신라를 치고 있었다).
+  assert(!atWar(g, 'goguryeo', 'baekje'), '642년 고구려·백제가 전쟁 상태입니다');
+  const baekjeCastle = Object.values(g.castles).find((c) => c.owner === 'baekje')!;
+  assert(
+    needsDeclaration(g, 'goguryeo', baekjeCastle.id),
+    '화평 중인 백제의 성에 선전포고 없이 갈 수 있습니다'
+  );
+});
+
+test('아군 성과 교전 중인 나라의 성에는 선전포고가 필요 없다', () => {
+  const g = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 7 });
+  assert(atWar(g, 'silla', 'baekje'), '642년 신라·백제가 전쟁 상태가 아닙니다');
+  const mine = Object.values(g.castles).find((c) => c.owner === 'silla')!;
+  const enemy = Object.values(g.castles).find((c) => c.owner === 'baekje')!;
+  assert(!needsDeclaration(g, 'silla', mine.id), '아군 성에 선전포고를 요구합니다');
+  assert(!needsDeclaration(g, 'silla', enemy.id), '교전 중인데 선전포고를 요구합니다');
+});
+
+test('규칙과 판정이 같은 답을 낸다 — 화평 중이면 validateMarch 도 막는다', () => {
+  const g = createGame({ scenarioId: 's642', playerFaction: 'goguryeo', seed: 7 });
+  const baekjeCastle = Object.values(g.castles).find((c) => c.owner === 'baekje')!;
+  const from = Object.values(g.castles).find((c) => c.owner === 'goguryeo' && c.troops > 2000)!;
+  const err = validateMarch(g, {
+    kind: 'march',
+    faction: 'goguryeo',
+    from: from.id,
+    target: baekjeCastle.id,
+    commander: 'yeon',
+    officers: [],
+    units: [{ unitType: 'infantry', count: 1000 }],
+    grain: 500,
+    siegeMode: 'assault',
+  });
+  assert(err !== null, '화평 중인 성으로 출진이 허락되었습니다');
 });
 
 /* ================================================================== *

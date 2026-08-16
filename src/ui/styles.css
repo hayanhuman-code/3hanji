@@ -1240,11 +1240,30 @@ table.grid td.n {
   display: flex;
   pointer-events: none;
 }
+/*
+ * 「출진한다」는 언제나 보여야 한다.
+ *
+ * 모달 전체를 스크롤 상자로 두면 발(취소·출진한다)이 내용 아래로 밀려 나간다.
+ * 폰에서는 편성 내용이 화면보다 길어 그 버튼이 통째로 잘렸다 — 출진 자체를
+ * 할 수 없었다. 머리와 발은 붙박고 본문만 흐르게 한다.
+ */
 .march-panel > .modal {
   pointer-events: auto;
   width: 100%;
   max-height: 100%;
   border-color: var(--jinsa);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.march-panel > .modal > .modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.march-panel > .modal > .modal-head,
+.march-panel > .modal > .modal-foot {
+  flex: none;
 }
 @media (max-width: 1100px) {
   .march-panel {

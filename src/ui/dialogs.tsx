@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react';
 import { castleDef, castleName, factionName, officerDef, unitDef } from '../core/data';
 import { B } from '../core/formulas';
-import { findMarchPath, isSeaRoute, validateMarch } from '../core/military';
+import { findMarchPath, isSeaRoute, needsDeclaration, validateMarch } from '../core/military';
 import { availableOfficersAt } from '../core/state';
 import { victoryLabel } from '../core/victory';
 import type { EventDef, GameState, MarchCommand, TurnReport, UnitStack } from '../core/types';
@@ -26,6 +26,9 @@ export function reachableFrom(state: GameState, faction: string, from: string) {
   const units = state.castles[from]?.composition;
   return Object.values(state.castles)
     .filter((c) => c.id !== from)
+    // 화평 중인 나라의 성은 후보가 아니다. 규칙이 막을 것을 지도가 밝히면
+    // 편성을 다 마친 뒤에야 「선전포고가 필요합니다」를 만나게 된다.
+    .filter((c) => !needsDeclaration(state, faction, c.id))
     .filter((c) => !!findMarchPath(state, faction, from, c.id, units))
     .sort((a, b) => {
       const pa = findMarchPath(state, faction, from, a.id, units)?.length ?? 99;
@@ -91,6 +94,15 @@ export function MarchDialog({
   };
   const error = target ? validateMarch(state, cmd) : '목적지를 고르십시오.';
   const path = target ? findMarchPath(state, faction, from, target, units) : null;
+
+  // 후보에서 빠진 이유가 「화평 중」인 나라들
+  const peaceful = [
+    ...new Set(
+      Object.values(state.castles)
+        .filter((c) => needsDeclaration(state, faction, c.id))
+        .map((c) => c.owner!)
+    ),
+  ];
 
   return (
     <div className="march-panel">
@@ -185,6 +197,16 @@ export function MarchDialog({
                 '지도에서 밝게 표시된 거점을 눌러도 됩니다.'
               )}
             </div>
+            {/*
+             * 화평 중인 나라의 성은 아예 후보에 없다. 그냥 사라지기만 하면
+             * 「왜 저기는 못 고르지」로 남으므로 누구와 화평 중인지 적어 준다.
+             */}
+            {peaceful.length > 0 && (
+              <div className="faint" style={{ fontSize: 11.5, marginTop: 4 }}>
+                {peaceful.map(factionName).join(' · ')}와(과)는 화평 중이라 그 성은 후보에
+                없습니다. 치려면 「외교」에서 먼저 선전포고하십시오.
+              </div>
+            )}
           </div>
 
           <div>

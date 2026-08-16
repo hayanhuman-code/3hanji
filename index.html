@@ -2,7 +2,9 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover 로 노치까지 쓰고, 안전영역은 CSS 의 env() 로 피한다.
+         확대 금지(user-scalable=no)는 넣지 않는다 — 접근성을 깎는다. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>삼한지(三韓志): 천하삼분</title>
 
     <!--

@@ -102,15 +102,28 @@ export function BattleScreen() {
 
   /* --------------------------- 그리기 --------------------------- */
 
+  // 화면이 바뀌면 다시 그린다. 회전·창 크기·패널 접힘 모두 여기로 들어온다.
+  const [resizeTick, setResizeTick] = useState(0);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ro = new ResizeObserver(() => setResizeTick((n) => n + 1));
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !battle) return;
-    const parent = canvas.parentElement;
-    if (!parent) return;
 
+    // **부모가 아니라 캔버스 자신의 상자를 잰다.**
+    // 부모(.battle-canvas-wrap)는 그리드 컨테이너라 옆(또는 아래) 패널까지 포함한다.
+    // 그걸로 백킹 스토어를 잡으면 그려지는 좌표계와 화면에 보이는 크기가 어긋나
+    // 클릭이 엉뚱한 헥스에 떨어진다 — 데스크톱에서도 가로로 280px 어긋나 있었다.
+    const box = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const w = parent.clientWidth;
-    const h = parent.clientHeight;
+    const w = Math.max(1, Math.round(box.width));
+    const h = Math.max(1, Math.round(box.height));
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     const ctx = canvas.getContext('2d');
@@ -246,7 +259,7 @@ export function BattleScreen() {
 
     // 클릭 좌표 → 헥스 변환에 필요한 값을 캔버스에 매달아 둔다.
     (canvas as HTMLCanvasElement & { _tf?: unknown })._tf = { size, ox, oy };
-  }, [battle, revision, selectedId, hover, reach, targets, wallTargets]);
+  }, [battle, revision, selectedId, hover, reach, targets, wallTargets, resizeTick]);
 
   if (!battle) return null;
 
@@ -352,8 +365,13 @@ export function BattleScreen() {
         <canvas
           ref={canvasRef}
           onClick={onClick}
-          onMouseMove={(e) => setHover(toHex(e))}
-          onMouseLeave={() => setHover(null)}
+          // 마우스 전용 이벤트를 쓰면 터치에서 onMouseLeave 가 영영 오지 않아
+          // 지형 표시가 마지막으로 누른 칸에 붙박인다. 포인터로 통일한다.
+          onPointerMove={(e) => {
+            if (e.pointerType === 'mouse') setHover(toHex(e));
+          }}
+          onPointerLeave={() => setHover(null)}
+          onPointerCancel={() => setHover(null)}
         />
         <div className="battle-side">
           {battle.finished && battle.result && (

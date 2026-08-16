@@ -17,7 +17,14 @@ html,
 body,
 #root {
   height: 100%;
+  /* 모바일 주소창이 접히고 펴질 때마다 100vh 가 흔들린다. dvh 가 실제 보이는 높이다. */
+  height: 100dvh;
   margin: 0;
+}
+
+body {
+  /* 지도를 끌 때 당겨서 새로고침이 끼어들지 않게 */
+  overscroll-behavior: none;
 }
 
 body {
@@ -311,7 +318,7 @@ select.btn {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 12px;
+  padding: calc(6px + var(--safe-t)) calc(12px + var(--safe-r)) 6px calc(12px + var(--safe-l));
   background: var(--ji);
   border-bottom: var(--edge);
   flex-wrap: wrap;
@@ -326,6 +333,10 @@ select.btn {
 .res {
   display: flex;
   gap: 14px;
+  /* 줄바꿈이 없으면 자원 7개가 min-content 로 버티며 문서를 가로로 넘긴다.
+     전면 지도 레이아웃에서 가로 스크롤은 가장 나쁜 증상이다. */
+  flex-wrap: wrap;
+  min-width: 0;
 }
 .res-item {
   display: flex;
@@ -368,6 +379,7 @@ select.btn {
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 80px);
+  max-height: calc(100dvh - 80px);
 }
 .win-hd {
   display: flex;
@@ -784,14 +796,45 @@ select.btn {
 }
 
 @media (max-width: 1100px) {
-  /* 좁은 화면에서는 범례까지 얹으면 볼 것이 없다 */
+  /* 좁은 화면에서는 범례까지 얹으면 볼 것이 없다 — 대신 거점 창 안에 한 줄로 남는다 */
   .map-hud.legend {
     display: none;
   }
-  .win {
-    left: 8px !important;
-    right: 8px;
-    width: auto !important;
+}
+
+/*
+ * 손 화면 — 지도 HUD 를 엄지가 닿는 자리로 내린다.
+ * 창은 여기서 바텀 시트가 되는데, 그 모양은 Window.tsx 가 고른다.
+ * CSS 로 !important 를 걸어 강제하면 드래그가 쓰는 인라인 스타일을 이겨 버린다
+ * (실제로 그렇게 두어 1100px 아래에서 창을 못 끌었다).
+ */
+@media (max-width: 760px) {
+  .map-hud.zoom {
+    left: calc(10px + var(--safe-l));
+    top: auto;
+    bottom: calc(10px + var(--safe-b));
+    flex-direction: row;
+    width: auto;
+  }
+  .map-hud.zoom button {
+    border-bottom: none;
+    border-right: var(--edge-thin);
+  }
+  .map-hud.zoom button:last-child {
+    border-right: none;
+  }
+  .map-hud.zoom .lv {
+    border-bottom: none;
+    border-right: var(--edge-thin);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+  }
+  .map-hud.when {
+    right: calc(10px + var(--safe-r));
+    top: calc(10px + var(--safe-t));
+    font-size: 13px;
+    padding: 3px 9px;
   }
 }
 
@@ -940,6 +983,7 @@ table.grid td.n {
   max-width: 680px;
   width: 100%;
   max-height: 88vh;
+  max-height: 88dvh;
   overflow-y: auto;
 }
 .modal-head {
@@ -1051,6 +1095,12 @@ table.grid td.n {
   height: 100%;
   display: block;
   cursor: pointer;
+  /* auto 행에서 height:100% 는 순환 참조가 된다 — 최소 높이를 0 으로 묶어 끊는다 */
+  min-height: 0;
+  min-width: 0;
+}
+.battle-canvas-wrap {
+  overflow: hidden;
 }
 .battle-side {
   border-left: var(--edge);

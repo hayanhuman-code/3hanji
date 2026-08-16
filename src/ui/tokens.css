@@ -38,6 +38,24 @@
   --edge-thin: 1px solid var(--meok-thin);
   --lift: 3px 4px 0 rgba(36, 31, 26, 0.18);
 
+  /* --- 화면 크기 --- *
+   * 중단점을 두 단계로 나눈다. 하나(1100px)로 뭉뚱그렸더니 아이패드까지
+   * 창 드래그가 막혔다. 미디어 쿼리에는 변수를 못 쓰므로 값은 각 규칙에 적되
+   * 기준은 여기 적어 둔다.
+   *
+   *   ≤ 760px   손 화면 — 바텀 시트, 압축 국력 바
+   *   761~1100  좁은 화면 — 창은 그대로 끌 수 있다
+   *   > 1100    데스크톱
+   *
+   * 손가락 크기는 폭이 아니라 입력 장치로 가른다 — `(pointer: coarse)`.
+   * 터치 노트북에서도 맞는다. */
+
+  /* 안전영역 — 노치·홈 인디케이터를 피한다 (viewport-fit=cover 와 짝) */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+
   /* --- 서체 (문서 §2.1) --- *
    * 명조 계열은 협상 대상이 아니다. 고딕으로 바꾸는 순간 고지도 성격이 사라진다.
    * 웹폰트가 막히더라도 폴백이 전부 명조라 고딕으로 떨어지지 않는다. */

@@ -853,6 +853,12 @@ select.btn {
     position: relative;
     padding-top: 15px;
     cursor: grab;
+    gap: 6px;
+  }
+  /* 닫기는 줄어들지 않는다 — 줄면 탭이 밀려 두 줄이 된다 */
+  .win.sheet .win-x {
+    flex: none;
+    margin-left: 4px;
   }
   /* 손잡이 — 여기를 잡으라는 표시 */
   .win.sheet .grip {
@@ -879,6 +885,12 @@ select.btn {
     margin-left: 0;
     overflow-x: auto;
     scrollbar-width: none;
+    /* 탭이 ✕ 에 밀려 좁아지면 「거점」이 두 줄로 접힌다. 줄이지 말고 옆으로 넘긴다. */
+    min-width: 0;
+  }
+  .win.sheet .tabs button {
+    flex: none;
+    white-space: nowrap;
   }
   .win.sheet .tabs::-webkit-scrollbar {
     display: none;

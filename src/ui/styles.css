@@ -324,6 +324,14 @@ select.btn {
   flex-wrap: wrap;
   z-index: 10;
 }
+/*
+ * 국력 바의 「행」. 데스크톱에서는 레이아웃에서 사라져(display: contents)
+ * 지금까지처럼 자식들이 .topbar 의 flex 항목으로 직접 늘어선다.
+ * 폰에서만 진짜 행이 되어 격자에 앉는다 — GameScreen.tsx 의 주석 참조.
+ */
+.bar-row {
+  display: contents;
+}
 .topbar .date {
   font-family: var(--font-num);
   font-size: 15px;
@@ -342,6 +350,9 @@ select.btn {
   display: flex;
   align-items: baseline;
   gap: 4px;
+  /* 좁은 화면에서 한글 라벨을 접을 때 position:absolute 를 쓴다.
+     여기 기준점이 없으면 라벨이 문서 전체를 기준으로 떠서 가로 폭을 늘린다. */
+  position: relative;
 }
 /* 한자 한 글자. 자간을 넓게 벌려 고지도의 여유를 낸다 (문서 §2.2) */
 .res-item .mark {
@@ -795,8 +806,13 @@ select.btn {
   white-space: nowrap;
 }
 
-@media (max-width: 1100px) {
-  /* 좁은 화면에서는 범례까지 얹으면 볼 것이 없다 — 대신 거점 창 안에 한 줄로 남는다 */
+/*
+ * 범례는 폰에서만 걷는다. 761~1100 은 창을 그대로 끄는 「좁은 화면」이라
+ * 범례 한 줄쯤 얹을 자리가 있다 — 이전에는 1100 아래를 통째로 감춰
+ * 태블릿에서 세력 색이 무엇을 뜻하는지 알 길이 없었다.
+ * 폰에서는 시트 「기타」 탭 안에 같은 내용이 그대로 있다.
+ */
+@media (max-width: 760px) {
   .map-hud.legend {
     display: none;
   }
@@ -809,10 +825,123 @@ select.btn {
  * (실제로 그렇게 두어 1100px 아래에서 창을 못 끌었다).
  */
 @media (max-width: 760px) {
+  /* --- 창이 시트가 된다 --- *
+   * 높이는 Window.tsx 가 스냅 3단으로 정해 인라인으로 내려보낸다.
+   * 여기서는 붙는 자리와 모양만 잡는다. left/top 을 CSS 가 쥐고 있으므로
+   * 컴포넌트는 시트 모드에서 좌표를 아예 내려보내지 않는다 — 서로 다투지 않는다. */
+  .win.sheet {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    max-height: 100dvh;
+    /* --panel 의 4% 투명은 작은 창이 지도 위에 「얹혀 있다」고 읽히게 하는 것이다.
+       화면의 88% 를 덮는 시트에서는 그냥 지도가 비쳐 글이 읽히지 않는다. */
+    background: var(--ji);
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    box-shadow: 0 -3px 0 rgba(36, 31, 26, 0.18);
+    padding-bottom: var(--safe-b);
+    transition: height 150ms ease-out;
+  }
+  /* 손가락을 따라오는 동안 전환이 붙으면 뒤늦게 미끄러진다 */
+  .win.sheet.dragging {
+    transition: none;
+  }
+  .win.sheet .win-hd {
+    position: relative;
+    padding-top: 15px;
+    cursor: grab;
+  }
+  /* 손잡이 — 여기를 잡으라는 표시 */
+  .win.sheet .grip {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 44px;
+    height: 3px;
+    margin-left: -22px;
+    background: var(--meok-cap);
+  }
+  .win.sheet .win-bd {
+    flex: 1;
+    /* 시트 높이가 본문을 정한다. maxHeight 는 데스크톱 것이다 */
+    max-height: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 시트 안에서는 제목이 탭과 자리를 다툰다. 어느 탭인지는 탭이 말한다. */
+  .win.sheet .win-hd > b {
+    display: none;
+  }
+  .win.sheet .tabs {
+    margin-left: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .win.sheet .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* --- 국력 바를 두 줄로 --- *
+   * 날짜 + 배지 + 자원 7 + 대기 인물 + 버튼 6 = 16개를 390px 에 한 줄로 두는 것은
+   * 불가능하다. 1행은 날짜·세력·턴 종료, 2행은 자원을 옆으로 넘겨 본다.
+   *
+   * flex-wrap + order 로는 안 된다. 자원 줄이 `flex-basis:100%` 로 줄을 넘기면
+   * 그 100% 가 불확정 폭에 걸려 max-content(408px) 로 풀리고, 그것이 레이아웃
+   * 뷰포트를 390 → 432 로 밀어 화면 오른쪽을 잘라먹었다. 격자로 자리를 못 박고
+   * `minmax(0, 1fr)` 로 트랙이 내용에 끌려가지 않게 한다. */
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 10px;
+    padding-bottom: 4px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    grid-row: 1;
+  }
+  .bar-a {
+    grid-column: 1;
+  }
+  .bar-b {
+    grid-column: 2;
+  }
+  .only-wide {
+    display: none;
+  }
+  .topbar .cap {
+    display: none;
+  }
+  .res {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    gap: 12px;
+    padding-bottom: 2px;
+  }
+  .res::-webkit-scrollbar {
+    display: none;
+  }
+  .res-item {
+    scroll-snap-align: start;
+    flex: none;
+  }
+
   .map-hud.zoom {
     left: calc(10px + var(--safe-l));
     top: auto;
-    bottom: calc(10px + var(--safe-b));
+    /* 엿보기(56px)로 접은 시트 위에 남는다 */
+    bottom: calc(66px + var(--safe-b));
     flex-direction: row;
     width: auto;
   }
@@ -836,6 +965,56 @@ select.btn {
     font-size: 13px;
     padding: 3px 9px;
   }
+}
+
+/*
+ * 아주 좁은 화면 — 한자 기호만 남기고 한글 라벨을 접는다.
+ * 지우지 않고 숨기기만 한다. 문서 §7 은 "색·기호만으로 정보를 전달하지 말 것"을
+ * 요구하는데, display:none 은 보조기술에서도 사라져 그 원칙을 어긴다.
+ */
+@media (max-width: 400px) {
+  .res-item b {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* 시트 「기타」 탭 — 지도 위에서 걷어낸 버튼과 좁은 화면에서 감춘 범례 */
+.etc {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.etc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 12px;
+}
+.etc-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.etc-legend i {
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--meok);
+}
+.etc-legend em {
+  font-family: var(--font-num);
+  font-style: normal;
+  color: var(--meok-mid);
+}
+.etc-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* ------------------------------------------------------------------ *

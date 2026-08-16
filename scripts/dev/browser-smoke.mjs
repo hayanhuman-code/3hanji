@@ -33,6 +33,25 @@ const page = await browser.newPage(
 /** 폰에서는 탭으로 고른다. 마우스 클릭으로만 검사하면 터치 경로는 한 번도 안 밟힌다. */
 const poke = (loc) => (PHONE ? loc.tap({ force: true }) : loc.click({ force: true }));
 
+/*
+ * 진짜 손가락으로 끌기.
+ *
+ * `page.mouse` 는 hasTouch 문맥에서도 pointerType:"mouse" 를 낸다. 그래서
+ * M단계까지 「폰 프로파일 통과」라고 해 놓고 터치 경로는 한 번도 안 밟았고,
+ * 실기기에서 지도가 안 밀리는 것을 못 잡았다. Playwright 에 터치 드래그 API 가
+ * 없으므로 CDP 로 직접 만든다.
+ */
+const cdp = PHONE ? await page.context().newCDPSession(page) : null;
+async function touchDrag(x, y, dx, dy, steps = 12) {
+  const send = (type, touchPoints) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints });
+  await send('touchStart', [{ x, y }]);
+  for (let i = 1; i <= steps; i++) {
+    await send('touchMove', [{ x: x + (dx * i) / steps, y: y + (dy * i) / steps }]);
+  }
+  await send('touchEnd', []);
+  await page.waitForTimeout(200);
+}
+
 /** 가로 스크롤은 전면 지도 화면에서 가장 나쁜 증상이다. 요소 하나가 문서를 밀어도 걸린다. */
 async function noSideScroll(where) {
   const m = await page.evaluate(() => ({
@@ -108,17 +127,43 @@ console.log('줌:', before, '→', after);
 // 끌면 화면이 움직이되 거점이 선택되지는 않아야 한다.
 const worldTf = () => page.locator('.map-svg > g').getAttribute('transform');
 const selNow = () => page.locator('.node.sel').getAttribute('data-castle-id').catch(() => null);
-const tfBefore = await worldTf();
-const selBefore = await selNow();
 const stage = page.locator('.map-stage');
 const box = await stage.boundingBox();
-await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-await page.mouse.down();
-await page.mouse.move(box.x + box.width / 2 - 140, box.y + box.height / 2 - 90, { steps: 12 });
-await page.mouse.up();
-await page.waitForTimeout(200);
-if (await worldTf() === tfBefore) throw new Error('끌었는데 화면이 움직이지 않았습니다');
-if (await selNow() !== selBefore) throw new Error('끌기가 거점 선택으로 잘못 처리되었습니다');
+{
+  const tfBefore = await worldTf();
+  const selBefore = await selNow();
+  const cx = box.x + box.width / 2;
+  const cy = box.y + (PHONE ? 160 : box.height / 2); // 폰은 아래쪽이 시트에 가린다
+  if (PHONE) await touchDrag(cx, cy, -140, -90);
+  else {
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    await page.mouse.move(cx - 140, cy - 90, { steps: 12 });
+    await page.mouse.up();
+    await page.waitForTimeout(200);
+  }
+  if ((await worldTf()) === tfBefore) throw new Error('끌었는데 화면이 움직이지 않았습니다');
+  if ((await selNow()) !== selBefore) throw new Error('끌기가 거점 선택으로 잘못 처리되었습니다');
+}
+
+/*
+ * 폰 — 네 방향이 다 밀려야 한다.
+ *
+ * 여기서 잡으려는 것: 시트가 가린 영역까지 「화면」으로 세면 남은 여백이 전부
+ * 시트 뒤에 있어 clampView 가 「더 갈 곳 없음」으로 판정하고, 위로 미는 것만
+ * 통째로 죽는다. 한 방향만 재면 안 잡힌다.
+ */
+if (PHONE) {
+  const dead = [];
+  for (const [name, dx, dy] of [['←', -110, 0], ['→', 110, 0], ['↑', 0, -110], ['↓', 0, 110]]) {
+    const t0 = await worldTf();
+    await touchDrag(box.x + box.width / 2, box.y + 180, dx, dy);
+    if ((await worldTf()) === t0) dead.push(name);
+    else await touchDrag(box.x + box.width / 2, box.y + 180, -dx, -dy); // 되돌려 다음 방향에 영향 없게
+  }
+  if (dead.length) throw new Error('손가락으로 밀리지 않는 방향: ' + dead.join(' '));
+  console.log('터치 팬: 네 방향 모두 ✅');
+}
 
 await page.getByRole('button', { name: '전체 보기' }).click();
 await page.waitForTimeout(200);
@@ -211,9 +256,45 @@ if (PHONE) {
   console.log('시트 3단:', peek, '/', half, '/', full);
   if (!(peek < half && half < full)) throw new Error(`시트 스냅이 3단으로 움직이지 않았습니다: ${peek}/${half}/${full}`);
   if (peek > 90) throw new Error('엿보기 단이 지도를 너무 가립니다: ' + peek);
-  await dragHead(320);
-  await dragHead(-200); // 절반으로 되돌린다
   await page.screenshot({ path: `${OUT}/03c-sheet-full.png` });
+  // 절반으로 되돌린다. 가득 편 상태에서는 줌 위젯이 시트 뒤로 들어가 못 누른다.
+  await dragHead(320);
+
+  /* 끌어서 접는 것은 축척을 건드리지 않는다 — 지도를 잠깐 살피려는 동작이다 */
+  {
+    await page.getByRole('button', { name: '확대' }).click();
+    await page.waitForTimeout(250);
+    const z0 = await zoomLevel();
+    await dragHead(320);
+    const z1 = await zoomLevel();
+    if (z0 !== z1) throw new Error(`끌어서 접었는데 배율이 바뀌었습니다: ${z0} → ${z1}`);
+    await dragHead(-200);
+  }
+
+  /* ✕ 는 시트를 엿보기로 접고 지도를 전체 보기로 되돌린다 */
+  {
+    const z0 = await zoomLevel();
+    await page.locator('.win.sheet .win-x').tap();
+    await page.waitForTimeout(500);
+    const z1 = await zoomLevel();
+    const h = Math.round((await sheet.boundingBox()).height);
+    if (h > 90) throw new Error('✕ 를 눌렀는데 시트가 안 접혔습니다: ' + h);
+    if (z0 === z1) throw new Error(`✕ 를 눌렀는데 전체 보기로 안 돌아갔습니다 (${z0})`);
+    console.log('✕ → 시트', h, 'px · 배율', z0, '→', z1);
+    await page.screenshot({ path: `${OUT}/03d-sheet-closed.png` });
+  }
+
+  /* 전체 보기 아래로는 못 줄인다 — 그 구간은 밀어도 안 움직이는 죽은 배율이다 */
+  {
+    const zFit = await zoomLevel();
+    for (let i = 0; i < 3; i++) {
+      await page.getByRole('button', { name: '축소' }).click();
+      await page.waitForTimeout(120);
+    }
+    const zMin = await zoomLevel();
+    if (zMin !== zFit) throw new Error(`전체 보기(${zFit}) 아래로 줄어들었습니다: ${zMin}`);
+    console.log('줄이기 하한:', zMin, '= 전체 보기 ✅');
+  }
 
   // 손가락 크기. 44 는 못 맞추더라도 36 아래로 내려가면 못 누른다.
   const small = await page.evaluate(() =>
@@ -239,11 +320,25 @@ if (PHONE) {
   console.log('창 이동:', Math.round(before.x), '→', Math.round(after.x));
   await page.screenshot({ path: `${OUT}/03c-window.png` });
 
-  // 닫고 다시 열기
+  // 닫으면 사라지고, 지도는 전체 보기로 돌아간다.
+  // 먼저 당겨 두어야 「돌아갔다」를 확인할 수 있다 — 이미 전체 보기면 아무 차이가 없다.
+  await page.getByRole('button', { name: '전체 보기' }).click();
+  await page.waitForTimeout(250);
+  const zFit = await zoomLevel();
+  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: '확대' }).click();
+  await page.waitForTimeout(250);
+  const zBeforeClose = await zoomLevel();
+  if (zBeforeClose === zFit) throw new Error('확대가 안 됐습니다: ' + zFit);
+
   const n0 = await page.locator('.win').count();
   await page.locator('.win-hd .win-x').first().click();
-  await page.waitForTimeout(150);
-  if (await page.locator('.win').count() !== n0 - 1) throw new Error('창이 닫히지 않았습니다');
+  await page.waitForTimeout(300);
+  if ((await page.locator('.win').count()) !== n0 - 1) throw new Error('창이 닫히지 않았습니다');
+  const zAfterClose = await zoomLevel();
+  if (zAfterClose !== zFit) {
+    throw new Error(`창을 닫았는데 전체 보기(${zFit})로 안 돌아갔습니다: ${zAfterClose}`);
+  }
+  console.log('창 닫기 → 배율', zBeforeClose, '→', zAfterClose, '(전체 보기)');
   await page.getByRole('button', { name: '사초', exact: true }).click();
   await page.waitForTimeout(150);
   await page.getByRole('button', { name: '거점창', exact: true }).click();

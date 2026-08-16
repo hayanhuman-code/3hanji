@@ -1563,8 +1563,14 @@ table.grid td.n {
  * 규칙끼리는 나중에 오는 쪽이 이기므로, 중간에 두면 `.legend { display: flex }`
  * 같은 뒤쪽 규칙에 조용히 져 버린다. 실제로 전투 화면 범례가 그렇게 살아났다.
  * ------------------------------------------------------------------ */
+.only-phone {
+  display: none;
+}
 @media (max-width: 760px) {
   .only-wide {
     display: none;
+  }
+  .only-phone {
+    display: inline;
   }
 }

@@ -114,8 +114,10 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
       </div>
 
       {marchTargets && (
+        /* 손 화면에서는 짧게 줄인다 — 긴 문장을 가운데 두면 계절 표시와 겹친다 */
         <div className="map-hud march-hint">
-          출진할 곳을 지도에서 고르십시오 · 후보 {marchTargets.size}
+          <span className="only-wide">출진할 곳을 지도에서 고르십시오 · 후보</span>
+          <span className="only-phone">목적지를 고르십시오 ·</span> {marchTargets.size}
         </div>
       )}
     </>

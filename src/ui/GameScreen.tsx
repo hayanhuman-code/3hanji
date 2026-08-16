@@ -89,6 +89,19 @@ export function GameScreen() {
   const [extra, setExtra] = useState<ExtraTab | null>(null);
   /** 시트를 올려 달라는 신호. 지도에서 무언가를 고를 때마다 하나씩 올린다. */
   const [raise, setRaise] = useState(0);
+  /** 시트를 접어 달라는 신호 (「전체」를 눌렀을 때) */
+  const [collapse, setCollapse] = useState(0);
+  /** 지도를 전체 보기로 돌려 달라는 신호 (창을 닫았을 때) */
+  const [fitKey, setFitKey] = useState(0);
+  /** 시트가 지도를 덮은 높이. 스냅이 확정될 때만 바뀐다 (끄는 도중에는 안 바뀐다) */
+  const [sheetInset, setSheetInset] = useState(0);
+
+  /*
+   * 창을 닫으면 지도가 전체 보기로 돌아간다.
+   * 폰에서는 시트가 사라지는 것이 아니라 엿보기로 접히므로, 접힌 뒤의 높이를
+   * 기준으로 fit 이 계산되도록 StrategyMap 이 한 프레임 미뤄 준다.
+   */
+  const backToWholeMap = useCallback(() => setFitKey((n) => n + 1), []);
 
   // 폰으로 좁아지면 창 둘이 시트 하나로 합쳐진다. 사초만 열려 있었다면
   // 그 상태를 잃지 않도록 사초 탭으로 옮겨 준다.
@@ -294,6 +307,12 @@ export function GameScreen() {
           selected={selected}
           onSelect={onMapSelect}
           marchTargets={marchTargets}
+          phone={phone}
+          sheetInset={phone ? sheetInset : 0}
+          fitKey={fitKey}
+          // 「전체」를 누르면 폰에서는 시트부터 접는다. 안 그러면 반도 전체가
+          // 시트에 안 가린 좁은 띠 안으로 우겨넣어져 깨알만 해진다.
+          onFitRequest={phone ? () => setCollapse((n) => n + 1) : undefined}
         />
       </div>
 
@@ -310,6 +329,10 @@ export function GameScreen() {
           y={0}
           width={0}
           raiseKey={raise}
+          collapseKey={collapse}
+          onHeight={setSheetInset}
+          // 폰의 ✕ 는 시트를 없애는 것이 아니라 엿보기로 접는 것이다 (Window.tsx)
+          onClose={backToWholeMap}
           head={
             <div className="tabs">
               {TABS.map((t) => (
@@ -348,7 +371,10 @@ export function GameScreen() {
               y={62}
               width={382}
               maxHeight={Math.round(window.innerHeight * 0.6)}
-              onClose={() => setOpenPanel(false)}
+              onClose={() => {
+                setOpenPanel(false);
+                backToWholeMap();
+              }}
               head={
                 <div className="tabs">
                   {TABS.map((t) => (

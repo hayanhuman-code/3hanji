@@ -15,7 +15,14 @@
  * 달라지는 것은 모양이 아니라 동작이라 CSS 로는 못 하고 여기서 갈라야 한다.
  */
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { usePhone } from './useMediaQuery';
 
 export interface WindowProps {
@@ -37,6 +44,18 @@ export interface WindowProps {
    * 데스크톱 창에는 뜻이 없다.
    */
   raiseKey?: number;
+  /**
+   * 값이 바뀌면 시트를 「엿보기」로 접는다.
+   * 「전체」 버튼처럼 지도를 다 보여 줘야 하는 동작이 부를 자리다.
+   */
+  collapseKey?: number;
+  /**
+   * 스냅이 확정됐을 때의 시트 높이(px). 폰이 아니면 0.
+   *
+   * **끄는 도중에는 안 부른다** — 손가락을 따라 매 프레임 부모를 다시 그리면
+   * 거점 76개가 같이 딸려 온다. 지도가 필요한 것은 확정된 높이뿐이다.
+   */
+  onHeight?: (h: number) => void;
   children: ReactNode;
 }
 
@@ -55,9 +74,10 @@ const KEEP_VISIBLE = 80;
  * 출진할 곳을 지도에서 고르는 동안 필요한 상태다.
  */
 type Snap = 0 | 1 | 2;
-const PEEK = 56;
+/** 「엿보기」 단의 높이. 접었을 때 지도가 얼마나 가리는지를 지도 쪽도 알아야 한다. */
+export const SHEET_PEEK = 56;
 function snapHeights(vh: number): [number, number, number] {
-  return [PEEK, Math.round(vh * 0.45), Math.round(vh * 0.88)];
+  return [SHEET_PEEK, Math.round(vh * 0.45), Math.round(vh * 0.88)];
 }
 /** MapStage 와 같은 임계값. 누른 것인지 끈 것인지 가른다. */
 const DRAG_THRESHOLD = 3;
@@ -111,6 +131,8 @@ export function Window({
   onClose,
   head,
   raiseKey,
+  collapseKey,
+  onHeight,
   children,
 }: WindowProps) {
   const phone = usePhone();
@@ -187,7 +209,7 @@ export function Window({
         const dy = startY - ev.clientY; // 위로 끌면 커진다
         if (!moved && Math.abs(dy) > DRAG_THRESHOLD) moved = true;
         if (!moved) return;
-        live = Math.min(Math.max(startH + dy, PEEK), heights[2]);
+        live = Math.min(Math.max(startH + dy, SHEET_PEEK), heights[2]);
         setDragH(live);
       };
       const up = (ev: PointerEvent) => {
@@ -224,13 +246,37 @@ export function Window({
     setSnap((s) => (s === 0 ? 1 : s));
   }, [raiseKey]);
 
+  // 「접어 달라」. 첫 렌더에는 반응하지 않는다 — 저장해 둔 단을 덮어쓰면 안 된다.
+  const firstCollapse = useRef(collapseKey);
+  useEffect(() => {
+    if (collapseKey === undefined || collapseKey === firstCollapse.current) return;
+    setSnap(0);
+    saveEntry(SNAP_KEY, id, 0);
+  }, [collapseKey, id]);
+
+  /**
+   * 폰의 ✕ 는 창을 없애는 것이 아니라 **엿보기로 접는 것**이다.
+   * 시트 머리의 탭 줄이 폰의 유일한 이동 수단이라 통째로 치우면 갈 곳이 없어진다.
+   * 접은 다음 바깥(onClose)에 알려 지도가 전체 보기로 돌아가게 한다.
+   */
+  const closeSheet = useCallback(() => {
+    setSnap(0);
+    saveEntry(SNAP_KEY, id, 0);
+    onClose?.();
+  }, [id, onClose]);
+
   /*
    * 시트가 얼마나 올라와 있는지를 CSS 로 흘려보낸다. 지도 HUD(줌 위젯)가
    * 그 위에 얹혀 있어야 하기 때문이다 — 고정 위치로 두었더니 기본 단(절반)에서
    * 통째로 가려져 폰에서는 확대·축소를 아예 누를 수 없었다.
    */
   const sheetH = phone ? (dragH ?? snapHeights(vh)[snap]) : 0;
-  useEffect(() => {
+  /*
+   * useEffect 가 아니라 useLayoutEffect 다. 「전체 보기」는 시트를 접은 **뒤의**
+   * 높이를 기준으로 지도를 맞춰야 하는데, 보통 효과로 두면 그 값이 다음 프레임에나
+   * 쓰여 지도가 아직 절반쯤 가려진 화면 기준으로 축소된다(실측: 31% 대신 21%).
+   */
+  useLayoutEffect(() => {
     if (!phone) return;
     const root = document.documentElement;
     root.style.setProperty('--sheet-h', `${sheetH}px`);
@@ -238,6 +284,12 @@ export function Window({
       root.style.removeProperty('--sheet-h');
     };
   }, [phone, sheetH]);
+
+  // 확정된 높이만 바깥에 알린다 (dragH 는 일부러 뺐다 — 위 주석 참조).
+  const settledH = phone ? snapHeights(vh)[snap] : 0;
+  useEffect(() => {
+    onHeight?.(settledH);
+  }, [settledH, onHeight]);
 
   // 창 크기가 바뀌면 화면 밖에 남아 있을 수 있다. 시트는 높이 기준이 달라진다.
   useEffect(() => {
@@ -265,7 +317,14 @@ export function Window({
           <span className="grip" aria-hidden="true" />
           <b>{title}</b>
           {head}
-          {closeBtn}
+          {onClose && (
+            <button
+              className="win-x"
+              onClick={closeSheet}
+              aria-label="창 접고 전체 지도 보기"
+              title="접기"
+            />
+          )}
         </div>
         <div className="win-bd">{children}</div>
       </div>

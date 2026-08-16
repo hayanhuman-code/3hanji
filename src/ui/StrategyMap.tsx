@@ -8,7 +8,7 @@
  * 층 순서는 아래에서 위로: 땅 → 영향권 → 길 → 부대 → 거점.
  */
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { CASTLES, castleDef, factionColor, factionName } from '../core/data';
 import { riversFrozen } from '../core/formulas';
 import type { GameState } from '../core/types';
@@ -19,6 +19,7 @@ import { Routes } from './map/Routes';
 import { Terrain } from './map/Terrain';
 import { Territory } from './map/Territory';
 import { useMapView } from './map/useMapView';
+import { SHEET_PEEK } from './Window';
 
 /**
  * 실제로 쓰는 범위. 지도 캔버스는 1760×2049 이지만 거점은 그 일부에만 있다
@@ -39,10 +40,44 @@ interface Props {
   onSelect: (id: string) => void;
   /** 출진 목표를 고르는 중이면 도달 가능한 거점 집합 */
   marchTargets?: Set<string> | null;
+  /** 폰 — 시트가 지도를 덮는다. 덮인 만큼은 화면으로 세지 않는다 */
+  phone?: boolean;
+  /** 시트가 스테이지 아래쪽을 덮은 높이(px). 데스크톱은 0 */
+  sheetInset?: number;
+  /** 값이 바뀌면 전체 보기로 돌아간다 (창을 닫았을 때) */
+  fitKey?: number;
+  /** 「전체」를 눌렀다 — 폰에서는 시트를 접어야 지도가 다 보인다 */
+  onFitRequest?: () => void;
 }
 
-export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) {
-  const api = useMapView(CONTENT);
+export function StrategyMap({
+  state,
+  selected,
+  onSelect,
+  marchTargets,
+  phone,
+  sheetInset = 0,
+  fitKey,
+  onFitRequest,
+}: Props) {
+  /*
+   * 가려진 높이는 useMapView 안에서 매 프레임 읽히므로 ref 로 넘긴다.
+   * 콜백 정체성이 흔들리면 MapStage 의 포인터 리스너가 통째로 다시 붙는다.
+   */
+  const insetRef = useRef(sheetInset);
+  insetRef.current = sheetInset;
+
+  const api = useMapView(
+    CONTENT,
+    useMemo(
+      () => ({
+        insetBottom: () => insetRef.current,
+        // 폰에서 전체 보기보다 더 줄이면 밀 곳이 하나도 남지 않는다.
+        allowUnderfit: !phone,
+      }),
+      [phone]
+    )
+  );
 
   /**
    * 코어는 GameState 를 **제자리에서** 고친다(README §계획과 달라진 점 1).
@@ -70,6 +105,28 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
     ensureVisible(def.position.x, def.position.y);
   }, [selected, ensureVisible]);
 
+  /*
+   * 전체 보기로 돌아가기.
+   *
+   * 폰에서는 시트가 먼저 접혀야 가려진 높이가 줄고, 그래야 fit 이 「보이는 띠」를
+   * 제대로 잰다. 그런데 접기는 부모 → 시트 → 다시 부모로 몇 단계를 거쳐 돌아오므로
+   * 한 프레임 미루는 것으로는 못 맞춘다(실측: 31% 대신 21%로 축소됐다).
+   *
+   * 기다리는 대신 **접힌 뒤의 높이를 미리 알려 준다.** 이 동작은 언제나 시트를
+   * 엿보기 단으로 접으므로 그 높이는 이미 정해져 있다. 타이밍 싸움이 사라진다.
+   */
+  const fitInset = phone ? SHEET_PEEK : undefined;
+  const wholeMap = useCallback(() => {
+    onFitRequest?.();
+    fit(fitInset);
+  }, [onFitRequest, fit, fitInset]);
+
+  const firstFitKey = useRef(fitKey);
+  useEffect(() => {
+    if (fitKey === undefined || fitKey === firstFitKey.current) return;
+    fit(fitInset);
+  }, [fitKey, fit, fitInset]);
+
   const frozen = riversFrozen(state.season);
   const alive = Object.values(state.factions).filter((f) => f.alive);
 
@@ -93,7 +150,7 @@ export function StrategyMap({ state, selected, onSelect, marchTargets }: Props) 
         <button onClick={() => zoomCenter(1 / 1.35)} aria-label="축소">
           －
         </button>
-        <button onClick={fit} aria-label="전체 보기">
+        <button onClick={wholeMap} aria-label="전체 보기">
           전체
         </button>
       </div>

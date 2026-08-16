@@ -80,6 +80,8 @@ export function BattleScreen() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hover, setHover] = useState<Axial | null>(null);
+  /** 전투 기록을 펼쳤는가. 세로 화면에서만 뜻이 있다 — 넓으면 늘 펼쳐진 높이다. */
+  const [logOpen, setLogOpen] = useState(false);
 
   const myTurn = !!battle && !battle.finished && battle.activeSide === battle.playerSide;
 
@@ -346,8 +348,10 @@ export function BattleScreen() {
             <button className="btn small" onClick={endTurn} disabled={!myTurn}>
               차례 종료
             </button>
+            {/* 폰에서 30합을 손으로 두는 것은 무리다. 이 버튼이 빠져나갈 구멍이므로
+                첫 화면에서 밀려나면 안 된다 — 좁으면 「위임」 두 글자로 줄인다. */}
             <button className="btn small" onClick={delegate}>
-              위임 (자동 진행)
+              위임<span className="only-wide"> (자동 진행)</span>
             </button>
             <button className="btn small" onClick={withdraw} disabled={!battle.playerSide}>
               퇴각
@@ -397,19 +401,24 @@ export function BattleScreen() {
             </div>
           )}
 
-          {selected && <UnitCard unit={selected} selected />}
+          {/* 세로 화면에서는 부대 목록 자체가 가로 띠라 고른 부대가 늘 보인다.
+              위에 한 장 더 얹으면 캔버스만 잡아먹는다. */}
+          {selected && <div className="only-wide">{<UnitCard unit={selected} selected />}</div>}
 
-          <div className="section-label" style={{ marginTop: 4 }}>
+          <div className="section-label only-wide" style={{ marginTop: 4 }}>
             아군 부대 {myUnits.length}
           </div>
-          {myUnits.map((u) => (
-            <div key={u.id} onClick={() => setSelectedId(u.id)} style={{ cursor: 'pointer' }}>
-              <UnitCard unit={u} selected={u.id === selectedId} />
-            </div>
-          ))}
+          {/* 세로 화면에서는 이 줄이 옆으로 넘기며 고르는 부대 띠가 된다 */}
+          <div className="unit-list">
+            {myUnits.map((u) => (
+              <div key={u.id} onClick={() => setSelectedId(u.id)} style={{ cursor: 'pointer' }}>
+                <UnitCard unit={u} selected={u.id === selectedId} />
+              </div>
+            ))}
+          </div>
 
-          <hr className="sep" />
-          <div className="legend">
+          <hr className="sep only-wide" />
+          <div className="legend only-wide">
             {(Object.keys(TERRAIN_COLOR) as HexTerrain[]).map((t) => (
               <span key={t}>
                 <i style={{ background: TERRAIN_COLOR[t] }} />
@@ -420,7 +429,21 @@ export function BattleScreen() {
         </div>
       </div>
 
-      <div className="battle-log">
+      {/*
+       * 전투 기록. 세로 화면에서는 한 줄만 두고 눌러서 펼친다 —
+       * 110px 을 늘 내주면 육각판이 그만큼 작아진다.
+       */}
+      <div
+        className={`battle-log${logOpen ? ' open' : ''}`}
+        onClick={() => setLogOpen((v) => !v)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') setLogOpen((v) => !v);
+        }}
+        aria-expanded={logOpen}
+        aria-label="전투 기록"
+      >
         {battle.log
           .slice(-60)
           .reverse()

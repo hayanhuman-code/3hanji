@@ -31,6 +31,12 @@ export interface WindowProps {
   onClose?: () => void;
   /** 머리 오른쪽에 놓을 것 (탭 등) */
   head?: ReactNode;
+  /**
+   * 값이 바뀌면 접혀 있던 시트를 「절반」까지 올린다.
+   * 지도에서 거점을 골랐는데 시트가 엿보기 단이면 아무 일도 없는 것처럼 보인다.
+   * 데스크톱 창에는 뜻이 없다.
+   */
+  raiseKey?: number;
   children: ReactNode;
 }
 
@@ -104,6 +110,7 @@ export function Window({
   maxHeight,
   onClose,
   head,
+  raiseKey,
   children,
 }: WindowProps) {
   const phone = usePhone();
@@ -210,6 +217,28 @@ export function Window({
     [snap, vh, id, toFront]
   );
 
+  // 바깥에서 「올려 달라」고 하면 접혀 있을 때만 절반까지 올린다.
+  // 이미 펼쳐 놓은 것을 함부로 줄이지는 않는다.
+  useEffect(() => {
+    if (raiseKey === undefined) return;
+    setSnap((s) => (s === 0 ? 1 : s));
+  }, [raiseKey]);
+
+  /*
+   * 시트가 얼마나 올라와 있는지를 CSS 로 흘려보낸다. 지도 HUD(줌 위젯)가
+   * 그 위에 얹혀 있어야 하기 때문이다 — 고정 위치로 두었더니 기본 단(절반)에서
+   * 통째로 가려져 폰에서는 확대·축소를 아예 누를 수 없었다.
+   */
+  const sheetH = phone ? (dragH ?? snapHeights(vh)[snap]) : 0;
+  useEffect(() => {
+    if (!phone) return;
+    const root = document.documentElement;
+    root.style.setProperty('--sheet-h', `${sheetH}px`);
+    return () => {
+      root.style.removeProperty('--sheet-h');
+    };
+  }, [phone, sheetH]);
+
   // 창 크기가 바뀌면 화면 밖에 남아 있을 수 있다. 시트는 높이 기준이 달라진다.
   useEffect(() => {
     const onResize = () => {
@@ -225,13 +254,11 @@ export function Window({
   );
 
   if (phone) {
-    const heights = snapHeights(vh);
-    const h = dragH ?? heights[snap];
     return (
       <div
         className={`win sheet${dragH === null ? '' : ' dragging'}`}
         ref={ref}
-        style={{ height: h, zIndex: z }}
+        style={{ height: sheetH, zIndex: z }}
         onPointerDown={toFront}
       >
         <div className="win-hd" onPointerDown={onGripPointerDown}>

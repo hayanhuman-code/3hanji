@@ -95,6 +95,13 @@ function OfficerChip({
   // 이름 옆에 역할을 적어 두면 76 거점에 300명을 흩어 놓아도 누가 무엇을 하는 사람인지 보인다.
   const g = officer.growth ?? {};
   const s = def.stats;
+  /*
+   * 인물의 내력과 출전은 여태 `title=` 에만 있었다. 터치에는 호버가 없으니
+   * 폰에서는 그 글이 아예 존재하지 않는 것과 같았다. 「詳」 을 눌러 펼친다.
+   * 칩 자체를 누르면 그 거점으로 건너뛰는 기존 동작은 그대로 둔다.
+   */
+  const [open, setOpen] = useState(false);
+  const note = [def.note, def.source && `출전: ${def.source}`].filter(Boolean).join(' · ');
   return (
     <div
       className={`officer-chip${officer.acted ? ' acted' : ''}`}
@@ -103,7 +110,6 @@ function OfficerChip({
         cursor: onClick ? 'pointer' : 'default',
       }}
       onClick={onClick}
-      title={[def.note, def.source && `출전: ${def.source}`].filter(Boolean).join('\n')}
     >
       <div className="portrait">{def.name.slice(0, 1)}</div>
       <div style={{ minWidth: 0, flex: 1 }}>
@@ -114,6 +120,19 @@ function OfficerChip({
           </b>
           <span className="faint" style={{ fontSize: 11 }}>
             {ROLE_LABEL[def.role] ?? ''} · {officer.acted ? '행동함' : officer.armyId ? '출진 중' : '대기'}
+            {note && (
+              <button
+                className="disclose"
+                aria-expanded={open}
+                aria-label={`${def.name} 내력`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen((v) => !v);
+                }}
+              >
+                詳
+              </button>
+            )}
           </span>
         </div>
         <div className="stats">
@@ -138,6 +157,7 @@ function OfficerChip({
             {def.skills.map((k) => SKILLS[k]?.name ?? k).join(' · ')}
           </div>
         )}
+        {open && note && <div className="note">{note}</div>}
       </div>
     </div>
   );
@@ -502,13 +522,18 @@ export function OfficerPanel({ state }: { state: GameState }) {
                   <button
                     className="btn small"
                     disabled={loyal}
-                    title={loyal ? '충의로 이름난 자는 항복하지 않는다.' : ''}
                     onClick={() =>
                       issue({ kind: 'captive', faction, targetOfficer: o.id, action: 'recruit' })
                     }
                   >
                     등용
                   </button>
+                  {/* 왜 누를 수 없는지는 호버가 아니라 글로 말한다 — 터치에는 호버가 없다 */}
+                  {loyal && (
+                    <span className="faint" style={{ fontSize: 11 }}>
+                      충의로 이름난 자는 항복하지 않는다.
+                    </span>
+                  )}
                   <button
                     className="btn small"
                     onClick={() =>
@@ -626,7 +651,6 @@ export function DiplomacyPanel({ state }: { state: GameState }) {
                 className="btn small"
                 disabled={!active}
                 onClick={() => send(f.id, 'demand_tribute')}
-                title={`복속을 받아내려면 상대의 ${B.vassalCastleRatio}배 이상을 차지해야 합니다.`}
               >
                 복속 요구
               </button>
@@ -647,6 +671,10 @@ export function DiplomacyPanel({ state }: { state: GameState }) {
               >
                 예물 800
               </button>
+            </div>
+            {/* 「복속 요구」의 조건은 여태 title= 에만 있었다 — 터치에서는 읽을 길이 없다 */}
+            <div className="faint" style={{ fontSize: 11, marginTop: 5 }}>
+              복속을 받아내려면 상대의 {B.vassalCastleRatio}배 이상을 차지해야 합니다.
             </div>
           </div>
         );

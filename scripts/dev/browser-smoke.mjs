@@ -5,6 +5,11 @@
  *   npm i -D playwright && npx playwright install chromium
  *   npm run dev &
  *   npm run smoke:browser -- http://127.0.0.1:5173/ /tmp/shots
+ *   npm run smoke:browser -- http://127.0.0.1:5173/ /tmp/shots phone
+ *
+ * 세 번째 인자가 프로파일이다. 폰에서는 화면이 「좁아진 데스크톱」이 아니라
+ * 다른 물건이 된다 — 창이 바텀 시트가 되고 국력 바가 두 줄로 접힌다.
+ * 같은 각본을 두 번 돌리되 갈라지는 곳만 프로파일로 나눈다.
  *
  * 브라우저 경로는 CHROME_PATH 로 덮어쓸 수 있다.
  */
@@ -13,10 +18,33 @@ import { mkdirSync } from 'node:fs';
 
 const URL = process.argv[2] ?? 'http://127.0.0.1:5178/';
 const OUT = process.argv[3] ?? '/tmp/shots';
+const PROFILE = process.argv[4] ?? 'desktop';
+const PHONE = PROFILE === 'phone';
 mkdirSync(OUT, { recursive: true });
+console.log(`── 프로파일: ${PROFILE} ──`);
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+const page = await browser.newPage(
+  PHONE
+    ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 3 }
+    : { viewport: { width: 1440, height: 900 } }
+);
+
+/** 폰에서는 탭으로 고른다. 마우스 클릭으로만 검사하면 터치 경로는 한 번도 안 밟힌다. */
+const poke = (loc) => (PHONE ? loc.tap({ force: true }) : loc.click({ force: true }));
+
+/** 가로 스크롤은 전면 지도 화면에서 가장 나쁜 증상이다. 요소 하나가 문서를 밀어도 걸린다. */
+async function noSideScroll(where) {
+  const m = await page.evaluate(() => ({
+    doc: document.documentElement.scrollWidth,
+    body: document.body.scrollWidth,
+    win: window.innerWidth,
+    vis: Math.round(window.visualViewport?.width ?? window.innerWidth),
+  }));
+  if (m.doc > m.vis || m.win > m.vis) {
+    throw new Error(`가로로 넘쳤습니다 (${where}): ${JSON.stringify(m)}`);
+  }
+}
 
 const errors = [];
 const fontIssues = [];
@@ -48,12 +76,27 @@ if (!/serif/i.test(fonts.body)) throw new Error('본문이 명조 계열이 아�
 await page.getByRole('button', { name: /신라/ }).first().click();
 await page.getByRole('button', { name: /으로 시작|로 시작/ }).click();
 await page.waitForSelector('.game', { timeout: 10000 });
+await page.waitForTimeout(400);
 await page.screenshot({ path: `${OUT}/02-map.png` });
+if (PHONE) await noSideScroll('전략맵');
 
 /* ---------------- 지도 조작 ---------------- *
  * 지명은 축척에 따라 나타났다 사라지므로 이름으로 찾으면 안 된다.
  * 거점 <g> 에 붙은 data-castle-id 로 짚는다. */
 const zoomLevel = () => page.locator('.map-hud.zoom .lv').innerText();
+
+/** 폰에서는 지도를 만지기 전에 시트를 엿보기로 접는다 — 사람이 하는 것과 같다. */
+async function collapseSheet() {
+  if (!PHONE) return;
+  const hd = await page.locator('.win.sheet .win-hd').boundingBox();
+  if (!hd) return;
+  await page.mouse.move(hd.x + hd.width / 2, hd.y + 10);
+  await page.mouse.down();
+  await page.mouse.move(hd.x + hd.width / 2, hd.y + 330, { steps: 12 });
+  await page.mouse.up();
+  await page.waitForTimeout(350);
+}
+await collapseSheet();
 
 const before = await zoomLevel();
 await page.getByRole('button', { name: '확대' }).click();
@@ -91,13 +134,41 @@ await page.screenshot({ path: `${OUT}/02c-map-zoom.png` });
 await page.getByRole('button', { name: '전체 보기' }).click();
 await page.waitForTimeout(200);
 
-// 거점 클릭 → 개발 명령
-await page.locator('[data-castle-id="geumseong"]').click({ force: true });
+/* 거점 선택 → 개발 명령. 폰에서는 마우스가 아니라 탭으로.
+ *
+ * <g> 가 아니라 그 안의 .hit 원을 짚는다 — <g> 의 경계 상자에는 세로 지명까지
+ * 들어가서 중심이 거점에서 밀린다.
+ *
+ * 그리고 폰에서는 한 번에 짚히지 않는다. 터치 원은 화면 좌표로 44px 고정인데
+ * 반도 전체가 들어오는 축척에서는 거점 사이가 20px 도 안 되어 이웃과 겹친다.
+ * 사람이 하는 대로 — 대충 짚어 그 근방으로 데려간 뒤, 당겨서 정확히 짚는다. */
+await poke(page.locator('[data-castle-id="geumseong"] .hit'));
 await page.waitForTimeout(250);
 const picked = await page.locator('.win-bd h2').first().innerText();
-if (!/금성/.test(picked)) throw new Error('거점 선택이 패널에 반영되지 않았습니다: ' + picked);
+if (PHONE) {
+  // 어느 거점이 잡히는지까지는 묻지 않는다. 반도 전체가 들어오는 축척에서는
+  // 거점 사이가 20px 도 안 되는데 터치 원은 44px 이라 이웃과 겹친다 —
+  // 정확히 짚으려면 사람도 당겨야 한다. 여기서 볼 것은 "탭이 선택으로
+  // 이어지고 그것이 시트에 그대로 나타나는가" 다.
+  const sel = await page.locator('.node.sel').getAttribute('data-castle-id');
+  if (!sel) throw new Error('탭했는데 거점이 선택되지 않았습니다');
+  if (!picked.trim()) throw new Error('탭한 거점이 시트에 나타나지 않았습니다');
+  console.log('탭으로 선택된 거점:', sel, '/ 시트 표제:', picked.split('\n')[0]);
+  // 터치 원이 실제로 커졌는지 (문서: 44px 기준)
+  const rr = await page.evaluate(() =>
+    parseFloat(getComputedStyle(document.querySelector('.node .hit')).r)
+  );
+  if (rr < 20) throw new Error('거점 터치 원이 손가락에 비해 작습니다: r=' + rr);
+  console.log('거점 터치 원: r =', rr);
+} else if (!/금성/.test(picked)) {
+  throw new Error('거점 선택이 패널에 반영되지 않았습니다: ' + picked);
+}
+// 고른 거점에 따라 개발이 막혀 있을 수 있다(한계치·인물 부족). 눌리는 때만 누른다.
 const devBtn = page.getByRole('button', { name: '농업 개발' });
-if (await devBtn.count()) { await devBtn.first().click(); await page.waitForTimeout(150); }
+if ((await devBtn.count()) && (await devBtn.first().isEnabled())) {
+  await devBtn.first().click();
+  await page.waitForTimeout(150);
+}
 await page.screenshot({ path: `${OUT}/03-castle.png` });
 
 // 출진 — 지도에서 목적지를 찍는다
@@ -110,14 +181,50 @@ if (await marchBtn.count()) {
   const lit = await page.locator('.node.target').count();
   console.log('출진 후보 거점:', lit);
   if (lit === 0) throw new Error('지도에 출진 후보가 하나도 밝혀지지 않았습니다');
-  await page.locator('.node.target').first().click({ force: true });
+  if (PHONE) await noSideScroll('출진 편성');
+  await poke(page.locator('.node.target').first());
   await page.waitForTimeout(200);
   await page.getByRole('button', { name: '취소' }).click();
   await page.waitForTimeout(150);
 }
 
-/* ---------------- 창(窓) ---------------- */
-{
+/* ---------------- 창(窓) ---------------- *
+ * 데스크톱은 자유 좌표로 끌고 닫았다 다시 연다.
+ * 폰은 아래에 붙은 시트라 위아래로 끌어 3단으로 여닫는다. 닫기 버튼은 없다. */
+if (PHONE) {
+  const sheet = page.locator('.win.sheet');
+  const h = async () => Math.round((await sheet.boundingBox()).height);
+  const dragHead = async (dy) => {
+    const hb = await sheet.locator('.win-hd').boundingBox();
+    await page.mouse.move(hb.x + hb.width / 2, hb.y + 10);
+    await page.mouse.down();
+    await page.mouse.move(hb.x + hb.width / 2, hb.y + 10 + dy, { steps: 12 });
+    await page.mouse.up();
+    await page.waitForTimeout(350);
+  };
+  const half = await h();
+  await dragHead(320);
+  const peek = await h();
+  await page.screenshot({ path: `${OUT}/03c-sheet-peek.png` });
+  await dragHead(-600);
+  const full = await h();
+  console.log('시트 3단:', peek, '/', half, '/', full);
+  if (!(peek < half && half < full)) throw new Error(`시트 스냅이 3단으로 움직이지 않았습니다: ${peek}/${half}/${full}`);
+  if (peek > 90) throw new Error('엿보기 단이 지도를 너무 가립니다: ' + peek);
+  await dragHead(320);
+  await dragHead(-200); // 절반으로 되돌린다
+  await page.screenshot({ path: `${OUT}/03c-sheet-full.png` });
+
+  // 손가락 크기. 44 는 못 맞추더라도 36 아래로 내려가면 못 누른다.
+  const small = await page.evaluate(() =>
+    [...document.querySelectorAll('.topbar .btn, .win.sheet .tabs button')]
+      // 폰에서 시트로 옮겨 간 버튼들은 display:none 이라 높이가 0 이다. 셈에서 뺀다.
+      .filter((b) => b.offsetParent !== null)
+      .map((b) => ({ t: b.innerText.trim(), h: Math.round(b.getBoundingClientRect().height) }))
+      .filter((x) => x.h < 36)
+  );
+  if (small.length) throw new Error('손가락에 비해 작은 버튼: ' + JSON.stringify(small));
+} else {
   const win = page.locator('.win').first();
   const head = win.locator('.win-hd');
   const before = await win.boundingBox();
@@ -158,6 +265,17 @@ for (let i = 0; i < 14; i++) {
   if (battle) {
     await page.screenshot({ path: `${OUT}/09-battle.png` });
     const delegate = page.getByRole('button', { name: /위임/ });
+    if (PHONE) {
+      await noSideScroll('전투');
+      // 폰에서 30합을 손으로 두는 것은 무리다. 이게 빠져나갈 구멍이므로
+      // 스크롤 없이 첫 화면에 보여야 한다.
+      if (!(await delegate.count()) || !(await delegate.first().isVisible())) {
+        throw new Error('전투 첫 화면에 「위임」이 보이지 않습니다');
+      }
+      const canvasH = (await page.locator('.battle-canvas-wrap canvas').boundingBox()).height;
+      console.log('세로 전투 — 육각판 높이:', Math.round(canvasH));
+      if (canvasH < 240) throw new Error('세로 화면에서 육각판이 너무 눌렸습니다: ' + Math.round(canvasH));
+    }
     if (await delegate.count()) await delegate.click();
     await page.waitForTimeout(400);
     const back = page.getByRole('button', { name: /전략맵으로/ });
@@ -168,6 +286,7 @@ for (let i = 0; i < 14; i++) {
   const choice = page.locator('.choice');
   if (await choice.count()) {
     await page.screenshot({ path: `${OUT}/08-event.png` });
+    if (PHONE) await noSideScroll('사건 대화상자');
     await choice.first().click();
     await page.waitForTimeout(400);
     continue;
@@ -197,11 +316,28 @@ await page.waitForSelector('.battle', { timeout: 10000 });
 
 await page.waitForTimeout(300);
 await page.screenshot({ path: `${OUT}/11-sandbox.png` });
+if (PHONE) {
+  await noSideScroll('전투 시뮬레이터');
+  if (!(await page.getByRole('button', { name: /위임/ }).first().isVisible())) {
+    throw new Error('전투 시뮬레이터 첫 화면에 「위임」이 보이지 않습니다');
+  }
+  // 전투 기록은 한 줄로 접혀 있다가 눌러서 펼쳐진다
+  const logBox = page.locator('.battle-log');
+  const h0 = (await logBox.boundingBox()).height;
+  await logBox.tap();
+  await page.waitForTimeout(250);
+  const h1 = (await logBox.boundingBox()).height;
+  if (h1 <= h0) throw new Error(`전투 기록이 펼쳐지지 않았습니다: ${Math.round(h0)} → ${Math.round(h1)}`);
+  console.log('전투 기록 접기/펼치기:', Math.round(h0), '→', Math.round(h1));
+  await logBox.tap();
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: `${OUT}/11b-sandbox-portrait.png` });
+}
 
 // 수비 측을 직접 지휘해 본다: 부대 선택 → 차례 종료
 const turnLabel = await page.locator('.battle-head').innerText();
 if (!/아군 차례/.test(turnLabel)) throw new Error('수비 측 차례로 넘어오지 않았습니다: ' + turnLabel);
-await page.locator('.unit-card').nth(1).click();
+await poke(page.locator('.unit-card').nth(1));
 await page.waitForTimeout(150);
 await page.screenshot({ path: `${OUT}/12-sandbox-select.png` });
 await page.getByRole('button', { name: '차례 종료' }).click();

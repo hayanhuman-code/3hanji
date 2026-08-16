@@ -87,6 +87,8 @@ export function GameScreen() {
   const [openLog, setOpenLog] = useState(true);
   /** 폰에서만 쓰는 추가 탭. null 이면 위의 다섯 탭(store 의 panel) 을 보여 준다. */
   const [extra, setExtra] = useState<ExtraTab | null>(null);
+  /** 시트를 올려 달라는 신호. 지도에서 무언가를 고를 때마다 하나씩 올린다. */
+  const [raise, setRaise] = useState(0);
 
   // 폰으로 좁아지면 창 둘이 시트 하나로 합쳐진다. 사초만 열려 있었다면
   // 그 상태를 잃지 않도록 사초 탭으로 옮겨 준다.
@@ -119,6 +121,8 @@ export function GameScreen() {
       if (phone) {
         setExtra(null);
         setPanel('castle');
+        // 접혀 있으면 올려 준다 — 안 그러면 탭이 먹통처럼 느껴진다.
+        setRaise((n) => n + 1);
       }
     },
     [marchTargets, select, phone, setPanel]
@@ -305,6 +309,7 @@ export function GameScreen() {
           x={0}
           y={0}
           width={0}
+          raiseKey={raise}
           head={
             <div className="tabs">
               {TABS.map((t) => (

@@ -165,7 +165,10 @@ export function useMapView(content: ContentBox): MapViewApi {
       const [w, h] = stageSize();
       const sx = v.tx + x * v.k;
       const sy = v.ty + y * v.k;
-      const margin = 80;
+      // 고정 80px 은 데스크톱에서는 여백이지만 390px 폰에서는 화면의 20% 라,
+      // 가장자리 근처의 거점을 고를 때마다 지도가 필요 없이 다시 가운데로 뛴다.
+      // 화면 크기에 비례하게 하되 위아래로 묶는다.
+      const margin = Math.max(24, Math.min(80, Math.min(w, h) * 0.1));
       if (sx < margin || sx > w - margin || sy < margin || sy > h - margin) {
         v.tx = w / 2 - x * v.k;
         v.ty = h / 2 - y * v.k;

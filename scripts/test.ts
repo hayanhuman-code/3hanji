@@ -16,7 +16,12 @@ import { deserialize, serialize } from '../src/core/save';
 import { beginNextTurn, completeEvent, resolveTurn } from '../src/core/turn';
 import { findPath } from '../src/core/util';
 import { castleDef, CASTLES, OFFICERS } from '../src/core/data';
-import { TROOPS } from '../src/core/types';
+import { TROOPS, type Troop } from '../src/core/types';
+import { FACTION_AFFINITY, TIER_POWER } from '../src/core/field/balance';
+import { BATTLEFIELD_IDS, battlefield } from '../src/core/field/battlefield';
+import { createField } from '../src/core/field/setup';
+import { runToEnd } from '../src/core/field/sim';
+import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
 import {
   canPass,
   findMarchPath,
@@ -510,6 +515,146 @@ test('사료상 못 박은 인물의 계열이 지켜진다', () => {
   }
   const jang = OFFICERS.find((o) => o.id === 'jangbogo');
   if (jang) assert(jang.naval, '장보고가 수군을 못 이끕니다');
+});
+
+/* ================================================================== *
+ * 전장 (전투 v2)
+ *
+ * 여기서 지키려는 것 셋.
+ *   ① 판이 재현된다 — 같은 시드면 같은 결과. 즉시결판과 관전이 어긋나면 안 된다
+ *   ② 갈 수 있는 땅이 이어져 있다 — 강이 판을 두 쪽으로 가르면 전투가 성립 안 한다
+ *   ③ 나라가 병종보다 크다 — 세력 계수가 단계 계수를 넘어서면 안 된다
+ * ================================================================== */
+
+section('전장');
+
+const fieldStats = new Map(OFFICERS.map((o) => [o.id, o.stats]));
+const statsFor = (id: string) => fieldStats.get(id)!;
+
+/** 시험용 편성 — 세력에서 계열별로 한 명씩 뽑는다 */
+function fieldArmy(faction: string, mix: Troop[], troops: number): FieldEntry[] {
+  const skip = new Set<string>();
+  const rows: Record<Troop, Row> = { inf: 'front', cav: 'mid', arc: 'rear', str: 'rear' };
+  const out: FieldEntry[] = [];
+  for (const t of mix) {
+    const o = OFFICERS.find((x) => x.faction === faction && x.troop === t && !skip.has(x.id));
+    if (!o) continue;
+    skip.add(o.id);
+    out.push({ officer: o.id, troops, row: rows[t], reserve: false });
+  }
+  return out;
+}
+
+function fieldSetup(seed: number, fieldId = 'hanseong'): FieldSetup {
+  const tiers = { inf: 2, cav: 2, arc: 2, str: 2 } as Record<Troop, 1 | 2 | 3 | 4>;
+  const mix: Troop[] = ['inf', 'inf', 'cav', 'arc'];
+  return {
+    fieldId,
+    seed,
+    season: 0,
+    siege: false,
+    playerSide: null,
+    attackerFaction: 'goguryeo',
+    defenderFaction: 'silla',
+    tiers: { attacker: tiers, defender: tiers },
+    attacker: fieldArmy('goguryeo', mix, 2500),
+    defender: fieldArmy('silla', mix, 2500),
+  };
+}
+
+test('같은 시드는 같은 결과를 낸다 (즉시결판 = 관전)', () => {
+  const a = runToEnd(createField(fieldSetup(4242)), statsFor);
+  const b = runToEnd(createField(fieldSetup(4242)), statsFor);
+  assertEqual(a.tick, b.tick, '같은 시드인데 전투 길이가 다릅니다');
+  assertEqual(a.result?.winner, b.result?.winner, '같은 시드인데 승자가 다릅니다');
+  assertEqual(
+    a.result?.attackerLoss,
+    b.result?.attackerLoss,
+    '같은 시드인데 손실이 다릅니다'
+  );
+});
+
+test('시드가 다르면 결과도 갈린다 (판이 굳어 있지 않다)', () => {
+  const runs = [11, 22, 33, 44, 55].map((s) => runToEnd(createField(fieldSetup(s)), statsFor));
+  const ticks = new Set(runs.map((r) => r.tick));
+  assert(ticks.size > 1, '시드를 바꿔도 전투가 똑같이 흘러갑니다');
+});
+
+test('전투가 실제로 끝난다 — 지쳐 쓰러지는 것이 아니라 승패로', () => {
+  for (const seed of [7, 77, 777]) {
+    const st = runToEnd(createField(fieldSetup(seed)), statsFor);
+    assertEqual(st.phase, 'done', '전투가 안 끝났습니다');
+    assert(st.result !== null, '결과가 없습니다');
+    const loss = (st.result!.attackerLoss + st.result!.defenderLoss) / 20000;
+    assert(loss > 0.05, `피해가 거의 없습니다 (${Math.round(loss * 100)}%) — 부대가 못 붙었을 수 있습니다`);
+  }
+});
+
+test('전멸할 때까지 싸우지 않는다 — 돌아갈 군대가 남는다', () => {
+  const st = runToEnd(createField(fieldSetup(31337)), statsFor);
+  const left = st.result!.survivors.reduce((s, x) => s + x.troops, 0);
+  assert(left > 0, '양쪽이 전멸했습니다 — 전략맵으로 돌아갈 병력이 없습니다');
+});
+
+test('갈 수 있는 땅은 모두 이어져 있다 (다리가 놓여 있다)', () => {
+  const BLOCK = new Set(['~', 's', 'X', 'W']);
+  const broken: string[] = [];
+  for (const id of BATTLEFIELD_IDS) {
+    const f = battlefield(id);
+    const H = f.tiles.length;
+    const W = f.w;
+    const seen = new Uint8Array(W * H);
+    const sizes: number[] = [];
+    const at = (x: number, y: number) => (y < H && x < f.tiles[y].length ? f.tiles[y][x] : 's');
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (BLOCK.has(at(x, y)) || seen[y * W + x]) continue;
+        let n = 0;
+        const stack = [[x, y]];
+        seen[y * W + x] = 1;
+        while (stack.length) {
+          const [cx, cy] = stack.pop()!;
+          n++;
+          for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nx = cx + ox;
+            const ny = cy + oy;
+            if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+            if (BLOCK.has(at(nx, ny)) || seen[ny * W + nx]) continue;
+            seen[ny * W + nx] = 1;
+            stack.push([nx, ny]);
+          }
+        }
+        sizes.push(n);
+      }
+    }
+    // 계립령의 산성 안쪽(44칸)처럼 성벽·절벽으로 둘러싸인 곳은 성문으로만 든다.
+    // 그것 말고 큰 덩어리가 둘 이상이면 전투가 성립하지 않는다.
+    if (sizes.filter((n) => n >= 80).length > 1) broken.push(id);
+  }
+  assertEqual(broken.length, 0, `강이 판을 가른 전장: ${broken.join(', ')}`);
+});
+
+test('나라를 키우는 쪽이 명장보다 크다 — 세력 계수가 단계를 못 넘는다', () => {
+  const tierSpread = TIER_POWER[4] / TIER_POWER[1];
+  let widest = 1;
+  for (const row of Object.values(FACTION_AFFINITY)) {
+    const vs = Object.values(row);
+    widest = Math.max(widest, Math.max(...vs) / Math.min(...vs));
+  }
+  assert(
+    widest < tierSpread,
+    `세력 계수 폭(${widest.toFixed(2)})이 단계 계수 폭(${tierSpread.toFixed(2)})을 넘습니다`
+  );
+});
+
+test('고구려 기병은 1단계부터 더 세다', () => {
+  assert(
+    FACTION_AFFINITY.goguryeo.cav > FACTION_AFFINITY.silla.cav &&
+      FACTION_AFFINITY.goguryeo.cav > FACTION_AFFINITY.baekje.cav,
+    '고구려 기병이 신라·백제 기병보다 세지 않습니다'
+  );
+  assert(FACTION_AFFINITY.gaya.inf > FACTION_AFFINITY.goguryeo.inf, '가야 보병이 세지 않습니다');
+  assert(FACTION_AFFINITY.baekje.navy > FACTION_AFFINITY.goguryeo.navy, '백제 수군이 세지 않습니다');
 });
 
 /* ================================================================== *

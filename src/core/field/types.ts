@@ -209,6 +209,11 @@ export interface FieldState {
   siegeState: SiegeState | null;
   /** 성 밖에서 온 값들 (수비 총대장·지형). 공성 AI 가 읽는다 */
   siegeCtx: SiegeContext;
+  /**
+   * 성문 자리를 한 번만 찾아 둔다 (undefined = 아직 안 찾음).
+   * 매 틱 전장을 훑던 것이 시뮬레이션 시간의 대부분을 먹었다.
+   */
+  gateAt?: { x: number; y: number } | null;
   attackerFaction: FactionId;
   defenderFaction: FactionId;
   /** 플레이어가 맡은 쪽. null 이면 관전 */

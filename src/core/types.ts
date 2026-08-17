@@ -490,6 +490,11 @@ export interface BattleSummary {
   siege: boolean;
   /** 사로잡힌 인물 */
   capturedOfficers: OfficerId[];
+  /**
+   * 성이 어떻게 넘어갔는가 (§6.3 — 강공·포위·계략·내응).
+   * 재측정에서 분포를 본다. 한쪽으로 쏠리면 나머지 수단이 사문서라는 뜻이다.
+   */
+  siegeMethod?: 'assault' | 'encircle' | 'scheme' | 'infiltrate' | null;
 }
 
 /** 전투 대기열 항목 — 턴 엔진 ④단계에서 소비 */

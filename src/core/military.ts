@@ -655,15 +655,24 @@ export function applyFieldResult(
     captured: capturedCastle,
     siege: pending.siege,
     capturedOfficers: captured,
+    siegeMethod: result.siegeMethod,
   };
 
+  const HOW: Record<string, string> = {
+    assault: '강공',
+    encircle: '포위',
+    scheme: '계략',
+    infiltrate: '내응',
+  };
   addLog(
     state,
     null,
     'battle',
     `${castleName(pending.castle)} — ${factionName(pending.attacker)} vs ${factionName(pending.defender)}: ` +
       `${factionName(summary.winner)} 승리 (피해 ${result.attackerLoss.toLocaleString()} : ${result.defenderLoss.toLocaleString()})` +
-      (capturedCastle ? `, ${castleName(pending.castle)} 함락` : '')
+      (capturedCastle
+        ? `, ${castleName(pending.castle)} 함락${result.siegeMethod ? ` (${HOW[result.siegeMethod]})` : ''}`
+        : '')
   );
   if (capturedCastle) {
     addChronicle(

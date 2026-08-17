@@ -186,8 +186,21 @@ export function insideWall(f: Battlefield, x: number, y: number): boolean {
   return insideWallGrid(f)[ty * f.w + tx] === 1;
 }
 
-/** 성문 자리(m). 여럿이면 가장 앞쪽(공격측에 가까운) 하나 */
+/**
+ * 성문 자리(m). 여럿이면 공격군이 먼저 닿는 문.
+ *
+ * **판에 캐시해 둔다.** 매 틱 48×32 를 훑던 탓에 부대 스무 개가 십만 틱을
+ * 도는 공성전 한 판에서 30억 번 타일을 읽었다 — 시뮬레이션이 서른 배 느려졌다.
+ * 성문은 전투 중에 움직이지 않는다.
+ */
 export function gatePoint(st: FieldState): { x: number; y: number } | null {
+  if (st.gateAt !== undefined) return st.gateAt;
+  const at = findGate(st);
+  st.gateAt = at;
+  return at;
+}
+
+function findGate(st: FieldState): { x: number; y: number } | null {
   const f = st.field;
   const [tw, th] = tileSize(f);
   let best: { x: number; y: number } | null = null;

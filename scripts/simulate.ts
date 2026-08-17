@@ -31,6 +31,18 @@ interface RunResult {
   turns: number;
   year: number;
   finalCastles: Record<string, number>;
+  /**
+   * **거점이 실제로 손바뀜한 횟수.**
+   *
+   * 승률만 보면 왜 안 끝나는지 알 수 없다. 성이 안 바뀌면 공성이 여전히
+   * 안 되는 것이고, 그러면 승률 조정은 노이즈를 튜닝하는 일이 된다.
+   */
+  flips: number;
+  /** 함락 방식 분포 (§6.3). 한쪽으로 쏠리면 나머지 수단이 사문서다 */
+  methods: Record<string, number>;
+  /** 전투 횟수와 그중 함락으로 끝난 횟수 */
+  battles: number;
+  captures: number;
 }
 
 function runOne(seed: number): RunResult {
@@ -47,6 +59,34 @@ function runOne(seed: number): RunResult {
 
   const rng = new RngCursor(seed ^ 0x5f3759df);
 
+  // 거점 소유를 매 턴 비교해 손바뀜을 센다
+  const owner = new Map<string, string | null>();
+  for (const c of Object.values(state.castles)) owner.set(c.id, c.owner);
+  let flips = 0;
+  const methods: Record<string, number> = {};
+  let battles = 0;
+  let captures = 0;
+  let logAt = 0;
+
+  const scanTurn = () => {
+    for (const c of Object.values(state.castles)) {
+      if (owner.get(c.id) !== c.owner) {
+        flips++;
+        owner.set(c.id, c.owner);
+      }
+    }
+    // 전투 기록에서 함락 방식을 읽는다 (로그가 단일 출처다)
+    for (const l of state.log.slice(logAt)) {
+      if (l.kind !== 'battle') continue;
+      if (!/vs/.test(l.text)) continue;
+      battles++;
+      const m = l.text.match(/함락 \((강공|포위|계략|내응)\)/);
+      if (/함락/.test(l.text)) captures++;
+      if (m) methods[m[1]] = (methods[m[1]] ?? 0) + 1;
+    }
+    logAt = state.log.length;
+  };
+
   while (!state.result && state.turn <= MAX_TURNS) {
     let guard = 0;
     for (;;) {
@@ -62,10 +102,12 @@ function runOne(seed: number): RunResult {
       }
       break;
     }
+    scanTurn();
     if (state.result) break;
     beginNextTurn(state);
     if (guard++ > 10000) break;
   }
+  scanTurn();
 
   const finalCastles: Record<string, number> = {};
   for (const f of factions) finalCastles[f] = factionCastles(state, f).length;
@@ -78,7 +120,17 @@ function runOne(seed: number): RunResult {
     kind = 'timeout';
   }
 
-  return { winner, kind, turns: state.turn, year: state.year, finalCastles };
+  return {
+    winner,
+    kind,
+    turns: state.turn,
+    year: state.year,
+    finalCastles,
+    flips,
+    methods,
+    battles,
+    captures,
+  };
 }
 
 /* --------------------------------- 실행 --------------------------------- */
@@ -151,5 +203,38 @@ console.log(
       .map(([k, v]) => `${victoryLabel(k)} ${v}`)
       .join(', ')
 );
+
+/* ------------------------------------------------------------------ *
+ * 판이 실제로 움직였는가
+ *
+ * **승률보다 먼저 봐야 하는 두 값이다.** 거점이 안 바뀌면 공성이 여전히
+ * 안 되는 것이고, 함락 방식이 한쪽으로 쏠리면 나머지 수단이 사문서다.
+ * ------------------------------------------------------------------ */
+
+const flips = results.reduce((a, r) => a + r.flips, 0);
+const battles = results.reduce((a, r) => a + r.battles, 0);
+const captures = results.reduce((a, r) => a + r.captures, 0);
+console.log('');
+console.log(`거점 손바뀜  판당 ${(flips / RUNS).toFixed(1)}회 (총 ${flips})`);
+console.log(
+  `전투         판당 ${(battles / RUNS).toFixed(1)}회, 그중 함락 ${captures}` +
+    (battles ? ` (${((captures / battles) * 100).toFixed(0)}%)` : '')
+);
+
+const methods: Record<string, number> = {};
+for (const r of results) {
+  for (const [k, v] of Object.entries(r.methods)) methods[k] = (methods[k] ?? 0) + v;
+}
+const mTotal = Object.values(methods).reduce((a, b) => a + b, 0);
+if (mTotal === 0) {
+  console.log('함락 방식     — (한 번도 함락되지 않았다)');
+} else {
+  console.log(
+    '함락 방식     ' +
+      ['강공', '포위', '계략', '내응']
+        .map((k) => `${k} ${(((methods[k] ?? 0) / mTotal) * 100).toFixed(0)}%`)
+        .join(' · ')
+  );
+}
 
 void factionTroops;

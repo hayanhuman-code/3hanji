@@ -226,6 +226,11 @@ export const TERRAIN: Record<TerrainCode, TerrainSpec> = {
   W: { name: '성벽', move: 0, defense: 1.5, melee: 1.0, arc: 1.15, cav: 1.0, toll: 1.0 },
   G: { name: '성문', move: 0.8, defense: 1.3, melee: 1.0, arc: 1.0, cav: 0.9, toll: 1.0 },
   P: { name: '항구', move: 0.9, defense: 1.0, melee: 1.0, arc: 1.0, cav: 0.9, toll: 1.0 },
+  // §7.1 — 성곽 규격이 더한 셋. 치·옹성벽은 성벽과 같이 못 지나간다
+  T: { name: '치', move: 0, defense: 1.6, melee: 1.0, arc: 1.25, cav: 1.0, toll: 1.0 },
+  O: { name: '옹성벽', move: 0, defense: 1.45, melee: 1.0, arc: 1.15, cav: 1.0, toll: 1.0 },
+  // 해자는 건널 수 있다. 다만 그 안에 있는 동안 방어가 무너진다 (§7.7 MOAT_DEF_PENALTY)
+  D: { name: '해자', move: 0.35, defense: 0.7, melee: 0.9, arc: 0.95, cav: 0.5, toll: 1.1 },
   r: { name: '길', move: 1.3, defense: 0.95, melee: 1.0, arc: 1.0, cav: 1.2, toll: 0.9 },
 };
 

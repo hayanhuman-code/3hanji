@@ -71,6 +71,30 @@ export const SIEGE = {
   streetDefense: 1.15,
   /** 시가전에서 항복하는 사기 */
   streetSurrenderMorale: 20,
+
+  /* ------------------------------------------------------------------ *
+   * §7.7 성곽 구조물 다이얼
+   *
+   * 기획서가 「§6.7 상수 파일에 합칠 것」이라 했으므로 여기 둔다. 지금은
+   * **맵 데이터에만** 반영돼 있고(치·옹성·해자 타일이 실제로 깔렸다),
+   * 이 계수를 읽는 전투 로직은 다음 단계다. 값을 미리 못 박아 두는 이유는
+   * 밸런싱할 때 찾아다니지 않게 하려는 것이다.
+   * ------------------------------------------------------------------ */
+
+  /** 해자에 발을 들인 그 라운드의 방어 감소 */
+  moatDefPenalty: -0.3,
+  /** 치에서 쏠 때 측면 판정 보정 */
+  chiFlankBonus: 0.25,
+  /** 옹성벽 HP = 성벽 HP × 이 값 */
+  ongseongHpRatio: 0.6,
+  /** 계곡수를 가진 성의 포위 완화 — 굶기기가 이만큼 더디다 */
+  waterSourceSiegeRelief: 0.25,
+  /** 구릉 방어 (TERRAIN.h 와 같은 값을 다이얼로도 적어 둔다) */
+  hillDefBonus: 0.1,
+  /** 외성이 떨어질 때 내성으로 물릴 수 있는 병력 비율 */
+  innerRetreatRatio: 0.7,
+  /** 쌍성에서 한쪽이 떨어져 다른 성으로 물러날 때 받는 추격 피해 */
+  twinRetreatDamage: 0.15,
 } as const;
 
 /** 성이 함락된 방식. 재측정에서 분포를 본다 — 한쪽으로 쏠리면 나머지가 사문서다 */
@@ -136,9 +160,13 @@ export function insideWallGrid(f: Battlefield): Uint8Array {
   const w = f.w;
   const h = f.h;
   const outside = new Uint8Array(w * h);
+  /*
+   * 치(T)·옹성벽(O)도 성벽이다 (§7.1). 이 둘을 빼고 물을 부으면 옹성 안쪽이
+   * 「성 밖」으로 잡혀, 성문 앞 옹성 주머니에서 근접 교전이 성립해 버린다.
+   */
   const isWall = (x: number, y: number) => {
     const c = f.tiles[y][x] as TerrainCode;
-    return c === 'W' || c === 'G';
+    return c === 'W' || c === 'G' || c === 'T' || c === 'O';
   };
 
   const stack: number[] = [];

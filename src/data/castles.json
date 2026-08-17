@@ -527,7 +527,7 @@
   },
   {
     "id": "ungjin",
-    "name": "웅진",
+    "name": "곰나루",
     "type": "major",
     "region": "금강",
     "position": {
@@ -1879,7 +1879,7 @@
   },
   {
     "id": "daegu",
-    "name": "대구",
+    "name": "달구벌",
     "type": "major",
     "region": "경상",
     "position": {
@@ -2596,7 +2596,7 @@
   },
   {
     "id": "maeso",
-    "name": "매소성",
+    "name": "호로고루",
     "type": "fort",
     "region": "한강",
     "position": {
@@ -2704,7 +2704,7 @@
   },
   {
     "id": "ungjingu",
-    "name": "웅진구",
+    "name": "곰나루어귀",
     "type": "port",
     "region": "금강",
     "position": {

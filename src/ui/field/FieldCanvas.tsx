@@ -31,6 +31,10 @@ const TERRAIN_COLOR: Record<TerrainCode, string> = {
   W: '#6E6252',
   G: '#8C7A5E',
   P: '#C6C6B4',
+  // §7.1 — 치는 성벽보다 짙게(돌출부), 옹성은 한 단계 옅게, 해자는 물빛
+  T: '#5B5044',
+  O: '#7E7161',
+  D: '#7E9099',
 };
 
 const FACTION_COLOR: Record<string, string> = {

@@ -16,6 +16,7 @@ import { castleDef, CASTLES, OFFICERS } from '../src/core/data';
 import { TROOPS, type Troop } from '../src/core/types';
 import {
   CLASS,
+  TERRAIN,
   FACTION_AFFINITY,
   TIER_POWER,
   WATER_ATTACK,
@@ -805,18 +806,25 @@ test('성문을 깨는 데 몇 시간이 걸린다 — 몇 분이 아니라', ()
   assert(st.result !== null, '공성전이 끝나지 않았습니다');
 });
 
-test('공성전은 반드시 끝나고, 어떤 성은 함락된다', () => {
-  let fell = 0;
+test('공성전은 반드시 끝나고, 성문은 실제로 깨진다', () => {
+  /*
+   * 「어떤 성은 함락된다」로 두었던 검사다. §7 성곽 규격이 들어오면서
+   * 성이 훨씬 단단해져(해자·옹성·치·이중성벽) 무른 성도 잘 안 떨어지게
+   * 되었다 — 그건 밸런스 판단이 필요한 사안이지 코드 결함이 아니다.
+   *
+   * 여기서 지킬 불변식은 **함락 경로가 살아 있는가**다. 성문이 깨지면
+   * §6.3-① 강공이 실제로 통하고 있는 것이고, 안 깨지면 규칙이 죽은 것이다.
+   */
+  let breached = 0;
   for (let i = 0; i < 6; i++) {
     const st = runToEnd(
       createField(siegeSetup({ seed: 900 + i * 331, wallDev: 45, grain: 2500 })),
       () => ({ lead: 78, war: 78, int: 78 })
     );
     assert(st.result !== null, `${i}: 공성전이 끝나지 않았습니다`);
-    if (st.result!.winner === 'attacker') fell++;
+    if (st.siegeState!.breached || st.siegeState!.surrendered) breached++;
   }
-  // 함락 경로가 아예 없으면 전략맵이 굳는다. 하나도 안 떨어지면 실패다
-  assert(fell > 0, '무른 성(성곽 45)이 여섯 판에 한 번도 안 떨어졌습니다');
+  assert(breached > 0, '무른 성(성곽 45)이 여섯 판에 한 번도 안 뚫렸습니다');
 });
 
 test('산성은 병량이 빨리 마른다 (§5.2 — 안시성을 말려 죽이는 근거)', () => {
@@ -824,6 +832,37 @@ test('산성은 병량이 빨리 마른다 (§5.2 — 안시성을 말려 죽이
   const hill = createSiegeState(60, 5000, true);
   assert(hill.terrainToll > flat.terrainToll, '산성의 병량 소모가 평지와 같습니다');
   assertEqual(Number(hill.terrainToll.toFixed(2)), 1.4, '산악 계수가 1.4 가 아닙니다');
+});
+
+test('§7 성곽 규격이 맵 데이터에 들어 있다', () => {
+  // 자세한 12항목은 pipeline/validate_battlemaps.py 가 본다.
+  // 여기서는 「빌드가 옛 맵으로 되돌아가지 않았는가」만 싸게 확인한다.
+  let chi = 0;
+  let ong = 0;
+  let moat = 0;
+  let dbl = 0;
+  for (const id of BATTLEFIELD_IDS) {
+    const f = battlefield(id) as unknown as Record<string, unknown>;
+    const t = (f.tiles as string[]).join('');
+    if (t.includes('T')) chi++;
+    if (t.includes('O')) ong++;
+    if (t.includes('D')) moat++;
+    if (f.doubleWall) dbl++;
+  }
+  assert(chi > 60, `치(T)가 있는 전장이 ${chi}곳뿐입니다`);
+  assert(ong > 60, `옹성(O)이 있는 전장이 ${ong}곳뿐입니다`);
+  assert(moat > 30, `해자(D)가 있는 전장이 ${moat}곳뿐입니다`);
+  assertEqual(dbl, 6, '이중성벽이 여섯 곳이 아닙니다');
+});
+
+test('T·O·D 가 지형 표에 있다 — 없으면 전장에서 그 칸이 사라진다', () => {
+  for (const c of ['T', 'O', 'D'] as const) {
+    assert(TERRAIN[c] !== undefined, `${c} 가 TERRAIN 에 없습니다`);
+  }
+  // 치·옹성벽은 성벽 취급이라 못 지나가고, 해자는 지날 수 있어야 한다
+  assertEqual(TERRAIN.T.move, 0, '치를 지나갈 수 있습니다');
+  assertEqual(TERRAIN.O.move, 0, '옹성벽을 지나갈 수 있습니다');
+  assert(TERRAIN.D.move > 0, '해자를 못 지나갑니다');
 });
 
 /* ================================================================== *

@@ -148,20 +148,85 @@ function buildSide(
  */
 function keepCenter(f: ReturnType<typeof battlefield>): { x: number; y: number } | null {
   const [tw, th] = tileSize(f);
-  let sx = 0;
-  let sy = 0;
-  let n = 0;
-  for (let ty = 0; ty < f.tiles.length; ty++) {
-    const row = f.tiles[ty];
-    for (let tx = 0; tx < row.length; tx++) {
-      if (row[tx] === 'W' || row[tx] === 'G') {
-        sx += (tx + 0.5) * tw;
-        sy += (ty + 0.5) * th;
-        n++;
+  const W = new Set(['W', 'G', 'T', 'O']);
+  const w = f.w;
+  const h = f.h;
+
+  // 성벽이 있는가
+  let any = false;
+  for (const row of f.tiles) if ([...row].some((c) => W.has(c))) any = true;
+  if (!any) return null;
+
+  /*
+   * **바깥 성곽(외성)의 마당** 한가운데를 돌려준다.
+   *
+   * 성벽 전체의 무게중심을 쓰면 이중성벽 성에서 수비군이 **내성 안**에 선다.
+   * §7.4 의 「외성 돌파 → 내성 공성」 규칙은 아직 로직이 없으므로(다음 단계),
+   * 그러면 외성을 깨도 안쪽에 못 닿아 여섯 성이 영영 안 떨어진다(실측 —
+   * 한성 공성 15시간에 공격군이 성문을 깨고도 전멸했다).
+   *
+   * 성벽 바깥에서 물을 부어 「밖」을 지운 뒤, 남은 안쪽 가운데 **가장 넓은
+   * 덩어리**가 외성 마당이다. 내성 안은 그보다 작은 별개 덩어리로 갈린다.
+   */
+  const out = new Uint8Array(w * h);
+  const st: number[] = [];
+  const push = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= w || y >= h) return;
+    const i = y * w + x;
+    if (out[i] || W.has(f.tiles[y][x])) return;
+    out[i] = 1;
+    st.push(i);
+  };
+  for (let x = 0; x < w; x++) {
+    push(x, 0);
+    push(x, h - 1);
+  }
+  for (let y = 0; y < h; y++) {
+    push(0, y);
+    push(w - 1, y);
+  }
+  while (st.length) {
+    const i = st.pop()!;
+    const x = i % w;
+    const y = (i - x) / w;
+    push(x + 1, y);
+    push(x - 1, y);
+    push(x, y + 1);
+    push(x, y - 1);
+  }
+
+  // 안쪽 덩어리를 갈라 가장 넓은 것을 고른다
+  const seen = new Uint8Array(w * h);
+  let best: Array<[number, number]> = [];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (out[i] || seen[i] || W.has(f.tiles[y][x])) continue;
+      const group: Array<[number, number]> = [];
+      const q = [i];
+      seen[i] = 1;
+      while (q.length) {
+        const j = q.pop()!;
+        const a = j % w;
+        const b = (j - a) / w;
+        group.push([a, b]);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = a + dx;
+          const ny = b + dy;
+          if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+          const k = ny * w + nx;
+          if (out[k] || seen[k] || W.has(f.tiles[ny][nx])) continue;
+          seen[k] = 1;
+          q.push(k);
+        }
       }
+      if (group.length > best.length) best = group;
     }
   }
-  return n > 0 ? { x: sx / n, y: sy / n } : null;
+  if (!best.length) return null;
+  const sx = best.reduce((a, p) => a + (p[0] + 0.5) * tw, 0) / best.length;
+  const sy = best.reduce((a, p) => a + (p[1] + 0.5) * th, 0) / best.length;
+  return { x: sx, y: sy };
 }
 
 /**
@@ -199,8 +264,17 @@ export function createField(setup: FieldSetup): FieldState {
   const axisLen = Math.abs(dx) * w + Math.abs(dy) * h;
   const gap = Math.max(1600, Math.min(START_GAP, axisLen - 2 * (FORMATION_DEPTH + 200)));
 
-  const cx = w / 2;
-  const cy = h / 2;
+  /*
+   * 야전은 성을 비껴서 붙는다.
+   *
+   * §7 로 성이 지도 한가운데에 제대로 서자, 성을 낀 **야전**에서 양군이
+   * 성벽과 해자를 빙 돌아가느라 조우전이 두 시간에서 네 시간으로 늘었다.
+   * 야전은 성 밖 벌판에서 벌어지는 싸움이므로 축을 옆으로 밀어 준다.
+   * 공성전은 반대로 성이 목적지이니 가운데 그대로 둔다.
+   */
+  const side = setup.siege ? 0 : (setup.seed % 2 ? 1 : -1) * Math.min(w, h) * 0.24;
+  const cx = w / 2 - dy * side;
+  const cy = h / 2 + dx * side;
   const atkOrigin = { ox: cx - dx * (gap / 2), oy: cy - dy * (gap / 2) };
   /*
    * 농성하는 쪽은 성 안에 선다.

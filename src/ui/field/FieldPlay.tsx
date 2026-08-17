@@ -268,6 +268,17 @@ export function FieldPlay({
                 </span>
                 <span className="num">{Math.round(sg.grain).toLocaleString()}</span>
               </div>
+              {/*
+                포위는 명령이 아니라 자리다 — 「포위」를 눌러도 길이 안 끊겼으면
+                병량은 한 톨도 안 준다. 그 사실을 여기서 보여 주지 않으면
+                플레이어는 왜 아무 일도 안 일어나는지 알 길이 없다.
+              */}
+              <div className="siege-gauge">
+                <span>봉쇄</span>
+                <span className="num" style={{ marginLeft: 'auto' }}>
+                  {sg.encircled ? '길이 모두 끊겼다' : '아직 길이 있다'}
+                </span>
+              </div>
 
               <div className="row" style={{ gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
                 <button
@@ -282,7 +293,7 @@ export function FieldPlay({
                 </button>
                 <button
                   className={`btn small${sg.mode === 'encircle' ? ' on' : ''}`}
-                  title="사방을 막아 병량을 말린다. 산성은 소모가 1.4배라 이쪽이 정답이 된다"
+                  title="성문으로 드는 길목에 부대를 세워 막는다. 길이 다 끊겨야 병량이 마른다 — 성문이 둘뿐인 산성은 막히고, 사방이 열린 평산성은 열두 부대로도 안 막힌다"
                   onClick={() => {
                     setSiegeMode(state, sg, 'encircle');
                     changed();

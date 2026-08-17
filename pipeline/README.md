@@ -50,3 +50,23 @@ mv ne_10m_land.geojson land.geojson
   "양쪽이 항구면 자동 수로" 규칙은 인접 해안까지 배로 돌게 만들어 폐기함
 - 하천을 통항 수역으로 인정하면 배가 내륙 하천으로 몰림. 시도했다가 폐기함
 - Catmull-Rom 장력 계수는 1/11. 기본값 1/6은 급커브에서 해안선을 넘음
+
+## 전장맵 (battlemaps.json)
+
+```bash
+# 지리 원본을 내려받는다 (저장소에 넣지 않는다 — 17MB)
+curl -sL -o land.geojson   https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_land.geojson
+curl -sL -o rivers.geojson https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson
+cp ../src/data/mapdata.json .
+
+python3 build_battlemaps.py      # 지형 + 성곽(§7) → battlemaps.json
+python3 validate_battlemaps.py   # §7.6 검증 12항목 — 위반 0 이어야 한다
+python3 build_bmviewer.py        # ../docs/battlemap-viewer.html
+cp battlemaps.json ../src/data/
+```
+
+`castleworks.py` 가 §7 성곽 규격을 맡는다. 지형은 `build_battlemaps.py`,
+성은 `castleworks.py` — §7 을 고칠 때 지리 코드를 건드릴 일이 없게 나눠 두었다.
+
+**생성은 결정론적이다.** 같은 입력이면 76곳이 한 타일도 안 바뀐다.
+(예전에는 `hash()` 를 써서 실행할 때마다 전부 달라졌다.)

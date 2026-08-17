@@ -1,0 +1,129 @@
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ji:#DDD0B2;--ji-deep:#CFC09C;--ji-edge:#B5A47E;--meok:#241F1A;
+    --meok-mid:#554C40;--meok-cap:#5A5143;--meok-thin:#8A7E6C;--jinsa:#A83232;--su:#4E7480}
+  *{box-sizing:border-box}
+  .bm{font-family:'Noto Serif KR','Batang',serif;color:var(--meok);background:var(--ji);
+    border:1px solid var(--ji-edge);position:relative;overflow:hidden;user-select:none;
+    box-shadow:inset 0 0 60px rgba(120,95,60,.18)}
+  .bm::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.12;z-index:5;
+    background-image:repeating-linear-gradient(93deg,transparent 0 3px,rgba(90,70,40,.5) 3px 4px),
+                     repeating-linear-gradient(177deg,transparent 0 5px,rgba(90,70,40,.3) 5px 6px)}
+  .top{display:flex;align-items:stretch;border-bottom:2px solid var(--meok);position:relative;z-index:2}
+  .top .t{padding:8px 14px;border-right:1px solid var(--meok-thin);display:flex;align-items:baseline;gap:8px}
+  .top .t b{font-size:15px;font-weight:900;letter-spacing:.2em}
+  .top .t i{font-style:normal;font-size:8px;color:var(--meok-cap);letter-spacing:.28em}
+  .top select{flex:1;min-width:0;border:none;border-right:1px solid var(--meok-thin);
+    background:transparent;font-family:inherit;font-size:13px;padding:0 12px;color:var(--meok);cursor:pointer}
+  .top .m{padding:5px 13px;border-right:1px solid rgba(138,126,108,.35);min-width:96px}
+  .top dt{font-size:8px;letter-spacing:.24em;color:var(--meok-cap)}
+  .top dd{margin:1px 0 0;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
+  .wrap{display:flex;position:relative;z-index:1}
+  .cvw{flex:1;min-width:0;padding:12px}
+  canvas{width:100%;height:auto;display:block;border:1.5px solid var(--meok)}
+  .side{flex:0 0 190px;border-left:2px solid var(--meok);padding:12px}
+  .eb{font-size:8.5px;letter-spacing:.3em;color:var(--meok-cap);margin:0 0 8px}
+  .lg{display:flex;align-items:center;gap:7px;font-size:11px;margin-bottom:5px}
+  .lg span{width:13px;height:13px;flex:none;border:1px solid rgba(36,31,26,.35)}
+  .ap{font-size:10.5px;line-height:1.65;color:var(--meok-mid);margin-top:3px}
+  .note{margin-top:14px;padding-top:11px;border-top:1px solid var(--meok-thin);
+    font-size:10px;line-height:1.6;color:var(--meok-cap)}
+  @media (max-width:720px){.wrap{flex-direction:column}
+    .side{flex:none;border-left:none;border-top:2px solid var(--meok)}}
+</style>
+
+<div class="bm">
+  <div class="top">
+    <div class="t"><b>戰場</b><i>BATTLEFIELD</i></div>
+    <select id="sel"></select>
+    <div class="m"><dt>규모</dt><dd id="mSize">—</dd></div>
+    <div class="m"><dt>산악도</dt><dd id="mMtn">—</dd></div>
+    <div class="m"><dt>능선거리</dt><dd id="mRidge">—</dd></div>
+  </div>
+  <div class="wrap">
+    <div class="cvw"><canvas id="cv" width="960" height="640"></canvas></div>
+    <aside class="side">
+      <p class="eb">지형 구성</p>
+      <div id="legend"></div>
+      <p class="eb" style="margin-top:14px">진입 방향</p>
+      <div class="ap" id="appr"></div>
+      <p class="note">해안선·하천은 Natural Earth 10m 실측 벡터를 거점 주변
+        7×5km로 잘라낸 것. 산지·구릉은 능선 근접도로 산출.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+const DATA = /*__BMDATA__*/;
+const C={
+  '.':['#CFC09C','평지'], 'f':['#A8AE86','숲'],   'h':['#BFAE84','구릉'],
+  'm':['#9A8B6E','산악'], 'X':['#6E6151','험지(통행불가)'],
+  '~':['#7FA0A8','하천'], '=':['#A9C0C4','여울'],
+  's':['#B9C3BC','바다'], 'M':['#A5A183','늪'],   'W':['#5A5143','성벽'],
+  'G':['#A83232','성문'], 'P':['#8C7C5E','항구'], 'r':['#C6B48C','길'],
+  // §7.1 — 치·옹성벽은 성벽 계열이라 짙게, 해자는 물빛
+  'T':['#3F382E','치(雉)'], 'O':['#7A6A55','옹성벽'], 'D':['#7E9099','해자']
+};
+const cv=document.getElementById('cv'), cx=cv.getContext('2d');
+const $=i=>document.getElementById(i);
+const ids=Object.keys(DATA.maps);
+$('sel').innerHTML=ids.map(i=>{
+  const m=DATA.maps[i];
+  const tag=[m.hasSea?'해':'',m.hasRiver?'강':''].filter(Boolean).join('·');
+  return `<option value="${i}">${m.name}　${({capital:'도성',major:'대성',fort:'산성',port:'항구'})[m.type]}${tag?'　'+tag:''}</option>`;
+}).join('');
+
+function render(id){
+  const m=DATA.maps[id];
+  const tw=cv.width/m.w, th=cv.height/m.h;
+  const cnt={};
+  for(let y=0;y<m.h;y++){
+    for(let x=0;x<m.w;x++){
+      const ch=m.tiles[y][x];
+      cnt[ch]=(cnt[ch]||0)+1;
+      cx.fillStyle=(C[ch]||['#CFC09C'])[0];
+      cx.fillRect(x*tw,y*th,tw+0.6,th+0.6);
+    }
+  }
+  // 격자
+  cx.strokeStyle='rgba(36,31,26,.07)'; cx.lineWidth=1;
+  for(let x=0;x<=m.w;x+=4){cx.beginPath();cx.moveTo(x*tw,0);cx.lineTo(x*tw,cv.height);cx.stroke();}
+  for(let y=0;y<=m.h;y+=4){cx.beginPath();cx.moveTo(0,y*th);cx.lineTo(cv.width,y*th);cx.stroke();}
+  // 진입 방향 화살
+  cx.font='700 15px "Noto Serif KR",serif'; cx.textAlign='center'; cx.textBaseline='middle';
+  const seen={};
+  m.approaches.forEach(a=>{
+    if(seen[a.edge])return; seen[a.edge]=1;
+    const p={N:[cv.width/2,18],S:[cv.width/2,cv.height-18],
+             W:[18,cv.height/2],E:[cv.width-18,cv.height/2]}[a.edge];
+    cx.fillStyle=a.sea?'#4E7480':'#241F1A';
+    cx.fillText({N:'▲',S:'▼',W:'◀',E:'▶'}[a.edge],p[0],p[1]);
+  });
+
+  $('mSize').textContent=`${m.kmW}×${m.kmH}km`;
+  $('mMtn').textContent=m.mountainous.toFixed(2);
+  $('mRidge').textContent=`${m.ridgeKm}km`;
+  const tot=m.w*m.h;
+  // §7 성곽 요약 — 유형·이중성벽·쌍성·계곡수
+  const FORM={sanseong:'산성',pyeongsanseong:'평산성',eupseong:'읍성',port:'항구',twin:'쌍성',none:'성 없음'};
+  const tags=[FORM[m.form]||m.form];
+  if(m.doubleWall) tags.push('이중성벽');
+  if(m.twinCastle) tags.push('쌍성');
+  if(m.waterSource) tags.push('계곡수');
+  tags.push('성문 '+m.gates, '치 '+m.chi, '옹성 '+m.ongseong, '해자 '+m.moat);
+  $('legend').innerHTML='<b style="letter-spacing:.1em">'+tags.join(' · ')+'</b><br>'+Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,8)
+    .map(([ch,n])=>`<div class="lg"><span style="background:${(C[ch]||['#CFC09C'])[0]}"></span>
+      ${(C[ch]||['','기타'])[1]} <em style="font-family:'JetBrains Mono';font-style:normal;
+      font-size:10px;color:var(--meok-cap);margin-left:auto">${Math.round(n/tot*100)}%</em></div>`).join('');
+  const by={};
+  m.approaches.forEach(a=>{
+    (by[a.edge]=by[a.edge]||[]).push(
+      (DATA.maps[a.from]?DATA.maps[a.from].name:a.from)+(a.sea?'(수로)':''));
+  });
+  $('appr').innerHTML=Object.keys(by).length
+    ? Object.entries(by).map(([e,v])=>`${({N:'북',S:'남',W:'서',E:'동'})[e]} — ${v.join(', ')}`).join('<br>')
+    : '연결 없음';
+}
+$('sel').onchange=e=>render(e.target.value);
+render(ids[0]);
+</script>

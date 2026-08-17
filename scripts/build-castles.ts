@@ -125,6 +125,20 @@ for (const [region, ids] of Object.entries(REGIONS)) {
  * mapdata 의 지형선은 M/L/Z 로만 이루어져 있고 길은 C 를 쓴다.
  * 거리 판정에는 제어점이 필요 없으므로 숫자쌍을 그대로 훑는다.
  */
+/**
+ * 표시 이름 교체 (전투 기획서 §7.5).
+ *
+ * 당대 고유어 지명이 사서·유적으로 확인되면 그것을 정식 표기로 하고 한자식
+ * 이름은 뒤로 물린다. **id 는 건드리지 않는다** — 시나리오·이벤트·세이브가
+ * 전부 id 로 엮여 있으므로 키를 바꾸면 옛 세이브가 깨진다.
+ */
+const DISPLAY_NAME: Record<string, string> = {
+  maeso: '호로고루',      // 매소성 — 임진강 주상절리 위의 고구려 성
+  ungjin: '곰나루',        // 웅진(熊津) 의 훈독. 固麻 로도 적혔다
+  ungjingu: '곰나루어귀',  // 웅진구
+  daegu: '달구벌',        // 達句伐 — 경덕왕이 대구로 고치기 전 이름
+};
+
 function pathPoints(d: string): Array<[number, number]> {
   const nums = d.match(/-?\d+(?:\.\d+)?/g) ?? [];
   const pts: Array<[number, number]> = [];
@@ -327,7 +341,7 @@ const out = map.castles.map((raw) => {
 
   return {
     id: c.id,
-    name: c.name,
+    name: DISPLAY_NAME[c.id] ?? c.name,
     type: c.type,
     region,
     position: { x: c.x, y: c.y },

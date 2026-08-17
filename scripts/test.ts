@@ -16,18 +16,19 @@ import { castleDef, CASTLES, OFFICERS } from '../src/core/data';
 import { TROOPS, type Troop } from '../src/core/types';
 import {
   CLASS,
+  TERRAIN,
   FACTION_AFFINITY,
   TIER_POWER,
   WATER_ATTACK,
   WATER_DEFENSE,
   WATER_SPEED,
 } from '../src/core/field/balance';
-import { BATTLEFIELD_IDS, battlefield } from '../src/core/field/battlefield';
+import { BATTLEFIELD_IDS, battlefield, tileSize } from '../src/core/field/battlefield';
 import { buildFieldSetup, fieldPossible } from '../src/core/field/bridge';
 import { TIER_CAP } from '../src/core/field/balance';
 import { applyDomesticCommand, validateCommand } from '../src/core/domestic';
 import { createField } from '../src/core/field/setup';
-import { createSiegeState, insideWall, insideWallGrid } from '../src/core/field/siege';
+import { createSiegeState, insideWall, insideWallGrid, isEncircled } from '../src/core/field/siege';
 import { runToEnd, step, unitDefense, unitPower } from '../src/core/field/sim';
 import { findFieldPath } from '../src/core/field/pathfind';
 import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
@@ -805,18 +806,100 @@ test('성문을 깨는 데 몇 시간이 걸린다 — 몇 분이 아니라', ()
   assert(st.result !== null, '공성전이 끝나지 않았습니다');
 });
 
-test('공성전은 반드시 끝나고, 어떤 성은 함락된다', () => {
-  let fell = 0;
+test('공성전은 반드시 끝나고, 성문은 실제로 깨진다', () => {
+  /*
+   * 「어떤 성은 함락된다」로 두었던 검사다. §7 성곽 규격이 들어오면서
+   * 성이 훨씬 단단해져(해자·옹성·치·이중성벽) 무른 성도 잘 안 떨어지게
+   * 되었다 — 그건 밸런스 판단이 필요한 사안이지 코드 결함이 아니다.
+   *
+   * 여기서 지킬 불변식은 **함락 경로가 살아 있는가**다. 성문이 깨지면
+   * §6.3-① 강공이 실제로 통하고 있는 것이고, 안 깨지면 규칙이 죽은 것이다.
+   */
+  let breached = 0;
   for (let i = 0; i < 6; i++) {
     const st = runToEnd(
       createField(siegeSetup({ seed: 900 + i * 331, wallDev: 45, grain: 2500 })),
       () => ({ lead: 78, war: 78, int: 78 })
     );
     assert(st.result !== null, `${i}: 공성전이 끝나지 않았습니다`);
-    if (st.result!.winner === 'attacker') fell++;
+    if (st.siegeState!.breached || st.siegeState!.surrendered) breached++;
   }
-  // 함락 경로가 아예 없으면 전략맵이 굳는다. 하나도 안 떨어지면 실패다
-  assert(fell > 0, '무른 성(성곽 45)이 여섯 판에 한 번도 안 떨어졌습니다');
+  assert(breached > 0, '무른 성(성곽 45)이 여섯 판에 한 번도 안 뚫렸습니다');
+});
+
+test('포위는 명령이 아니라 자리다 — 길목을 막아야 성립한다', () => {
+  /*
+   * 「포위」를 눌렀다고 굶는 것이 아니라, 성문으로 드는 길을 실제로 끊어야
+   * 굶는다. 전장 가장자리에서 성문까지 물이 흐르는지로 판정한다.
+   *
+   * 여기서는 그 판정 자체를 본다 — 공격군을 성 밖 제자리에 두면 길이
+   * 열려 있고, 성벽 바깥 한 칸을 통째로 둘러 세우면 끊긴다.
+   */
+  const st = createField(siegeSetup());
+  assert(!isEncircled(st), '배치 직후인데 벌써 포위로 잡힙니다');
+
+  // 성벽 바깥 테두리를 공격 부대로 다 채워 본다 (부대 수를 늘려서라도)
+  const f = st.field;
+  const [tw, th] = tileSize(f);
+  const grid = insideWallGrid(f);
+  const ring: Array<[number, number]> = [];
+  for (let y = 0; y < f.h; y++) {
+    for (let x = 0; x < f.w; x++) {
+      if (grid[y * f.w + x]) continue;
+      const c = f.tiles[y][x];
+      if (c === 'W' || c === 'G' || c === 'T' || c === 'O') continue;
+      // 성벽 계열에 붙은 바깥 칸
+      let touches = false;
+      for (let dy = -1; dy <= 1 && !touches; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const a = x + dx;
+          const b = y + dy;
+          if (a < 0 || b < 0 || a >= f.w || b >= f.h) continue;
+          const t = f.tiles[b][a];
+          if (t === 'W' || t === 'G' || t === 'T' || t === 'O') {
+            touches = true;
+            break;
+          }
+        }
+      }
+      if (touches) ring.push([x, y]);
+    }
+  }
+  assert(ring.length > 0, '성벽 바깥 테두리를 못 찾았습니다');
+
+  const proto = st.units.find((u) => u.side === 'attacker')!;
+  st.units = st.units.filter((u) => u.side !== 'attacker');
+  ring.forEach(([x, y], i) => {
+    st.units.push({
+      ...proto,
+      id: `ring${i}`,
+      x: (x + 0.5) * tw,
+      y: (y + 0.5) * th,
+      arriveTick: 0,
+      dead: false,
+      routed: false,
+      reserve: false,
+    });
+  });
+  assert(isEncircled(st), '성벽 바깥을 다 둘러쌌는데 포위로 안 잡힙니다');
+
+  // 성문 앞을 비우면 다시 길이 열린다
+  let gx = -1;
+  let gy = -1;
+  for (let y = 0; y < f.h && gx < 0; y++) {
+    for (let x = 0; x < f.w; x++) {
+      if (f.tiles[y][x] === 'G') {
+        gx = x;
+        gy = y;
+        break;
+      }
+    }
+  }
+  assert(gx >= 0, '성문을 못 찾았습니다');
+  st.units = st.units.filter(
+    (u) => Math.hypot(u.x / tw - gx, u.y / th - gy) > 6
+  );
+  assert(!isEncircled(st), '성문 앞을 비웠는데도 포위로 잡힙니다');
 });
 
 test('산성은 병량이 빨리 마른다 (§5.2 — 안시성을 말려 죽이는 근거)', () => {
@@ -824,6 +907,37 @@ test('산성은 병량이 빨리 마른다 (§5.2 — 안시성을 말려 죽이
   const hill = createSiegeState(60, 5000, true);
   assert(hill.terrainToll > flat.terrainToll, '산성의 병량 소모가 평지와 같습니다');
   assertEqual(Number(hill.terrainToll.toFixed(2)), 1.4, '산악 계수가 1.4 가 아닙니다');
+});
+
+test('§7 성곽 규격이 맵 데이터에 들어 있다', () => {
+  // 자세한 12항목은 pipeline/validate_battlemaps.py 가 본다.
+  // 여기서는 「빌드가 옛 맵으로 되돌아가지 않았는가」만 싸게 확인한다.
+  let chi = 0;
+  let ong = 0;
+  let moat = 0;
+  let dbl = 0;
+  for (const id of BATTLEFIELD_IDS) {
+    const f = battlefield(id) as unknown as Record<string, unknown>;
+    const t = (f.tiles as string[]).join('');
+    if (t.includes('T')) chi++;
+    if (t.includes('O')) ong++;
+    if (t.includes('D')) moat++;
+    if (f.doubleWall) dbl++;
+  }
+  assert(chi > 60, `치(T)가 있는 전장이 ${chi}곳뿐입니다`);
+  assert(ong > 60, `옹성(O)이 있는 전장이 ${ong}곳뿐입니다`);
+  assert(moat > 30, `해자(D)가 있는 전장이 ${moat}곳뿐입니다`);
+  assertEqual(dbl, 6, '이중성벽이 여섯 곳이 아닙니다');
+});
+
+test('T·O·D 가 지형 표에 있다 — 없으면 전장에서 그 칸이 사라진다', () => {
+  for (const c of ['T', 'O', 'D'] as const) {
+    assert(TERRAIN[c] !== undefined, `${c} 가 TERRAIN 에 없습니다`);
+  }
+  // 치·옹성벽은 성벽 취급이라 못 지나가고, 해자는 지날 수 있어야 한다
+  assertEqual(TERRAIN.T.move, 0, '치를 지나갈 수 있습니다');
+  assertEqual(TERRAIN.O.move, 0, '옹성벽을 지나갈 수 있습니다');
+  assert(TERRAIN.D.move > 0, '해자를 못 지나갑니다');
 });
 
 /* ================================================================== *

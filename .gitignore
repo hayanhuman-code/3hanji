@@ -4,3 +4,11 @@ dist
 *.local
 .vite
 *.tsbuildinfo
+
+# 파이프라인 산출물 (재생성 가능)
+pipeline/__pycache__/
+pipeline/battlemaps.json
+pipeline/land.geojson
+pipeline/rivers.geojson
+pipeline/lakes.geojson
+pipeline/mapdata.json

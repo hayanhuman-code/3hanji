@@ -901,6 +901,11 @@ const TOKEN_PAIRS: Array<[string, string]> = [
   ['--su', T.su],
   ['--su-ice', T.suIce],
   ['--on-dark', T.onDark],
+  // 전장 화면이 CSS 에서 세력색을 쓰므로 이쪽도 두 벌이 되었다
+  ['--f-goguryeo', T.goguryeo],
+  ['--f-baekje', T.baekje],
+  ['--f-silla', T.silla],
+  ['--f-gaya', T.gaya],
 ];
 
 test('tokens.css 와 tokens.ts 의 값이 같다', () => {

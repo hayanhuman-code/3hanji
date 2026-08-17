@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BattleScreen } from './ui/BattleScreen';
 import { GameScreen } from './ui/GameScreen';
 import { TitleScreen } from './ui/TitleScreen';
+import { FieldSim } from './ui/field/FieldSim';
 import { useGame } from './ui/store';
 
 export default function App() {
@@ -19,7 +20,9 @@ export default function App() {
 
   return (
     <>
-      {screen === 'sandbox' || (screen === 'game' && battle) ? (
+      {screen === 'field' ? (
+        <FieldSim />
+      ) : screen === 'sandbox' || (screen === 'game' && battle) ? (
         <BattleScreen />
       ) : screen === 'game' ? (
         <GameScreen />

@@ -16,6 +16,7 @@ export function TitleScreen() {
   const adoptState = useGame((s) => s.adoptState);
   const startSandbox = useGame((s) => s.startSandbox);
   const notify = useGame((s) => s.notify);
+  const setScreen = useGame((s) => s.setScreen);
 
   const [scenarioId, setScenarioId] = useState(SCENARIOS[0].id);
   const [faction, setFaction] = useState('silla');
@@ -165,6 +166,10 @@ export function TitleScreen() {
               }}
             />
           </label>
+
+          <button className="btn ghost" onClick={() => setScreen('field')}>
+            전장 시뮬레이터 (전투 v2)
+          </button>
 
           <button
             className="btn ghost"

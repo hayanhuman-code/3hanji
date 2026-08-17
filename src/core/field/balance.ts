@@ -350,6 +350,8 @@ export const F = {
 
   /** 측면·후방에서 맞으면 (§4.11 사기 하락 요인) */
   flankBonus: 1.25,
+  /** 매복에 걸린 동안 받는 피해 (orders.ts 의 계략) */
+  ambushBonus: 1.5,
 
   /** 한쪽 병력이 이 비율 아래로 떨어지면 승패가 갈린 것으로 본다 */
   breakRatio: 0.25,

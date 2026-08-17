@@ -28,7 +28,7 @@ import { beginNextTurn, completeBattle, completeEvent, resolveTurn } from '../co
 import type { EventDef, Command, GameState, PendingEvent, CastleId } from '../core/types';
 import type { Axial } from '../core/battle/hex';
 
-export type Screen = 'title' | 'game' | 'sandbox';
+export type Screen = 'title' | 'game' | 'sandbox' | 'field';
 export type SidePanel = 'castle' | 'officers' | 'diplomacy' | 'institutions' | 'chronicle';
 
 interface EventPrompt {

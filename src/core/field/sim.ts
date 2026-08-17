@@ -41,6 +41,16 @@ const PATH_REFRESH = 240;
 const spec = (u: FieldUnit) => (u.navy ? NAVY_SPEC : CLASS[u.troop]);
 
 /**
+ * 이 부대가 닿는 거리(m). 근접은 부대 정면 폭, 원거리는 사거리다.
+ *
+ * 화면도 이 값을 쓴다 — `u.target` 은 「노리는 상대」일 뿐이라, 이것으로
+ * 걸러 주지 않으면 전장 반대편까지 교전선이 그어진다.
+ */
+export function unitRange(u: FieldUnit): number {
+  return spec(u).range;
+}
+
+/**
  * 장수가 부대에 보태는 몫.
  * 책략계만 지력을 본다 — 계략으로 싸우는 사람에게 무력을 묻지 않는다.
  */
@@ -142,8 +152,13 @@ function pickTarget(st: FieldState, u: FieldUnit): FieldUnit | null {
     const forced = st.units.find((v) => v.id === u.orderTarget && !v.dead);
     if (forced) return forced;
   }
+  /*
+   * 무너진 적은 평소에 쫓지 않는다 — 진형을 지키는 편이 안전하다.
+   * 「추격」을 명하면 그때부터 쫓는다. 섬멸하면 전략적 이득이 크지만
+   * 진형이 흐트러진 채 적 원군을 만나면 역전당한다 (§4.7-1).
+   */
   const foes = st.units.filter(
-    (v) => v.side !== u.side && !v.dead && !v.routed && v.arriveTick <= st.tick
+    (v) => v.side !== u.side && !v.dead && (u.pursuing || !v.routed) && v.arriveTick <= st.tick
   );
   if (!foes.length) return null;
 
@@ -233,12 +248,14 @@ function applyDamage(
 
   const moraleF = 0.55 + (u.morale / 100) * 0.45;
   const flank = isFlanking(st, u, v) ? F.flankBonus : 1;
+  // 매복에 걸려 있으면 그동안 받는 피해가 커진다 (orders.ts 의 계략)
+  const exposed = v.exposedUntil !== null && st.tick <= v.exposedUntil ? F.ambushBonus : 1;
   // 여울에서 맞으면 두 배 — 살수대첩이 규칙으로 성립하는 자리다 (§5.1)
   const vTile = terrainAt(st.field, v.x, v.y);
   const ford = vTile === '=' ? FORD_AMBUSH : 1;
 
   const raw =
-    (atk * counter * terrainAtk * stanceAtk * moraleF * flank * ford * vTaken) /
+    (atk * counter * terrainAtk * stanceAtk * moraleF * flank * ford * exposed * vTaken) /
     Math.max(0.05, def * terrainDef * vDefStance) /
     F.damageDivisor;
 
@@ -483,7 +500,12 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
       u.routed = true;
       log(st, `${u.name} 부대가 무너져 물러난다.`, true);
     }
-    if (u.routed) u.morale = Math.min(100, u.morale + 0.02);
+    /*
+     * 무너진 부대는 다시 서지 못한다 — 도망치는 동안 사기가 조금 돌아오지만
+     * 이탈선 위로는 올라가지 않는다. 예전에는 100 까지 회복해서, 화면에
+     * 「붕괴」라고 붙은 부대의 사기 막대가 89 까지 차 있는 일이 있었다.
+     */
+    if (u.routed) u.morale = Math.min(F.moraleRout, u.morale + 0.02);
   }
 
   separate(st);

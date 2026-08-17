@@ -137,6 +137,12 @@ export interface FieldUnit {
   pathAt: number;
   /** 그때의 목표. 목표가 크게 움직이지 않았으면 다시 낼 이유가 없다 */
   pathGoal: { x: number; y: number } | null;
+  /** 무너진 적을 쫓는 중인가 (§4.7-1 추격 국면) */
+  pursuing: boolean;
+  /** 마지막으로 계략을 쓴 시각(틱). 재사용 대기에 쓴다 */
+  schemeAt: number | null;
+  /** 매복에 걸려 있는 동안 — 이 틱까지는 받는 피해가 커진다 */
+  exposedUntil: number | null;
   /** 무너져 물러나는 중 */
   routed: boolean;
   dead: boolean;

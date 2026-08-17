@@ -29,7 +29,7 @@ import {
 } from './balance';
 import { onWater, passable, specAt, terrainAt } from './battlefield';
 import { findFieldPath, lineOfMarch } from './pathfind';
-import { SIEGE, gatePoint, insideWall, stepSiege } from './siege';
+import { SIEGE, gatePoint, insideWall, investRing, stepSiege } from './siege';
 import type { FieldState, FieldUnit, Side } from './types';
 
 /** 경로를 다시 내는 주기(틱). 목표가 움직이므로 가끔 고쳐야 한다 */
@@ -224,6 +224,33 @@ function pickTarget(st: FieldState, u: FieldUnit): FieldUnit | null {
   return best;
 }
 
+/**
+ * 포위망에서 이 부대가 설 자리.
+ *
+ * 성을 둘러싼 고리 위에 부대들을 방위별로 나눠 세운다. 자기 순번은 부대
+ * 목록에서의 자리로 정해 — 난수를 쓰면 매 틱 자리가 바뀌어 영영 안 선다.
+ */
+function ringPoint(st: FieldState, u: FieldUnit): { x: number; y: number } {
+  const ring = investRing(st.field);
+  const gate = gatePoint(st) ?? { x: st.field.w * 73, y: st.field.h * 78 };
+  if (!ring.length) return gate;
+  const mates = st.units.filter(
+    (v) => v.side === 'attacker' && !v.dead && !v.reserve && !v.routed
+  );
+  const i = Math.max(0, mates.findIndex((v) => v.id === u.id));
+  const n = Math.max(1, mates.length);
+  /*
+   * 성벽 둘레를 부대 수로 나눠 하나씩 맡는다.
+   *
+   * 처음에는 성문에서 1,150m 떨어진 원 위에 세웠는데, 재어 보니 그 편이
+   * 오히려 **덜 막혔다** — 원이 성보다 커서 산성의 좁은 통로를 비켜 갔다.
+   * 성벽에 바짝 붙어야 통로가 막힌다. 성 위에서 쏘는 화살을 맞는 자리이니
+   * 포위에는 포위대로 값을 치른다.
+   */
+  const k = Math.floor(((i + 0.5) / n) * ring.length) % ring.length;
+  return ring[k];
+}
+
 /** 계열별 자율 행동이 원하는 자리 (§4.6) */
 function desiredPoint(st: FieldState, u: FieldUnit, tgt: FieldUnit | null): { x: number; y: number } | null {
   if (u.orderPoint) return u.orderPoint;
@@ -242,10 +269,18 @@ function desiredPoint(st: FieldState, u: FieldUnit, tgt: FieldUnit | null): { x:
     const gate = gatePoint(st);
     if (u.side === 'attacker' && gate) {
       if (sg.mode === 'encircle') {
-        // 포위 — 성문 앞을 막되 붙지는 않는다
-        const gx = gate.x - st.axis.dx * 700;
-        const gy = gate.y - st.axis.dy * 700;
-        return Math.hypot(u.x - gx, u.y - gy) < 260 ? null : { x: gx, y: gy };
+        /*
+         * 포위 — **길목에 흩어져 선다.**
+         *
+         * 예전에는 전군이 성문 앞 한 점으로 모였다. 그러면 옆길이 그대로
+         * 열려 있어 아무리 오래 있어도 포위가 성립하지 않았다(isEncircled).
+         * 성을 중심으로 고르게 벌려, 부대마다 다른 방위의 통로를 막는다.
+         *
+         * 이것이 §6.3-② 를 진짜 선택으로 만든다. 흩어지면 성문을 칠 힘이
+         * 줄고, 성문에 몰면 굶기지 못한다.
+         */
+        const keep = ringPoint(st, u);
+        return Math.hypot(u.x - keep.x, u.y - keep.y) < 220 ? null : keep;
       }
       if (ranged(u) && tgt && Math.hypot(tgt.x - u.x, tgt.y - u.y) <= spec(u).range) return null;
       return gate;

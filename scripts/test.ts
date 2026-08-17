@@ -23,12 +23,12 @@ import {
   WATER_DEFENSE,
   WATER_SPEED,
 } from '../src/core/field/balance';
-import { BATTLEFIELD_IDS, battlefield } from '../src/core/field/battlefield';
+import { BATTLEFIELD_IDS, battlefield, tileSize } from '../src/core/field/battlefield';
 import { buildFieldSetup, fieldPossible } from '../src/core/field/bridge';
 import { TIER_CAP } from '../src/core/field/balance';
 import { applyDomesticCommand, validateCommand } from '../src/core/domestic';
 import { createField } from '../src/core/field/setup';
-import { createSiegeState, insideWall, insideWallGrid } from '../src/core/field/siege';
+import { createSiegeState, insideWall, insideWallGrid, isEncircled } from '../src/core/field/siege';
 import { runToEnd, step, unitDefense, unitPower } from '../src/core/field/sim';
 import { findFieldPath } from '../src/core/field/pathfind';
 import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
@@ -825,6 +825,81 @@ test('공성전은 반드시 끝나고, 성문은 실제로 깨진다', () => {
     if (st.siegeState!.breached || st.siegeState!.surrendered) breached++;
   }
   assert(breached > 0, '무른 성(성곽 45)이 여섯 판에 한 번도 안 뚫렸습니다');
+});
+
+test('포위는 명령이 아니라 자리다 — 길목을 막아야 성립한다', () => {
+  /*
+   * 「포위」를 눌렀다고 굶는 것이 아니라, 성문으로 드는 길을 실제로 끊어야
+   * 굶는다. 전장 가장자리에서 성문까지 물이 흐르는지로 판정한다.
+   *
+   * 여기서는 그 판정 자체를 본다 — 공격군을 성 밖 제자리에 두면 길이
+   * 열려 있고, 성벽 바깥 한 칸을 통째로 둘러 세우면 끊긴다.
+   */
+  const st = createField(siegeSetup());
+  assert(!isEncircled(st), '배치 직후인데 벌써 포위로 잡힙니다');
+
+  // 성벽 바깥 테두리를 공격 부대로 다 채워 본다 (부대 수를 늘려서라도)
+  const f = st.field;
+  const [tw, th] = tileSize(f);
+  const grid = insideWallGrid(f);
+  const ring: Array<[number, number]> = [];
+  for (let y = 0; y < f.h; y++) {
+    for (let x = 0; x < f.w; x++) {
+      if (grid[y * f.w + x]) continue;
+      const c = f.tiles[y][x];
+      if (c === 'W' || c === 'G' || c === 'T' || c === 'O') continue;
+      // 성벽 계열에 붙은 바깥 칸
+      let touches = false;
+      for (let dy = -1; dy <= 1 && !touches; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const a = x + dx;
+          const b = y + dy;
+          if (a < 0 || b < 0 || a >= f.w || b >= f.h) continue;
+          const t = f.tiles[b][a];
+          if (t === 'W' || t === 'G' || t === 'T' || t === 'O') {
+            touches = true;
+            break;
+          }
+        }
+      }
+      if (touches) ring.push([x, y]);
+    }
+  }
+  assert(ring.length > 0, '성벽 바깥 테두리를 못 찾았습니다');
+
+  const proto = st.units.find((u) => u.side === 'attacker')!;
+  st.units = st.units.filter((u) => u.side !== 'attacker');
+  ring.forEach(([x, y], i) => {
+    st.units.push({
+      ...proto,
+      id: `ring${i}`,
+      x: (x + 0.5) * tw,
+      y: (y + 0.5) * th,
+      arriveTick: 0,
+      dead: false,
+      routed: false,
+      reserve: false,
+    });
+  });
+  assert(isEncircled(st), '성벽 바깥을 다 둘러쌌는데 포위로 안 잡힙니다');
+
+  // 성문 앞을 비우면 다시 길이 열린다
+  let gx = -1;
+  let gy = -1;
+  for (let y = 0; y < f.h && gx < 0; y++) {
+    for (let x = 0; x < f.w; x++) {
+      if (f.tiles[y][x] === 'G') {
+        gx = x;
+        gy = y;
+        break;
+      }
+    }
+  }
+  assert(gx >= 0, '성문을 못 찾았습니다');
+  st.units = st.units.filter(
+    (u) => Math.hypot(u.x / tw - gx, u.y / th - gy) > 6
+  );
+  assert(!isEncircled(st), '성문 앞을 비웠는데도 포위로 잡힙니다');
 });
 
 test('산성은 병량이 빨리 마른다 (§5.2 — 안시성을 말려 죽이는 근거)', () => {

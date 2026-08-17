@@ -71,6 +71,14 @@ export const SIEGE = {
   streetDefense: 1.15,
   /** 시가전에서 항복하는 사기 */
   streetSurrenderMorale: 20,
+  /**
+   * 포위로 돌아섰는데 이만큼 라운드를 두고도 길을 못 막으면 강공으로 되돌린다.
+   *
+   * 처음에 3(한 시간)으로 뒀다가 재어 보고 고쳤다 — 부대가 성문 앞에서
+   * 목까지 걸어가 자리를 잡는 데만 서너 시간이 걸린다(안시성 3.4h).
+   * 한 시간 만에 포기하면 **막을 수 있는 성에서도 한 번도 안 막힌다.**
+   */
+  ringGiveUpRounds: 14,
 
   /* ------------------------------------------------------------------ *
    * §7.7 성곽 구조물 다이얼
@@ -128,6 +136,12 @@ export interface SiegeState {
   /** 산악이면 1.4 — 안시성을 말려 죽일 수 있는 이유 (§5.2) */
   terrainToll: number;
   mode: SiegeMode;
+  /** 지금 실제로 길이 끊겨 있는가 (명령이 아니라 판 위의 사실) */
+  encircled: boolean;
+  /** 성 안에 계곡수가 있는가 — 굶기기가 더디다 (§7.3-2) */
+  waterSource: boolean;
+  /** 포위로 돌아선 뒤 길을 못 막은 채 흘려보낸 라운드 수 */
+  ringFailRounds: number;
   /** 내응은 한 번뿐이다 */
   infiltrated: boolean;
   surrendered: boolean;
@@ -250,13 +264,266 @@ function findGate(st: FieldState): { x: number; y: number } | null {
 }
 
 /* ------------------------------------------------------------------ *
+ * 봉쇄 — 포위는 명령이 아니라 **자리**다
+ * ------------------------------------------------------------------ */
+
+/**
+ * 성문으로 통하는 길이 모두 끊겼는가.
+ *
+ * 예전에는 포위가 단추였다. 「포위」를 누르면 위치와 무관하게 병량이 말랐고,
+ * 그래서 함락의 3~7% 만이 포위였다 — 굶기는 것보다 성문을 치는 쪽이 거의
+ * 언제나 빨랐기 때문이다. 수단이 사실상 셋뿐인 셈이었다.
+ *
+ * 이제는 판 위의 사실로 정한다. 전장 가장자리에서 물을 부어 성문까지 닿는지
+ * 본다. 공격군이 서 있는 자리는 물이 안 지나간다 — **길목에 부대를 세워
+ * 모든 통로를 끊으면 그 순간 포위가 성립한다.**
+ *
+ * 이 규칙이 12부대 편성을 판단으로 만든다. 길을 끊으려 흩어지면 성문을 칠
+ * 힘이 줄고, 성문에 몰면 옆길이 열린다. 산성은 접근로가 한두 방향뿐이라
+ * 적은 병력으로 막히고(§7.2), 벌판의 읍성은 사방을 둘러야 한다.
+ */
+/** 성벽 계열 — 넘어야 지나가는 것들 */
+function isWallTile(c: string): boolean {
+  return c === 'W' || c === 'G' || c === 'T' || c === 'O';
+}
+
+/**
+ * 육군이 성으로 다가갈 때 지나갈 수 있는 칸인가.
+ *
+ * 봉쇄 판정과 포위망 배치가 같은 잣대를 쓰게 하려고 한 군데로 모았다.
+ * **강은 막지 않는다** — 이 게임에서는 누구나 뗏목으로 건넌다(§5.3). 강을
+ * 벽으로 치면 강가의 성이 저절로 봉쇄돼 버린다.
+ */
+function approachable(f: Battlefield, x: number, y: number): boolean {
+  const c = f.tiles[y][x];
+  if (isWallTile(c)) return false;
+  const s = TERRAIN[c as keyof typeof TERRAIN];
+  return !!s && s.move > 0;
+}
+
+/**
+ * 포위망이 설 자리 — **가장 좁은 목** (§6.3-②).
+ *
+ * 성문에서 바깥으로 물을 부어 거리를 재고, 같은 거리의 칸들을 한 켜로
+ * 묶는다. 네 방향으로만 번지므로 **한 켜를 다 막으면 그보다 먼 곳에서
+ * 성문으로 오는 길이 전부 끊긴다** — 켜를 건너뛸 수가 없다. 그중 칸이
+ * 가장 적은 켜가 이 성의 목이다.
+ *
+ * 성벽에 바짝 붙여 세워 보기도 했는데 그건 틀린 자리였다. 산성은 성벽
+ * 둘레가 넓게 열려 있고 정작 좁은 곳은 한참 아래 고갯길이다 — 성벽을
+ * 둘러싸면 고갯길이 뚫린 채로 남는다. 목을 찾아 막아야 한다.
+ *
+ * 이래야 지형이 답을 정한다. 살수·안시성처럼 험지가 통로를 조인 곳은
+ * 서너 부대로 막히고, 벌판 한가운데 읍성은 열두 부대로도 안 막힌다.
+ */
+const ringCache = new Map<string, Array<{ x: number; y: number }>>();
+
+/**
+ * 목을 찾을 때 성문에서 이만큼은 떨어진다.
+ *
+ * 성문 두 칸 앞이 늘 제일 좁지만 거기 서면 **성 위에서 쏘는 화살 한복판**이다
+ * (궁병 사거리 430m ≒ 세 칸). 재어 보니 그 자리에 세운 포위망은 몇 시간이면
+ * 무너져 길이 도로 열렸다. 포위는 화살 밖에 서는 것이다.
+ */
+const CHOKE_MIN = 4;
+/** 너무 멀면 전장 밖이라 의미가 없다 */
+const CHOKE_MAX = 16;
+
+export function investRing(f: Battlefield): Array<{ x: number; y: number }> {
+  const hit = ringCache.get(f.id);
+  if (hit) return hit;
+  const [tw, th] = tileSize(f);
+  const w = f.w;
+  const h = f.h;
+
+  // 성문에서 바깥으로 번져 거리를 잰다 (성문이 여럿이면 한꺼번에)
+  const dist = new Int16Array(w * h).fill(-1);
+  const queue: number[] = [];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (f.tiles[y][x] === 'G') {
+        dist[y * w + x] = 0;
+        queue.push(y * w + x);
+      }
+    }
+  }
+  for (let qi = 0; qi < queue.length; qi++) {
+    const i = queue[qi];
+    const x = i % w;
+    const y = (i - x) / w;
+    const d = dist[i];
+    for (const [a, b] of [
+      [x + 1, y],
+      [x - 1, y],
+      [x, y + 1],
+      [x, y - 1],
+    ]) {
+      if (a < 0 || b < 0 || a >= w || b >= h) continue;
+      const j = b * w + a;
+      if (dist[j] >= 0) continue;
+      if (!approachable(f, a, b)) continue;
+      dist[j] = d + 1;
+      queue.push(j);
+    }
+  }
+
+  // 켜별로 세어 가장 얇은 켜를 고른다
+  const layers = new Map<number, number[]>();
+  for (let i = 0; i < dist.length; i++) {
+    const d = dist[i];
+    if (d < CHOKE_MIN || d > CHOKE_MAX) continue;
+    const row = layers.get(d);
+    if (row) row.push(i);
+    else layers.set(d, [i]);
+  }
+  let best: number[] = [];
+  for (let d = CHOKE_MIN; d <= CHOKE_MAX; d++) {
+    const row = layers.get(d);
+    if (!row || !row.length) continue;
+    if (!best.length || row.length < best.length) best = row;
+  }
+
+  /*
+   * 목을 **한 줄로 잇는다.**
+   *
+   * 부대는 선 자리를 중심으로 한 칸씩 좌우를 막는다. 그러니 이웃한 순번의
+   * 부대가 이웃한 칸에 서야 막힌 자리가 이어진다. 성문 기준 방위각으로
+   * 정렬해 봤더니 성문이 둘인 성에서 두 갈래 목이 뒤섞여, 열두 부대가
+   * 열일곱 칸 중 열둘까지밖에 못 덮고 늘 구멍이 남았다.
+   *
+   * 갈래(연결 성분)로 나눈 뒤 갈래마다 끝에서 끝으로 훑는다.
+   */
+  const inLayer = new Set(best);
+  const chain: number[] = [];
+  const used = new Set<number>();
+  const near = (i: number) => {
+    const x = i % w;
+    const y = (i - x) / w;
+    const out: number[] = [];
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const a = x + dx;
+        const b = y + dy;
+        if (a < 0 || b < 0 || a >= w || b >= h) continue;
+        const j = b * w + a;
+        if (inLayer.has(j)) out.push(j);
+      }
+    }
+    return out;
+  };
+  for (const seed of best) {
+    if (used.has(seed)) continue;
+    // 이 갈래를 다 모은다
+    const comp: number[] = [];
+    const stack = [seed];
+    used.add(seed);
+    while (stack.length) {
+      const i = stack.pop()!;
+      comp.push(i);
+      for (const j of near(i)) {
+        if (used.has(j)) continue;
+        used.add(j);
+        stack.push(j);
+      }
+    }
+    // 끝점(이웃이 하나뿐인 칸)에서 시작해 이웃을 따라간다
+    const inComp = new Set(comp);
+    const start = comp.find((i) => near(i).filter((j) => inComp.has(j)).length <= 1) ?? comp[0];
+    const walked = new Set<number>([start]);
+    let cur = start;
+    chain.push(cur);
+    for (;;) {
+      const nxt = near(cur).find((j) => inComp.has(j) && !walked.has(j));
+      if (nxt === undefined) break;
+      walked.add(nxt);
+      chain.push(nxt);
+      cur = nxt;
+    }
+    // 갈래가 갈라져 못 훑은 칸이 남으면 뒤에 붙인다
+    for (const i of comp) if (!walked.has(i)) chain.push(i);
+  }
+
+  const out = chain.map((i) => {
+    const x = i % w;
+    const y = (i - x) / w;
+    return { x: (x + 0.5) * tw, y: (y + 0.5) * th };
+  });
+  ringCache.set(f.id, out);
+  return out;
+}
+
+export function isEncircled(st: FieldState): boolean {
+  const f = st.field;
+  const [tw, th] = tileSize(f);
+  const w = f.w;
+  const h = f.h;
+
+  // 공격군이 밟고 선 타일 — 부대 정면 폭(약 180m)만큼 길을 막는다
+  const held = new Set<number>();
+  for (const u of st.units) {
+    if (u.side !== 'attacker' || u.dead || u.routed || u.arriveTick > st.tick) continue;
+    const tx = Math.floor(u.x / tw);
+    const ty = Math.floor(u.y / th);
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const a = tx + dx;
+        const b = ty + dy;
+        if (a >= 0 && b >= 0 && a < w && b < h) held.add(b * w + a);
+      }
+    }
+  }
+
+  const blocked = (x: number, y: number) => {
+    if (!approachable(f, x, y)) return true;
+    return held.has(y * w + x);
+  };
+
+  const seen = new Uint8Array(w * h);
+  const stack: number[] = [];
+  const push = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= w || y >= h) return;
+    const i = y * w + x;
+    if (seen[i]) return;
+    if (f.tiles[y][x] === 'G') {
+      seen[i] = 2; // 성문에 닿았다
+      return;
+    }
+    if (blocked(x, y)) return;
+    seen[i] = 1;
+    stack.push(i);
+  };
+  for (let x = 0; x < w; x++) {
+    push(x, 0);
+    push(x, h - 1);
+  }
+  for (let y = 0; y < h; y++) {
+    push(0, y);
+    push(w - 1, y);
+  }
+  while (stack.length) {
+    const i = stack.pop()!;
+    const x = i % w;
+    const y = (i - x) / w;
+    push(x + 1, y);
+    push(x - 1, y);
+    push(x, y + 1);
+    push(x, y - 1);
+  }
+  // 성문에 하나라도 닿았으면 아직 길이 있다
+  for (let i = 0; i < seen.length; i++) if (seen[i] === 2) return false;
+  return true;
+}
+
+/* ------------------------------------------------------------------ *
  * 준비
  * ------------------------------------------------------------------ */
 
 export function createSiegeState(
   wallDev: number,
   grain: number,
-  mountainous: boolean
+  mountainous: boolean,
+  waterSource = false
 ): SiegeState {
   const wallMax = Math.max(600, Math.round(wallDev * SIEGE.wallHpPerDev));
   const gateMax = Math.round(wallMax * SIEGE.gateHpRatio);
@@ -272,6 +539,9 @@ export function createSiegeState(
     // 산에서 버티면 병량이 먼저 마른다 (§5.2)
     terrainToll: mountainous ? TERRAIN.m.toll : 1,
     mode: 'assault',
+    encircled: false,
+    waterSource,
+    ringFailRounds: 0,
     infiltrated: false,
     surrendered: false,
     burned: false,
@@ -371,9 +641,24 @@ export function stepSiege(st: FieldState, s: SiegeState, rng: RngCursor): void {
      * 잠깐 강공으로 돌아서면 굶주림이 없던 일이 되었다 — 성 안에 먹을 것이
      * 없는데 사기가 멀쩡했다. 포위가 풀리기 전까지는 매 라운드 깎인다.
      */
-    if (s.mode === 'encircle' && !s.breached) {
+    /*
+     * **길이 끊겨 있어야 굶는다.** 「포위」를 누르는 것만으로는 아무 일도
+     * 일어나지 않는다 — 부대를 길목에 세워 성문으로 가는 통로를 전부
+     * 막았을 때 비로소 성립한다.
+     */
+    const ring = !s.breached && isEncircled(st);
+    if (ring !== s.encircled) {
+      s.encircled = ring;
+      note(st, ring ? '성으로 드는 길이 모두 끊겼다 — 포위.' : '포위가 풀렸다.', true);
+    }
+    if (ring) {
       const was = s.grain;
-      s.grain = Math.max(0, s.grain - holding * SIEGE.starveRate * s.terrainToll * rounds);
+      // 계곡수를 가진 성은 잘 안 마른다 (§7.3-2 · §7.7)
+      const relief = s.waterSource ? 1 - SIEGE.waterSourceSiegeRelief : 1;
+      s.grain = Math.max(
+        0,
+        s.grain - holding * SIEGE.starveRate * s.terrainToll * relief * rounds
+      );
       if (s.grain <= 0) {
         if (was > 0) note(st, '성 안의 병량이 다했다.', true);
         for (const u of st.units) {
@@ -408,7 +693,7 @@ export function stepSiege(st: FieldState, s: SiegeState, rng: RngCursor): void {
     if (alive.length) {
       const avg = alive.reduce((a, u) => a + u.morale, 0) / alive.length;
       const line = s.breached ? SIEGE.streetSurrenderMorale : SIEGE.surrenderMorale;
-      const starved = s.grain <= 0 && !s.breached;
+      const starved = s.grain <= 0 && !s.breached && s.encircled;
       if (avg <= line && (starved || s.breached) && rng.chance(0.35)) {
         s.surrendered = true;
         s.method = s.method ?? (starved ? 'encircle' : 'assault');
@@ -479,7 +764,21 @@ function siegeAI(
     const perRound = done / round;
     const need = perRound > 0 ? s.gateHp / perRound : Infinity;
     if (round + need > SIEGE.maxRounds) setSiegeMode(st, s, 'encircle');
-  } else if (s.mode === 'encircle' && s.grain <= 0) {
+  } else if (s.mode === 'encircle' && !s.encircled && s.grain > 0) {
+    /*
+     * **못 막는 성도 있다.** 성문이 넷인 벌판의 읍성은 열두 부대로 사방을
+     * 두를 수 없다 — 재어 보면 안시성(2문 산성)은 92% 의 시간을 막아 두는데
+     * 한성·사비·금성은 한 번도 못 막는다. 못 막는 자리에 서서 굶기를 기다리면
+     * 포위는 「아무것도 안 하는 명령」이 된다. 세 라운드를 시도해도 길이
+     * 안 끊기면 헛일임을 인정하고 성문으로 돌아간다.
+     */
+    s.ringFailRounds += 1;
+    if (s.ringFailRounds >= SIEGE.ringGiveUpRounds) {
+      s.ringFailRounds = 0;
+      setSiegeMode(st, s, 'assault');
+      note(st, '사방을 다 막을 수 없다 — 다시 성문을 친다.', true);
+    }
+  } else if (s.mode === 'encircle' && s.grain <= 0 && s.encircled) {
     /*
      * 굶겼으면 마무리는 강공이다. 다만 **아직 버틸 만한 성에는 돌아서지
      * 않는다** — 그러면 굶주림이 멎어 여태 굶긴 것이 없던 일이 된다.

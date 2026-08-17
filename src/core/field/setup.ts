@@ -308,7 +308,12 @@ export function createField(setup: FieldSetup): FieldState {
      */
     siegeState:
       setup.siege && keep
-        ? createSiegeState(setup.wallDev ?? 50, setup.grain ?? 2000, f.mountainous >= 0.25)
+        ? createSiegeState(
+            setup.wallDev ?? 50,
+            setup.grain ?? 2000,
+            f.mountainous >= 0.25,
+            !!(f as unknown as { waterSource?: boolean }).waterSource
+          )
         : null,
     siegeCtx: {
       wardenChr: setup.wardenChr ?? 50,

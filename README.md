@@ -18,6 +18,7 @@ npm run dev        # 개발 서버
 npm run validate   # JSON 데이터 검증
 npm test           # 스모크 테스트 35종
 npm run simulate   # AI 자동 대전 승률 집계
+npm run tune:field # 전투 길이·손실을 다섯 유형으로 실측 (§4.2 목표 대조)
 npm run build      # 정적 빌드
 
 npm run build:data # 지도·인물 원본에서 castles.json / officers.json 재생성 + 검증
@@ -42,15 +43,24 @@ npm run smoke:browser -- http://127.0.0.1:5173/ /tmp/shots phone    # 폰 390×8
   머리를 잡고 위아래로 끌어 엿보기 / 절반 / 가득 3단으로 여닫는다.
 - 계절(1년 4턴) 단위로 **내정 · 인사 · 외교 · 군사** 명령을 내리고 턴을 넘긴다.
 - 출진할 때 도달 가능한 거점이 지도에 밝혀지고, **거기서 바로 목적지를 찍는다**.
-- 출진하면 **헥스 전술 전투**가 열린다. 직접 지휘하거나 위임할 수 있다.
-- 산성에 농성하고, 포위로 적의 병량을 말리고, 도하 중인 적을 친다.
+- 출진하면 **그 땅의 실제 지형 위에서** 전투가 벌어진다(48×32 타일, 7×5km).
+  부대를 칸칸이 옮기는 것이 아니라 **태세와 목표를 주고 지켜본다** — 1×/2×/4×/8×
+  로 보거나 즉시결판으로 넘긴다. 자동 전투용 별도 공식이 없어 관전과 결판이
+  언제나 같은 결과를 낸다.
+- **강해지는 것은 나라다.** 장수 능력치는 평생 거의 그대로이고, 그가 이끄는 부대의
+  위력은 국가 병종 단계(기·보·궁·책 각 1~4단계)에서 온다. 넷을 다 올릴 자원은
+  없으므로 무엇을 키울지가 곧 그 나라의 전쟁 방식이 된다.
+- 산성에 농성하고, 포위로 적의 병량을 말리고, 도하 중인 적을 친다. 다리는 없다 —
+  건너려면 배를 지어야 하고, 물 위에서는 수군만 제 몫을 한다.
 - **뱃길** — 양 끝을 쥔 수로는 보병도 배로 건넌다. 적이 지키는 항로는 수군이 있어야
   강행한다. 겨울에는 강이 얼어 도하가 열리는 대신 **먼바다 항로가 닫힌다** —
   진격도 후퇴도 보급도 막히므로 탐라·우산국에 남은 군대는 봄까지 갇힌다.
 - 사서 인용문이 붙은 **역사 이벤트**를 만나고, 역사대로 갈지 다른 길로 갈지 고른다.
 - 통일하거나, 다른 두 나라를 조공국으로 복속시켜 패권을 잡거나, 망한다.
 
-전투 화면은 전략맵 없이도 뜬다 — 시작 화면의 **「전투 시뮬레이터 (안시성 농성)」**로 전투만 따로 확인할 수 있다.
+전투 화면은 전략맵 없이도 뜬다 — 시작 화면의 **「전장 시뮬레이터 (전투 v2)」**에서
+전장 76곳·양측 세력·병종 단계·12부대 3열 편성을 바꿔 가며 반복해 돌려 볼 수 있다.
+같은 씨앗이면 언제나 같은 결과가 난다.
 
 ---
 
@@ -62,7 +72,7 @@ npm run smoke:browser -- http://127.0.0.1:5173/ /tmp/shots phone    # 폰 390×8
 |---|---|
 | §3.1 턴 엔진 (7단계) | `src/core/turn.ts` — ④전투·⑤이벤트에서 UI 상호작용을 위해 재개 가능하게 나뉜다 |
 | §3.2 내정 모듈 | 개발(농/상/성곽/병영)·징병·훈련·순찰·탐색·병량 비축·등용·포로 처리 |
-| §3.3 전투 모듈 (헥스) | 13×9 헥스, 병종 상성, 지형, 사기, 성벽 HP, 공성병기, 도하 피격, 자동 전투 |
+| §3.3 전투 모듈 | **전투 v2** (`docs/battle-system.md`) — 실지형 48×32, 틱 시뮬레이션, 계열 자율 행동, 3열·예비대, 태세·계략 개입, 배속 관전과 즉시결판 |
 | §3.4 AI 모듈 | 3단계 우선순위 휴리스틱 + 세력 성향 파라미터 |
 | §3.5 외교 모듈 | 우호도·전쟁/화평/동맹/조공, 선전포고(명분), 조공(대중국), 예물, 복속 요구 |
 | §3.6 이벤트 엔진 | 조건-효과 선언형 + 미니 DSL 파서 (`src/core/dsl.ts`) |
@@ -97,22 +107,30 @@ src/
     ai.ts               규칙 기반 AI
     events.ts / dsl.ts / effects.ts   이벤트 엔진과 조건식·효과 해석
     victory.ts save.ts rng.ts util.ts
-    battle/             전술 전투 — core 의 나머지를 몰라도 단독 실행된다
-      hex.ts battleState.ts battleEngine.ts
+    field/              전장(戰場) — 전략 코어를 몰라도 단독 실행된다
+      types.ts balance.ts     타입과 **모든 수치** (밸런싱은 balance.ts 한 파일)
+      battlefield.ts          battlemaps.json 조회 · 지형 판정
+      pathfind.ts setup.ts    길찾기 · 편성을 판으로
+      sim.ts orders.ts        틱 시뮬레이션 · 개입 명령과 계략
+      bridge.ts               전략맵과의 통역 (여기만 GameState 를 안다)
   data/                 ★ 밸런싱·콘텐츠 작업 영역. 전부 JSON
     mapdata.json        지도 원본 — 실제 경위도에서 뽑은 해안선·하천·산맥·길 (파이프라인 산물)
     castles.json        ↑ 에서 build-castles.ts 가 생성. 손으로 고치지 말 것
     officers.json       source/ 두 벌에서 build-officers.ts 가 생성. 손으로 고치지 말 것
     source/             생성기의 입력 — officers-300.json · officers-legacy.json
+    battlemaps.json     전장 76곳 — 거점 하나에 하나씩, 실제 지형에서 뽑았다
     factions.json unitTypes.json institutions.json events.json scenarios/*.json
   ui/                   React + Zustand
     map/                전략맵 — 뷰 변환(useMapView) · 조작(MapStage) · 레이어 5종
+    field/              전장 화면 — FieldCanvas(그리기) · FieldPlay(보고 개입)
+                        FieldBattle(실전) · FieldSim(단독 시뮬레이터)
 scripts/
   build-castles.ts      지도 원본 → 거점 정의 (인접·지형·개발치·특성을 규칙으로 파생)
   build-officers.ts     인물 원본 두 벌 → 명부 하나 (역사 창 + 압축 창)
   validate-data.ts      데이터 검증기
   test.ts               스모크 테스트 (의존성 없음)
   simulate.ts           AI 자동 대전
+  tune-field.ts         전투 길이·손실 실측 (밸런싱용)
   dev/browser-smoke.mjs 실제 브라우저 구동 확인 (Playwright)
 ```
 

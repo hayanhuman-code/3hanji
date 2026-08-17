@@ -404,41 +404,51 @@ if (/겨울/.test(date)) {
   await page.screenshot({ path: `${OUT}/10b-winter.png` });
 }
 
-// 전투 시뮬레이터 단독 실행
+/* ---------------- 전장 시뮬레이터 (전투 v2) ---------------- *
+ * 헥스 판이 사라진 자리다. 편성 화면 → 전투 화면 → 즉시결판까지 한 바퀴.
+ * 여기서 보는 것은 「돌아가는가」이지 밸런스가 아니다 — 그쪽은 tune:field. */
 await page.goto(URL, { waitUntil: 'networkidle' });
-await page.getByRole('button', { name: /전투 시뮬레이터/ }).click();
-await page.waitForSelector('.battle', { timeout: 10000 });
-
+await page.getByRole('button', { name: /전장 시뮬레이터/ }).click();
+await page.waitForSelector('.field-setup', { timeout: 10000 });
 await page.waitForTimeout(300);
-await page.screenshot({ path: `${OUT}/11-sandbox.png` });
-if (PHONE) {
-  await noSideScroll('전투 시뮬레이터');
-  if (!(await page.getByRole('button', { name: /위임/ }).first().isVisible())) {
-    throw new Error('전투 시뮬레이터 첫 화면에 「위임」이 보이지 않습니다');
-  }
-  // 전투 기록은 한 줄로 접혀 있다가 눌러서 펼쳐진다
-  const logBox = page.locator('.battle-log');
-  const h0 = (await logBox.boundingBox()).height;
-  await logBox.tap();
-  await page.waitForTimeout(250);
-  const h1 = (await logBox.boundingBox()).height;
-  if (h1 <= h0) throw new Error(`전투 기록이 펼쳐지지 않았습니다: ${Math.round(h0)} → ${Math.round(h1)}`);
-  console.log('전투 기록 접기/펼치기:', Math.round(h0), '→', Math.round(h1));
-  await logBox.tap();
-  await page.waitForTimeout(250);
-  await page.screenshot({ path: `${OUT}/11b-sandbox-portrait.png` });
-}
+await page.screenshot({ path: `${OUT}/11-field-setup.png` });
+if (PHONE) await noSideScroll('전장 시뮬레이터 편성');
 
-// 수비 측을 직접 지휘해 본다: 부대 선택 → 차례 종료
-const turnLabel = await page.locator('.battle-head').innerText();
-if (!/아군 차례/.test(turnLabel)) throw new Error('수비 측 차례로 넘어오지 않았습니다: ' + turnLabel);
-await poke(page.locator('.unit-card').nth(1));
-await page.waitForTimeout(150);
-await page.screenshot({ path: `${OUT}/12-sandbox-select.png` });
-await page.getByRole('button', { name: '차례 종료' }).click();
+await page.getByRole('button', { name: '전투 시작' }).click();
+await page.waitForSelector('.field-canvas', { timeout: 10000 });
 await page.waitForTimeout(400);
-await page.screenshot({ path: `${OUT}/13-sandbox-turn2.png` });
-console.log('전투 진행:', (await page.locator('.battle-head .tag').first().innerText()));
+
+// 전장이 실제로 자리를 차지하는가 (auto 행에서 height:100% 가 0 이 되는 사고가 있었다)
+const cv = await page.locator('.field-canvas').boundingBox();
+if (!cv || cv.height < 120) throw new Error(`전장이 그려질 자리가 없습니다: ${JSON.stringify(cv)}`);
+console.log('전장 크기:', Math.round(cv.width) + '×' + Math.round(cv.height));
+if (PHONE) await noSideScroll('전장 전투');
+
+// 배속을 올리면 시각이 흐른다
+const clock = () => page.locator('.field-head .tag.num').first().innerText();
+const t0 = await clock();
+await page.getByRole('button', { name: '8×' }).click();
+await page.waitForTimeout(2500);
+const t1 = await clock();
+if (t0 === t1) throw new Error(`배속을 올렸는데 시각이 그대로입니다: ${t0}`);
+console.log('전장 시각:', t0, '→', t1);
+await page.screenshot({ path: `${OUT}/12-field-clash.png` });
+
+// 부대를 고르면 개입 단추가 나온다
+await poke(page.locator('.unit-row').first());
+await page.waitForTimeout(200);
+if (!(await page.getByRole('button', { name: '명령 해제' }).count())) {
+  throw new Error('부대를 골랐는데 개입 단추가 나오지 않습니다');
+}
+await page.screenshot({ path: `${OUT}/13-field-unit.png` });
+
+// 즉시결판 — 반드시 승패가 난다
+await page.getByRole('button', { name: '즉시결판' }).click();
+await page.waitForTimeout(2000);
+const verdict = await page.locator('.field-side .card h3').first().innerText().catch(() => '');
+if (!/승리|무승부/.test(verdict)) throw new Error('즉시결판에 결과가 없습니다: ' + verdict);
+console.log('전투 결과:', verdict.replace(/\s+/g, ' '));
+await page.screenshot({ path: `${OUT}/14-field-result.png` });
 
 // 문서 §7 — 이모지·현대적 아이콘 금지
 const emoji = await page.evaluate(() =>

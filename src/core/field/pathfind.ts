@@ -25,7 +25,16 @@ export interface Point {
 /** 이웃 여덟 칸. 매 노드에서 배열을 새로 만들지 않도록 밖에 둔다 */
 const NEIGHBORS = [1, 0, -1, 0, 0, 1, 0, -1, 1, 1, 1, -1, -1, 1, -1, -1] as const;
 
-/** 타일 통행 비용. 0 이면 못 지나간다 */
+/**
+ * 타일 통행 비용. 0 이면 못 지나간다.
+ *
+ * 육군에게 하천은 **갈 수는 있지만 비싸다.** 뗏목을 엮어 건너는 동안 거의
+ * 못 싸우기 때문이다(balance.ts ④-b). 비용을 높게 두면 부대는 웬만하면
+ * 여울과 뭍으로 돌아가고, 정말 질러야 할 때만 물에 든다 — 그 선택이
+ * 도박이 되는 것이 이 규칙의 목적이다.
+ */
+const RIVER_COST = 9;
+
 function cost(f: Battlefield, cx: number, cy: number, navy: boolean): number {
   if (cx < 0 || cy < 0 || cy >= f.tiles.length) return 0;
   const row = f.tiles[cy];
@@ -33,7 +42,8 @@ function cost(f: Battlefield, cx: number, cy: number, navy: boolean): number {
   const code = row[cx] as TerrainCode;
   const s = TERRAIN[code];
   if (!s) return 1;
-  if (navy) return s.water || s.name === '항구' ? 1 : 0;
+  if (navy) return s.water || code === 'P' ? 1 : 0;
+  if (code === '~') return RIVER_COST;
   return s.move > 0 ? 1 / s.move : 0;
 }
 

@@ -12,11 +12,10 @@
     "validate": "tsx scripts/validate-data.ts",
     "build:castles": "tsx scripts/build-castles.ts",
     "build:officers": "tsx scripts/build-officers.ts",
-    "build:data": "npm run build:castles && npm run build:officers && npm run build:battlemaps && npm run validate",
+    "build:data": "npm run build:castles && npm run build:officers && npm run validate",
     "simulate": "tsx scripts/simulate.ts",
     "test": "tsx scripts/test.ts",
     "smoke:browser": "node scripts/dev/browser-smoke.mjs",
-    "build:battlemaps": "tsx scripts/build-battlemaps.ts",
     "tune:field": "tsx scripts/tune-field.ts"
   },
   "dependencies": {

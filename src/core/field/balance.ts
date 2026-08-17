@@ -219,25 +219,64 @@ export const TERRAIN: Record<TerrainCode, TerrainSpec> = {
   X: { name: '험지', move: 0, defense: 1.0, melee: 1.0, arc: 1.0, cav: 1.0, toll: 1.0 },
   M: { name: '늪', move: 0.5, defense: 0.9, melee: 0.85, arc: 0.9, cav: 0.6, toll: 1.2 },
   '=': { name: '여울', move: 0.4, defense: 0.8, melee: 1.0, arc: 1.0, cav: 0.7, toll: 1.0 },
-  '~': { name: '강', move: 0, defense: 1.0, melee: 1.0, arc: 1.0, cav: 1.0, toll: 1.0, water: true },
+  // 강 — 뗏목으로 건넌다. move 는 쓰지 않는다(WATER_SPEED 가 절대값으로 정한다)
+  '~': { name: '강', move: 1, defense: 0.7, melee: 1.0, arc: 1.0, cav: 1.0, toll: 1.3, water: true },
+  // 바다 — 수군만. 뗏목으로 외해를 건너지는 못한다
   s: { name: '바다', move: 0, defense: 1.0, melee: 0.4, arc: 1.0, cav: 1.0, toll: 1.2, water: true },
   W: { name: '성벽', move: 0, defense: 1.5, melee: 1.0, arc: 1.15, cav: 1.0, toll: 1.0 },
   G: { name: '성문', move: 0.8, defense: 1.3, melee: 1.0, arc: 1.0, cav: 0.9, toll: 1.0 },
   P: { name: '항구', move: 0.9, defense: 1.0, melee: 1.0, arc: 1.0, cav: 0.9, toll: 1.0 },
   r: { name: '길', move: 1.3, defense: 0.95, melee: 1.0, arc: 1.0, cav: 1.2, toll: 0.9 },
-  /*
-   * 다리 — scripts/build-battlemaps.ts 가 갈라진 전장에 놓는다.
-   * 한 칸뿐이라 대군이 한 줄로 몰린다. 그래서 다리를 먼저 점하는 것 자체가
-   * 전술이 되고, 다리 위에서 맞으면 여울처럼 크게 다친다.
-   */
-  B: { name: '다리', move: 1.0, defense: 0.75, melee: 1.0, arc: 1.0, cav: 0.9, toll: 1.0 },
 };
 
 /**
- * 여울·다리에서 피격당하면 피해가 두 배 — 살수대첩 재현 장치 (§5.1).
+ * 여울에서 피격당하면 피해가 두 배 — 살수대첩 재현 장치 (§5.1).
  * 물을 건너는 중에는 대열이 없다.
  */
 export const FORD_AMBUSH = 2.0;
+
+/* ------------------------------------------------------------------ *
+ * ④-b 물 — 누구나 건너되, 물 위에서는 수군만 싸운다
+ *
+ * 처음에는 갈라진 전장에 **다리를 놓아** 풀었다. 그런데 6세기에 7km 전장을
+ * 가로지르는 다리를 놓는 것은 무리이고, 무엇보다 그러면 수군이 할 일이 없다.
+ *
+ * 대신 이렇게 한다: **어느 병종이든 뗏목을 지어 하천을 건널 수 있다.**
+ * 다만 물 위에서는
+ *   · 느리다 — 수군 > 책략 > 보병 > 기병 순. 말을 배에 태우는 것이 제일 힘들다
+ *   · 거의 못 싸운다 — 수군만 제 위력을 낸다
+ *
+ * 그래서 도하는 언제나 도박이 되고, 수군을 가진 쪽이 강을 지배한다.
+ * 실측으로도 하천만 열면 갈라져 있던 8개 전장이 전부 이어진다 —
+ * **먼바다는 열지 않는다.** 뗏목으로 외해를 건너지는 못한다.
+ * ------------------------------------------------------------------ */
+
+/** 물 위 이동 속도(m/초). 육상 속도와 무관한 절대값이다 */
+export const WATER_SPEED: Record<Troop | 'navy', number> = {
+  navy: 1.9, // 제일 빠르다. 배가 본업이다
+  str: 0.75, // 약간 빠르다 — 뗏목을 엮는 것도 재주다
+  inf: 0.65, // 기본
+  arc: 0.6,
+  cav: 0.42, // 제일 느리다. 말을 태워야 한다
+};
+
+/** 물 위 공격 배율. 수군이 아니면 거의 못 싸운다 */
+export const WATER_ATTACK: Record<Troop | 'navy', number> = {
+  navy: 1.0,
+  inf: 0.2,
+  str: 0.18,
+  arc: 0.22, // 배 위에서도 활은 쏜다
+  cav: 0.12,
+};
+
+/** 물 위 방어 배율. 도하 중에 맞으면 크게 다친다 */
+export const WATER_DEFENSE: Record<Troop | 'navy', number> = {
+  navy: 1.0,
+  inf: 0.28,
+  str: 0.22,
+  arc: 0.24,
+  cav: 0.18,
+};
 
 /* ------------------------------------------------------------------ *
  * ⑤ 나머지 계수

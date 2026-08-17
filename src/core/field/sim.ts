@@ -20,11 +20,14 @@ import {
   NAVY_SPEC,
   ROW_FIT,
   SEASON,
+  WATER_ATTACK,
+  WATER_DEFENSE,
+  WATER_SPEED,
   STANCE,
   TIER_NAME,
   TIER_POWER,
 } from './balance';
-import { passable, specAt, terrainAt } from './battlefield';
+import { onWater, passable, specAt, terrainAt } from './battlefield';
 import { findFieldPath, lineOfMarch } from './pathfind';
 import type { FieldState, FieldUnit, Side } from './types';
 
@@ -64,9 +67,14 @@ function fatigueFactor(u: FieldUnit): number {
   return 1 - over * (1 - F.fatigueFloor);
 }
 
-export function unitPower(u: FieldUnit, stats: { lead: number; war: number; int: number }): number {
+export function unitPower(
+  u: FieldUnit,
+  stats: { lead: number; war: number; int: number },
+  water = false
+): number {
   const s = spec(u);
   return (
+    (water ? WATER_ATTACK[waterKey(u)] : 1) *
     (u.troops / F.troopScale) *
     s.attack *
     TIER_POWER[u.tier] *
@@ -77,9 +85,14 @@ export function unitPower(u: FieldUnit, stats: { lead: number; war: number; int:
   );
 }
 
-export function unitDefense(u: FieldUnit, stats: { lead: number; war: number }): number {
+export function unitDefense(
+  u: FieldUnit,
+  stats: { lead: number; war: number },
+  water = false
+): number {
   const s = spec(u);
   return (
+    (water ? WATER_DEFENSE[waterKey(u)] : 1) *
     Math.max(0.15, u.troops / F.troopScale) *
     s.defense *
     TIER_POWER[u.tier] *
@@ -88,6 +101,9 @@ export function unitDefense(u: FieldUnit, stats: { lead: number; war: number }):
     fatigueFactor(u)
   );
 }
+
+/** 물 위에서는 수군만 제 몫을 한다 (balance.ts 의 ④-b 참조) */
+const waterKey = (u: FieldUnit): Troop | 'navy' => (u.navy ? 'navy' : u.troop);
 
 /** 화면에도 쓰는 이름 — 「고구려 개마무사」 */
 export function unitTitle(u: FieldUnit): string {
@@ -199,8 +215,10 @@ function applyDamage(
   statsOf: StatsLookup,
   rng: RngCursor
 ) {
-  const atk = unitPower(u, statsOf(u.officer));
-  const def = unitDefense(v, statsOf(v.officer));
+  const uWet = onWater(st.field, u.x, u.y);
+  const vWet = onWater(st.field, v.x, v.y);
+  const atk = unitPower(u, statsOf(u.officer), uWet);
+  const def = unitDefense(v, statsOf(v.officer), vWet);
   const counter = COUNTER[u.troop]?.[v.troop] ?? 1;
 
   const uGround = specAt(st.field, u.x, u.y);
@@ -217,7 +235,7 @@ function applyDamage(
   const flank = isFlanking(st, u, v) ? F.flankBonus : 1;
   // 여울에서 맞으면 두 배 — 살수대첩이 규칙으로 성립하는 자리다 (§5.1)
   const vTile = terrainAt(st.field, v.x, v.y);
-  const ford = vTile === '=' || vTile === 'B' ? FORD_AMBUSH : 1;
+  const ford = vTile === '=' ? FORD_AMBUSH : 1;
 
   const raw =
     (atk * counter * terrainAtk * stanceAtk * moraleF * flank * ford * vTaken) /
@@ -238,7 +256,7 @@ function applyDamage(
     );
   }
   if (ford > 1 && rng.chance(0.0015)) {
-    log(st, `${v.name} 부대가 ${vTile === 'B' ? '다리 위' : '여울'}에서 발이 묶인 채 화살을 맞고 있다.`);
+    log(st, `${v.name} 부대가 여울에서 발이 묶인 채 화살을 맞고 있다.`);
   }
 
   if (v.troops <= v.maxTroops * 0.04) {
@@ -406,7 +424,15 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
         if (u.path.length && d < 90) {
           u.path.shift();
         } else if (d > 20) {
-          const stepLen = s.speed * ground.move * fatigueFactor(u);
+          /*
+           * 물 위에서는 육상 속도가 아니라 절대값을 쓴다. 기병의 육상 속도는
+           * 보병의 두 배지만 배에 말을 태우면 제일 느리다 — 수군 > 책략 >
+           * 보병 > 궁병 > 기병 순이다 (balance.ts 의 WATER_SPEED).
+           */
+          const base = onWater(st.field, u.x, u.y)
+            ? WATER_SPEED[waterKey(u)]
+            : s.speed * ground.move;
+          const stepLen = base * fatigueFactor(u);
           const nx = u.x + (dx / d) * stepLen;
           const ny = u.y + (dy / d) * stepLen;
           if (passable(st.field, nx, ny, u.navy)) {

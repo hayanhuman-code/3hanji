@@ -63,9 +63,17 @@ export function specAt(f: Battlefield, x: number, y: number) {
 export function passable(f: Battlefield, x: number, y: number, navy: boolean): boolean {
   const [w, h] = fieldSizeM(f);
   if (x < 0 || y < 0 || x > w || y > h) return false;
-  const s = specAt(f, x, y);
-  if (navy) return !!s.water || s.name === '항구';
+  const code = terrainAt(f, x, y);
+  const s = TERRAIN[code];
+  if (navy) return !!s.water || code === 'P';
+  // 하천은 누구나 뗏목으로 건넌다. 다만 물 위에서는 거의 못 싸운다(balance.ts).
+  // 먼바다는 열지 않는다 — 뗏목으로 외해를 건너지는 못한다.
   return s.move > 0;
+}
+
+/** 지금 물 위에 있는가. 이동 속도와 전투력이 통째로 달라지는 자리다 */
+export function onWater(f: Battlefield, x: number, y: number): boolean {
+  return !!TERRAIN[terrainAt(f, x, y)].water;
 }
 
 /** 그 변의 한가운데 좌표 — 진입 방향에서 전장으로 들어온다 (§5.4) */

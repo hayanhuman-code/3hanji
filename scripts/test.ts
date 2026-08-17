@@ -17,10 +17,18 @@ import { beginNextTurn, completeEvent, resolveTurn } from '../src/core/turn';
 import { findPath } from '../src/core/util';
 import { castleDef, CASTLES, OFFICERS } from '../src/core/data';
 import { TROOPS, type Troop } from '../src/core/types';
-import { FACTION_AFFINITY, TIER_POWER } from '../src/core/field/balance';
+import {
+  CLASS,
+  FACTION_AFFINITY,
+  TIER_POWER,
+  WATER_ATTACK,
+  WATER_DEFENSE,
+  WATER_SPEED,
+} from '../src/core/field/balance';
 import { BATTLEFIELD_IDS, battlefield } from '../src/core/field/battlefield';
 import { createField } from '../src/core/field/setup';
-import { runToEnd } from '../src/core/field/sim';
+import { runToEnd, unitDefense, unitPower } from '../src/core/field/sim';
+import { findFieldPath } from '../src/core/field/pathfind';
 import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
 import {
   canPass,
@@ -596,8 +604,10 @@ test('전멸할 때까지 싸우지 않는다 — 돌아갈 군대가 남는다'
   assert(left > 0, '양쪽이 전멸했습니다 — 전략맵으로 돌아갈 병력이 없습니다');
 });
 
-test('갈 수 있는 땅은 모두 이어져 있다 (다리가 놓여 있다)', () => {
-  const BLOCK = new Set(['~', 's', 'X', 'W']);
+test('하천을 건널 수 있으므로 모든 전장이 이어진다', () => {
+  // 다리는 놓지 않는다. 대신 누구나 뗏목으로 하천을 건넌다 — 그래서 강이
+  // 판을 두 쪽으로 가르지 않는다. 먼바다·험지·성벽만 막는다.
+  const BLOCK = new Set(['s', 'X', 'W']);
   const broken: string[] = [];
   for (const id of BATTLEFIELD_IDS) {
     const f = battlefield(id);
@@ -632,6 +642,62 @@ test('갈 수 있는 땅은 모두 이어져 있다 (다리가 놓여 있다)', 
     if (sizes.filter((n) => n >= 80).length > 1) broken.push(id);
   }
   assertEqual(broken.length, 0, `강이 판을 가른 전장: ${broken.join(', ')}`);
+});
+
+test('물 위에서는 수군이 압도한다', () => {
+  // 다리를 놓는 대신 누구나 배를 지어 건너게 했다. 대신 물 위에서는
+  // 수군만 제 위력을 낸다 — 그것이 수군을 가질 이유다.
+  for (const t of ['inf', 'cav', 'arc', 'str'] as Troop[]) {
+    assert(
+      WATER_ATTACK.navy > WATER_ATTACK[t] * 3,
+      `물 위 공격에서 수군이 ${t} 보다 세 배도 강하지 않습니다`
+    );
+    assert(
+      WATER_DEFENSE.navy > WATER_DEFENSE[t] * 3,
+      `물 위 방어에서 수군이 ${t} 보다 세 배도 강하지 않습니다`
+    );
+  }
+});
+
+test('물 위 속도는 수군 > 책략 > 보병 > 궁병 > 기병', () => {
+  // 말을 배에 태우는 것이 제일 힘들다. 육상에서 기병이 제일 빠른 것과 반대다.
+  const order: Array<Troop | 'navy'> = ['navy', 'str', 'inf', 'arc', 'cav'];
+  for (let i = 0; i + 1 < order.length; i++) {
+    assert(
+      WATER_SPEED[order[i]] > WATER_SPEED[order[i + 1]],
+      `물 위 속도 순서가 어긋납니다: ${order[i]} ≤ ${order[i + 1]}`
+    );
+  }
+  assert(CLASS.cav.speed > CLASS.inf.speed, '육상에서는 기병이 더 빨라야 합니다');
+  assert(WATER_SPEED.cav < WATER_SPEED.inf, '물 위에서는 기병이 더 느려야 합니다');
+});
+
+test('물에 발을 들이면 위력이 무너진다 (수군만 빼고)', () => {
+  // 표만 보지 않고 실제 계산에 걸리는지 본다. 표는 맞는데 배선이 빠져
+  // 아무 데도 안 쓰이는 일이 가장 흔한 실수다.
+  const st = createField(fieldSetup(1));
+  const stats = { lead: 80, war: 80, int: 80 };
+  const land = st.units.find((u) => u.troop === 'inf')!;
+  const dry = unitPower(land, stats, false);
+  const wet = unitPower(land, stats, true);
+  assert(wet < dry * 0.4, `보병이 물 위에서도 셉니다 (뭍 ${dry.toFixed(2)} → 물 ${wet.toFixed(2)})`);
+  const wetDef = unitDefense(land, stats, true);
+  assert(wetDef < unitDefense(land, stats, false) * 0.4, '보병이 물 위에서도 단단합니다');
+
+  // 같은 부대를 수군으로 편성하면 물 위에서 제 위력을 낸다
+  const navy = { ...land, navy: true };
+  assertEqual(
+    Math.round(unitPower(navy, stats, true) * 1000),
+    Math.round(unitPower(navy, stats, false) * 1000),
+    '수군이 물 위에서 약해졌습니다'
+  );
+});
+
+test('강 건너편으로 길이 난다 — 다리 없이', () => {
+  // 한성은 한강이 판을 가른다. 다리를 놓지 않았으므로 길은 물을 지나야 한다.
+  const f = battlefield('hanseong');
+  const path = findFieldPath(f, { x: 3500, y: 400 }, { x: 3500, y: 4600 }, false);
+  assert(path.length > 0, '강 건너편으로 가는 길을 못 찾습니다');
 });
 
 test('나라를 키우는 쪽이 명장보다 크다 — 세력 계수가 단계를 못 넘는다', () => {

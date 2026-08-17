@@ -22,8 +22,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "평양을 쳐 고국원왕을 전사시킨 백제 최전성기의 왕",
+  "troop": "cav",
+  "naval": true,
   "age": 38,
-  "lifespan": 70,
+  "lifespan": 61,
   "ruler": true
  },
  {
@@ -48,8 +50,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "황산벌에서 5천으로 5만을 맞음",
+  "troop": "inf",
+  "naval": false,
   "age": 36,
-  "lifespan": 75,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -75,8 +79,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기·고려사",
   "note": "후백제를 세운 맹장. 아들에게 유폐됨",
-  "age": 34,
-  "lifespan": 68,
+  "troop": "cav",
+  "naval": false,
+  "age": 33,
+  "lifespan": 78,
   "ruler": false
  },
  {
@@ -102,8 +108,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "사비 천도와 불교 전파. 관산성에서 전사",
-  "age": 31,
-  "lifespan": 62,
+  "troop": "cav",
+  "naval": false,
+  "age": 32,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -128,8 +136,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "주몽을 돕고 온조와 함께 백제를 세운 여걸",
+  "troop": "str",
+  "naval": false,
   "age": 40,
-  "lifespan": 52,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -154,8 +164,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·지석",
   "note": "웅진기 백제를 다시 일으킴",
-  "age": 31,
-  "lifespan": 73,
+  "troop": "inf",
+  "naval": false,
+  "age": 32,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -180,8 +192,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "옥중에서 탄현 방어를 간언하고 굶어 죽음",
+  "troop": "str",
+  "naval": false,
   "age": 52,
-  "lifespan": 74,
+  "lifespan": 83,
   "ruler": false
  },
  {
@@ -206,8 +220,10 @@
   "loyalty": "mercenary",
   "source": "묘지명 출토",
   "note": "부흥군을 이끌다 당에 투항해 명장이 됨",
+  "troop": "cav",
+  "naval": false,
   "age": 28,
-  "lifespan": 64,
+  "lifespan": 83,
   "ruler": false
  },
  {
@@ -231,8 +247,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "유배지에서 백강·탄현 사수를 건의",
+  "troop": "str",
+  "naval": false,
   "age": 50,
-  "lifespan": 69,
+  "lifespan": 85,
   "ruler": false
  },
  {
@@ -256,8 +274,10 @@
   "loyalty": "loyal",
   "source": "사택지적비 출토",
   "note": "의자왕대의 대좌평. 비문이 전함",
-  "age": 34,
-  "lifespan": 73,
+  "troop": "str",
+  "naval": false,
+  "age": 44,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -282,8 +302,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "천자문과 논어를 왜에 전함",
-  "age": 40,
-  "lifespan": 79,
+  "troop": "str",
+  "naval": false,
+  "age": 34,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -307,8 +329,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "백제 부흥운동의 중심. 도침을 죽이고 내분",
+  "troop": "inf",
+  "naval": false,
   "age": 33,
-  "lifespan": 72,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -332,8 +356,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "가야 방면 원정을 이끈 목씨 가문의 장수",
-  "age": 44,
-  "lifespan": 64,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -357,8 +383,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "642년 대야성을 함락시킴",
+  "troop": "inf",
+  "naval": true,
   "age": 39,
-  "lifespan": 67,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -382,8 +410,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "주류성을 근거로 부흥군을 일으킨 승려",
-  "age": 38,
-  "lifespan": 51,
+  "troop": "str",
+  "naval": false,
+  "age": 39,
+  "lifespan": 54,
   "ruler": false
  },
  {
@@ -407,8 +437,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "왜에 학문을 전한 사절",
-  "age": 39,
-  "lifespan": 80,
+  "troop": "str",
+  "naval": false,
+  "age": 26,
+  "lifespan": 88,
   "ruler": false
  },
  {
@@ -432,8 +464,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "왜에 불상과 경론을 전함",
-  "age": 43,
-  "lifespan": 72,
+  "troop": "str",
+  "naval": false,
+  "age": 41,
+  "lifespan": 88,
   "ruler": false
  },
  {
@@ -457,8 +491,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "신라 서변을 여러 차례 공격",
-  "age": 28,
-  "lifespan": 66,
+  "troop": "cav",
+  "naval": true,
+  "age": 31,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -482,8 +518,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기·일본서기",
   "note": "한성 함락기의 실권자",
-  "age": 39,
-  "lifespan": 61,
+  "troop": "cav",
+  "naval": false,
+  "age": 37,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -507,8 +545,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "견훤을 금산사에 가두고 즉위",
-  "age": 31,
-  "lifespan": 63,
+  "troop": "arc",
+  "naval": false,
+  "age": 40,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -532,8 +572,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·일본서기",
   "note": "왜에서 돌아와 부흥군의 왕으로 옹립됨",
-  "age": 36,
-  "lifespan": 69,
+  "troop": "cav",
+  "naval": false,
+  "age": 34,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -557,8 +599,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "도림의 계략에 빠져 한성을 잃고 죽음",
-  "age": 31,
-  "lifespan": 59,
+  "troop": "inf",
+  "naval": false,
+  "age": 33,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -583,8 +627,10 @@
   "loyalty": "loyal",
   "source": "삼국유사 가락국기",
   "note": "금관가야의 시조",
+  "troop": "arc",
+  "naval": false,
   "age": 44,
-  "lifespan": 61,
+  "lifespan": 77,
   "ruler": true
  },
  {
@@ -608,8 +654,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "가야금 12곡을 짓고 신라에 귀부",
-  "age": 37,
-  "lifespan": 67,
+  "troop": "str",
+  "naval": false,
+  "age": 46,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -633,8 +681,10 @@
   "loyalty": "loyal",
   "source": "삼국유사·신증동국여지승람",
   "note": "대가야의 시조로 전함",
-  "age": 37,
-  "lifespan": 70,
+  "troop": "cav",
+  "naval": true,
+  "age": 40,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -656,8 +706,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "대가야의 마지막 왕으로 추정",
-  "age": 35,
-  "lifespan": 78,
+  "troop": "inf",
+  "naval": true,
+  "age": 34,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -683,6 +735,8 @@
   "loyalty": "loyal",
   "source": "삼국사기·광개토왕비",
   "note": "재위 22년간 요동과 만주를 아우른 정복군주",
+  "troop": "cav",
+  "naval": false,
   "age": 29,
   "lifespan": 85,
   "ruler": true
@@ -710,8 +764,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "612년 살수에서 수의 대군을 무너뜨림",
+  "troop": "str",
+  "naval": false,
   "age": 46,
-  "lifespan": 88,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -737,6 +793,8 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "평양 천도 후 남진을 완성한 장수의 왕",
+  "troop": "inf",
+  "naval": false,
   "age": 11,
   "lifespan": 71,
   "ruler": false
@@ -764,8 +822,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "후삼국을 통일한 고려 태조",
-  "age": 41,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": true,
+  "age": 36,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -790,6 +850,8 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "진대법을 시행한 국상",
+  "troop": "str",
+  "naval": false,
   "age": 57,
   "lifespan": 73,
   "ruler": false
@@ -816,8 +878,10 @@
   "loyalty": "loyal",
   "source": "통칭(조선후기 문헌)",
   "note": "645년 안시성에서 당 태종의 대군을 막아냄",
-  "age": 31,
-  "lifespan": 68,
+  "troop": "inf",
+  "naval": false,
+  "age": 37,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -843,8 +907,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "영류왕을 시해하고 대막리지로 집권",
+  "troop": "cav",
+  "naval": false,
   "age": 41,
-  "lifespan": 68,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -869,8 +935,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "평강공주 설화의 주인공. 아단성에서 전사",
+  "troop": "inf",
+  "naval": false,
   "age": 24,
-  "lifespan": 75,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -896,8 +964,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "고려 최고의 야전 명장",
-  "age": 41,
-  "lifespan": 76,
+  "troop": "cav",
+  "naval": false,
+  "age": 32,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -922,8 +992,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·광개토왕비",
   "note": "고구려의 시조 동명성왕",
+  "troop": "arc",
+  "naval": false,
   "age": 36,
-  "lifespan": 82,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -948,8 +1020,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "백제에 잠입해 개로왕을 토목에 빠뜨린 첩자승",
+  "troop": "str",
+  "naval": false,
   "age": 50,
-  "lifespan": 73,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -974,8 +1048,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "공산에서 왕건 대신 죽음",
-  "age": 30,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 29,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -1000,8 +1076,10 @@
   "loyalty": "loyal",
   "source": "신당서·발해고",
   "note": "발해를 세운 고구려 유민의 지도자",
-  "age": 34,
-  "lifespan": 84,
+  "troop": "cav",
+  "naval": false,
+  "age": 38,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -1026,8 +1104,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "좌원에서 한의 군대를 청야전술로 격파",
+  "troop": "inf",
+  "naval": false,
   "age": 59,
-  "lifespan": 74,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -1051,8 +1131,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "봉상왕을 폐하고 미천왕을 세운 국상",
+  "troop": "str",
+  "naval": false,
   "age": 58,
-  "lifespan": 88,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -1076,8 +1158,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "동천왕의 퇴각을 몸으로 막아냄",
-  "age": 34,
-  "lifespan": 64,
+  "troop": "inf",
+  "naval": false,
+  "age": 40,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -1101,8 +1185,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "거문고를 만든 악사",
-  "age": 38,
-  "lifespan": 60,
+  "troop": "str",
+  "naval": false,
+  "age": 36,
+  "lifespan": 81,
   "ruler": false
  },
  {
@@ -1127,8 +1213,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "태봉을 세웠으나 폭정으로 축출됨",
+  "troop": "cav",
+  "naval": false,
   "age": 39,
-  "lifespan": 74,
+  "lifespan": 52,
   "ruler": false
  },
  {
@@ -1152,8 +1240,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "위군 진영에 거짓 항복해 장수를 찔러 죽임",
-  "age": 31,
-  "lifespan": 41,
+  "troop": "inf",
+  "naval": false,
+  "age": 32,
+  "lifespan": 44,
   "ruler": false
  },
  {
@@ -1178,8 +1268,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "종이·먹 제법과 회화를 왜에 전함",
-  "age": 42,
-  "lifespan": 64,
+  "troop": "str",
+  "naval": false,
+  "age": 35,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -1204,8 +1296,10 @@
   "loyalty": "loyal",
   "source": "신당서",
   "note": "발해 수군으로 당의 등주를 기습",
-  "age": 31,
-  "lifespan": 77,
+  "troop": "inf",
+  "naval": true,
+  "age": 30,
+  "lifespan": 79,
   "ruler": false
  },
  {
@@ -1230,8 +1324,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "부흥군을 이끌고 신라와 연합",
-  "age": 41,
-  "lifespan": 58,
+  "troop": "inf",
+  "naval": false,
+  "age": 37,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -1255,8 +1351,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "평양성 최후까지 항전한 연개소문의 차남",
+  "troop": "cav",
+  "naval": false,
   "age": 15,
-  "lifespan": 72,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -1280,8 +1378,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "고구려 부흥운동을 일으킴",
+  "troop": "inf",
+  "naval": false,
   "age": 32,
-  "lifespan": 68,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -1305,8 +1405,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기·묘지명",
   "note": "연개소문의 장남. 형제 다툼 끝에 당에 투항",
+  "troop": "inf",
+  "naval": false,
   "age": 17,
-  "lifespan": 57,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -1331,8 +1433,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "외교로 당을 끌어들인 태종무열왕",
+  "troop": "str",
+  "naval": false,
   "age": 31,
-  "lifespan": 64,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -1358,8 +1462,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "삼국통일 전쟁의 총사령",
+  "troop": "cav",
+  "naval": false,
   "age": 22,
-  "lifespan": 71,
+  "lifespan": 81,
   "ruler": false
  },
  {
@@ -1384,6 +1490,8 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "일심 사상으로 불교를 민중에 퍼뜨림",
+  "troop": "str",
+  "naval": false,
   "age": 34,
   "lifespan": 83,
   "ruler": false
@@ -1410,8 +1518,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "당에서 이름을 떨친 대문장가",
+  "troop": "str",
+  "naval": false,
   "age": 33,
-  "lifespan": 80,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -1436,8 +1546,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "첨성대와 황룡사 구층탑을 세움",
-  "age": 39,
-  "lifespan": 76,
+  "troop": "str",
+  "naval": false,
+  "age": 37,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -1462,8 +1574,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "삼국통일과 나당전쟁을 완수",
+  "troop": "cav",
+  "naval": true,
   "age": 8,
-  "lifespan": 71,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -1488,8 +1602,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·순수비",
   "note": "한강 유역을 장악하고 순수비를 세움",
+  "troop": "cav",
+  "naval": true,
   "age": 33,
-  "lifespan": 72,
+  "lifespan": 60,
   "ruler": true
  },
  {
@@ -1514,8 +1630,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·삼국유사",
   "note": "순교로 불교 공인을 이끌어냄",
-  "age": 40,
-  "lifespan": 50,
+  "troop": "str",
+  "naval": false,
+  "age": 39,
+  "lifespan": 45,
   "ruler": false
  },
  {
@@ -1540,8 +1658,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "화엄종을 열고 부석사를 세움",
+  "troop": "str",
+  "naval": false,
   "age": 30,
-  "lifespan": 75,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -1566,6 +1686,8 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "나무 사자로 우산국을 복속시킴",
+  "troop": "cav",
+  "naval": true,
   "age": 48,
   "lifespan": 63,
   "ruler": false
@@ -1592,8 +1714,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·삼국유사",
   "note": "왜에 볼모로 간 왕제를 구하고 순사",
-  "age": 34,
-  "lifespan": 46,
+  "troop": "str",
+  "naval": false,
+  "age": 25,
+  "lifespan": 32,
   "ruler": false
  },
  {
@@ -1619,8 +1743,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기·신당서",
   "note": "청해진을 근거로 동아시아 해상을 장악",
-  "age": 38,
-  "lifespan": 62,
+  "troop": "arc",
+  "naval": true,
+  "age": 34,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -1645,8 +1771,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "문두루비법으로 당 수군을 물리쳤다 전함",
+  "troop": "str",
+  "naval": true,
   "age": 39,
-  "lifespan": 72,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -1671,8 +1799,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "15세로 대가야 정벌에 종군한 화랑",
+  "troop": "cav",
+  "naval": false,
   "age": 15,
-  "lifespan": 31,
+  "lifespan": 23,
   "ruler": false
  },
  {
@@ -1697,8 +1827,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "황산벌에서 홀로 돌격해 전사한 소년 화랑",
+  "troop": "cav",
+  "naval": false,
   "age": 15,
-  "lifespan": 26,
+  "lifespan": 28,
   "ruler": false
  },
  {
@@ -1722,8 +1854,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "당에 오래 머물며 외교를 담당",
+  "troop": "cav",
+  "naval": false,
   "age": 20,
-  "lifespan": 86,
+  "lifespan": 78,
   "ruler": false
  },
  {
@@ -1747,8 +1881,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "세속오계를 지어 화랑도의 규범을 세움",
+  "troop": "str",
+  "naval": false,
   "age": 48,
-  "lifespan": 73,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -1773,8 +1909,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "외교 문서를 도맡은 문장가",
+  "troop": "str",
+  "naval": false,
   "age": 26,
-  "lifespan": 88,
+  "lifespan": 84,
   "ruler": false
  },
  {
@@ -1799,8 +1937,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "국사를 편찬하고 고구려 10군을 취함",
+  "troop": "cav",
+  "naval": false,
   "age": 45,
-  "lifespan": 82,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -1824,8 +1964,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "김유신의 아우. 백제·고구려 정벌에 종군",
-  "age": 34,
-  "lifespan": 75,
+  "troop": "cav",
+  "naval": false,
+  "age": 32,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -1849,7 +1991,9 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "비담의 난을 진압한 상대등",
-  "age": 30,
+  "troop": "arc",
+  "naval": false,
+  "age": 38,
   "lifespan": 59,
   "ruler": false
  },
@@ -1875,8 +2019,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "황룡사 구층탑 건립을 건의",
+  "troop": "str",
+  "naval": false,
   "age": 42,
-  "lifespan": 84,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -1900,8 +2046,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "여러 차례 외적을 물리친 장수",
-  "age": 29,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 31,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -1925,8 +2073,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "석문에서 패해 아버지 김유신에게 버림받음",
+  "troop": "cav",
+  "naval": false,
   "age": -6,
-  "lifespan": 71,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -1950,8 +2100,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "대야성에서 항복을 거부하고 전사",
+  "troop": "inf",
+  "naval": false,
   "age": 19,
-  "lifespan": 25,
+  "lifespan": 33,
   "ruler": false
  },
  {
@@ -1975,8 +2127,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "선덕여왕 말년에 반란을 일으킨 상대등",
-  "age": 35,
-  "lifespan": 58,
+  "troop": "arc",
+  "naval": false,
+  "age": 33,
+  "lifespan": 88,
   "ruler": false
  },
  {
@@ -1998,8 +2152,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "대야성 도독. 실정으로 성을 잃음",
-  "age": 41,
-  "lifespan": 82,
+  "troop": "inf",
+  "naval": true,
+  "age": 32,
+  "lifespan": 78,
   "ruler": false
  },
  {
@@ -2024,8 +2180,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "백제의 시조",
-  "age": 37,
-  "lifespan": 62,
+  "troop": "cav",
+  "naval": false,
+  "age": 41,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -2050,8 +2208,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "관등제를 정비한 왕",
-  "age": 5,
-  "lifespan": 69,
+  "troop": "inf",
+  "naval": false,
+  "age": 26,
+  "lifespan": 83,
   "ruler": false
  },
  {
@@ -2076,8 +2236,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "미륵사를 세우고 신라를 압박",
-  "age": 28,
-  "lifespan": 68,
+  "troop": "cav",
+  "naval": false,
+  "age": 31,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -2102,7 +2264,9 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "해동증자로 불렸으나 말년에 실정",
-  "age": 40,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
   "lifespan": 78,
   "ruler": false
  },
@@ -2127,8 +2291,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "아신왕대에 고구려와 싸움",
-  "age": 31,
-  "lifespan": 65,
+  "troop": "inf",
+  "naval": true,
+  "age": 32,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -2152,8 +2318,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "동성왕을 시해함",
-  "age": 1,
-  "lifespan": 76,
+  "troop": "arc",
+  "naval": false,
+  "age": -2,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -2177,8 +2345,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "견훤의 격서를 지은 문객",
-  "age": 49,
-  "lifespan": 79,
+  "troop": "str",
+  "naval": false,
+  "age": 48,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -2202,8 +2372,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "한성 함락 때 문주왕을 호위",
-  "age": 48,
-  "lifespan": 69,
+  "troop": "arc",
+  "naval": true,
+  "age": 36,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -2228,8 +2400,10 @@
   "loyalty": "ambitious",
   "source": "일본서기",
   "note": "복신의 다른 표기. 부흥군 지도자",
-  "age": 41,
-  "lifespan": 60,
+  "troop": "arc",
+  "naval": true,
+  "age": 39,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -2253,8 +2427,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "역법과 천문을 왜에 전함",
-  "age": 35,
-  "lifespan": 68,
+  "troop": "str",
+  "naval": false,
+  "age": 37,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -2278,8 +2454,10 @@
   "loyalty": "loyal",
   "source": "미륵불광사사적",
   "note": "인도에서 율장을 구해옴",
-  "age": 35,
-  "lifespan": 76,
+  "troop": "str",
+  "naval": false,
+  "age": 38,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -2303,8 +2481,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "웅진기의 왕권 회복을 꾀함",
-  "age": 28,
-  "lifespan": 69,
+  "troop": "str",
+  "naval": false,
+  "age": 46,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -2328,8 +2508,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기·묘지명",
   "note": "의자왕의 아들. 당의 웅진도독",
-  "age": 3,
-  "lifespan": 61,
+  "troop": "cav",
+  "naval": false,
+  "age": 33,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -2353,8 +2535,10 @@
   "loyalty": "loyal",
   "source": "설화",
   "note": "아사달의 아내. 무영탑 전설",
-  "age": 35,
-  "lifespan": 78,
+  "troop": "str",
+  "naval": false,
+  "age": 28,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -2378,8 +2562,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "견훤의 아들. 신검의 거사에 가담",
-  "age": 30,
-  "lifespan": 68,
+  "troop": "arc",
+  "naval": false,
+  "age": 40,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -2403,8 +2589,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "견훤이 후계로 삼으려 한 아들",
-  "age": 29,
-  "lifespan": 55,
+  "troop": "arc",
+  "naval": false,
+  "age": 27,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -2428,8 +2616,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "견훤을 도운 순천 호족",
-  "age": 41,
-  "lifespan": 58,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -2453,8 +2643,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "광개토대왕에게 굴복",
-  "age": 34,
-  "lifespan": 79,
+  "troop": "arc",
+  "naval": false,
+  "age": 24,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -2478,8 +2670,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "문주왕을 시해한 병관좌평",
-  "age": 29,
-  "lifespan": 77,
+  "troop": "arc",
+  "naval": true,
+  "age": 34,
+  "lifespan": 56,
   "ruler": false
  },
  {
@@ -2503,8 +2697,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "상주의 호족. 견훤의 아버지로 전함",
-  "age": 36,
-  "lifespan": 52,
+  "troop": "inf",
+  "naval": true,
+  "age": 30,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -2528,8 +2724,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "서동요 설화의 주인공",
-  "age": 37,
-  "lifespan": 71,
+  "troop": "inf",
+  "naval": false,
+  "age": -1,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -2553,8 +2751,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "신라와 자주 충돌",
-  "age": 28,
-  "lifespan": 56,
+  "troop": "inf",
+  "naval": false,
+  "age": 33,
+  "lifespan": 80,
   "ruler": false
  },
  {
@@ -2578,8 +2778,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "왜에서 돌아와 즉위",
-  "age": 29,
-  "lifespan": 59,
+  "troop": "inf",
+  "naval": true,
+  "age": 33,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -2603,8 +2805,10 @@
   "loyalty": "loyal",
   "source": "남제서",
   "note": "북위군을 물리쳤다 전함",
-  "age": 2,
-  "lifespan": 70,
+  "troop": "arc",
+  "naval": false,
+  "age": 4,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -2628,8 +2832,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "전지왕대의 상좌평",
-  "age": 40,
-  "lifespan": 65,
+  "troop": "str",
+  "naval": false,
+  "age": 22,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -2653,8 +2859,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "후백제의 장수",
-  "age": 22,
-  "lifespan": 80,
+  "troop": "inf",
+  "naval": false,
+  "age": 5,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -2678,8 +2886,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "후백제의 재상. 신검을 옹립",
-  "age": 41,
-  "lifespan": 73,
+  "troop": "str",
+  "naval": false,
+  "age": 33,
+  "lifespan": 83,
   "ruler": false
  },
  {
@@ -2703,8 +2913,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "신라 석토성 등을 공격",
-  "age": 39,
-  "lifespan": 63,
+  "troop": "inf",
+  "naval": false,
+  "age": 20,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -2728,8 +2940,10 @@
   "loyalty": "loyal",
   "source": "관세음응험기",
   "note": "익산 천도설과 관련",
-  "age": 34,
-  "lifespan": 54,
+  "troop": "arc",
+  "naval": false,
+  "age": 50,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -2753,8 +2967,10 @@
   "loyalty": "loyal",
   "source": "설화",
   "note": "석가탑을 만든 석공",
-  "age": 48,
-  "lifespan": 66,
+  "troop": "str",
+  "naval": false,
+  "age": 41,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -2778,8 +2994,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "견훤의 아들",
+  "troop": "arc",
+  "naval": false,
   "age": 34,
-  "lifespan": 68,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -2803,8 +3021,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "아신왕대 장수",
-  "age": 30,
-  "lifespan": 66,
+  "troop": "cav",
+  "naval": false,
+  "age": 27,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -2828,8 +3048,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "웅진 천도를 도움",
-  "age": 20,
-  "lifespan": 65,
+  "troop": "inf",
+  "naval": false,
+  "age": 36,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -2853,7 +3075,9 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "왜에 건너가 활동",
-  "age": 44,
+  "troop": "arc",
+  "naval": false,
+  "age": 39,
   "lifespan": 61,
   "ruler": false
  },
@@ -2878,8 +3102,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전(설화)",
   "note": "개로왕에게 눈을 잃은 인물",
-  "age": 25,
-  "lifespan": 79,
+  "troop": "str",
+  "naval": false,
+  "age": 36,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -2903,8 +3129,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "예성강을 습격한 후백제 수군장",
-  "age": -3,
-  "lifespan": 61,
+  "troop": "inf",
+  "naval": true,
+  "age": 12,
+  "lifespan": 57,
   "ruler": false
  },
  {
@@ -2928,8 +3156,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "온조의 형. 미추홀에 정착",
-  "age": -1,
-  "lifespan": 64,
+  "troop": "arc",
+  "naval": false,
+  "age": 36,
+  "lifespan": 57,
   "ruler": false
  },
  {
@@ -2953,8 +3183,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "고구려로 달아난 장수",
-  "age": 42,
-  "lifespan": 54,
+  "troop": "arc",
+  "naval": false,
+  "age": 21,
+  "lifespan": 51,
   "ruler": false
  },
  {
@@ -2978,8 +3210,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "후백제 장수",
-  "age": 27,
-  "lifespan": 50,
+  "troop": "inf",
+  "naval": false,
+  "age": 23,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -3003,8 +3237,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전(설화)",
   "note": "정절로 이름을 남김",
-  "age": 30,
-  "lifespan": 77,
+  "troop": "str",
+  "naval": false,
+  "age": 39,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -3028,8 +3264,10 @@
   "loyalty": "loyal",
   "source": "삼국유사 가락국기",
   "note": "김수로의 왕비로 전함",
-  "age": 33,
-  "lifespan": 66,
+  "troop": "inf",
+  "naval": false,
+  "age": 29,
+  "lifespan": 57,
   "ruler": false
  },
  {
@@ -3053,8 +3291,10 @@
   "loyalty": "loyal",
   "source": "신증동국여지승람(설화)",
   "note": "대가야·금관가야 시조의 어머니로 전함",
-  "age": 40,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 12,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -3078,8 +3318,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "금관가야 마지막 왕. 신라에 항복",
-  "age": 33,
-  "lifespan": 69,
+  "troop": "cav",
+  "naval": false,
+  "age": 28,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -3103,8 +3345,10 @@
   "loyalty": "loyal",
   "source": "남제서",
   "note": "남제에 사신을 보낸 대가야 왕",
-  "age": 39,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": true,
+  "age": 3,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -3128,8 +3372,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "금관가야 왕족",
-  "age": 37,
-  "lifespan": 68,
+  "troop": "arc",
+  "naval": true,
+  "age": 34,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -3153,8 +3399,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "금관가야의 왕",
-  "age": 39,
-  "lifespan": 65,
+  "troop": "arc",
+  "naval": false,
+  "age": 7,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -3178,8 +3426,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "금관가야의 왕",
-  "age": 5,
-  "lifespan": 75,
+  "troop": "cav",
+  "naval": false,
+  "age": 27,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -3203,8 +3453,10 @@
   "loyalty": "loyal",
   "source": "설화",
   "note": "금관가야 시조 설화의 이름",
-  "age": 34,
-  "lifespan": 74,
+  "troop": "inf",
+  "naval": false,
+  "age": 32,
+  "lifespan": 57,
   "ruler": false
  },
  {
@@ -3228,8 +3480,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "금관가야의 왕",
-  "age": 41,
-  "lifespan": 65,
+  "troop": "inf",
+  "naval": true,
+  "age": 34,
+  "lifespan": 58,
   "ruler": false
  },
  {
@@ -3253,8 +3507,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "금관가야의 왕",
-  "age": 30,
-  "lifespan": 62,
+  "troop": "inf",
+  "naval": true,
+  "age": 47,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -3278,8 +3534,10 @@
   "loyalty": "loyal",
   "source": "신증동국여지승람",
   "note": "대가야 왕자로 전함",
-  "age": 41,
-  "lifespan": 70,
+  "troop": "inf",
+  "naval": true,
+  "age": 3,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -3303,8 +3561,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "우륵의 제자",
-  "age": 30,
-  "lifespan": 77,
+  "troop": "str",
+  "naval": false,
+  "age": 32,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -3328,8 +3588,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "우륵에게 가야금을 배움",
-  "age": 48,
-  "lifespan": 59,
+  "troop": "str",
+  "naval": false,
+  "age": 44,
+  "lifespan": 86,
   "ruler": false
  },
  {
@@ -3353,8 +3615,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "우륵의 제자",
-  "age": 42,
-  "lifespan": 75,
+  "troop": "str",
+  "naval": false,
+  "age": 3,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -3379,8 +3643,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "영류왕. 연개소문에게 시해됨",
-  "age": 30,
-  "lifespan": 70,
+  "troop": "cav",
+  "naval": true,
+  "age": -4,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -3405,7 +3671,9 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "소금장수로 숨어 지내다 즉위",
-  "age": 31,
+  "troop": "cav",
+  "naval": false,
+  "age": 32,
   "lifespan": 64,
   "ruler": false
  },
@@ -3430,8 +3698,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "연개소문의 아우. 신라에 투항",
-  "age": 34,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 20,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -3455,8 +3725,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "동부여 왕. 대무신왕에게 죽음",
-  "age": -3,
-  "lifespan": 56,
+  "troop": "cav",
+  "naval": false,
+  "age": 46,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -3480,7 +3752,9 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "부여 정벌에서 대소왕을 벰",
-  "age": 31,
+  "troop": "inf",
+  "naval": false,
+  "age": 26,
   "lifespan": 71,
   "ruler": false
  },
@@ -3505,8 +3779,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "고국천왕대의 국상",
-  "age": 38,
-  "lifespan": 61,
+  "troop": "str",
+  "naval": false,
+  "age": 26,
+  "lifespan": 80,
   "ruler": false
  },
  {
@@ -3530,8 +3806,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "주몽을 도와 비류국을 취함",
-  "age": -1,
-  "lifespan": 81,
+  "troop": "inf",
+  "naval": false,
+  "age": 34,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -3555,8 +3833,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "영양왕대의 장수",
-  "age": 40,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": false,
+  "age": 35,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -3580,8 +3860,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "보덕국왕으로 신라에 의탁",
-  "age": 34,
-  "lifespan": 68,
+  "troop": "arc",
+  "naval": false,
+  "age": 30,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -3605,8 +3887,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "혜종을 보호한 무장",
-  "age": 24,
-  "lifespan": 83,
+  "troop": "inf",
+  "naval": false,
+  "age": 42,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -3630,8 +3914,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "왕건을 추대한 사기장(四騎將)의 하나",
-  "age": 30,
-  "lifespan": 66,
+  "troop": "arc",
+  "naval": false,
+  "age": 32,
+  "lifespan": 56,
   "ruler": false
  },
  {
@@ -3655,8 +3941,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "공산에서 신숭겸과 함께 전사",
-  "age": 25,
-  "lifespan": 71,
+  "troop": "arc",
+  "naval": false,
+  "age": 43,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -3681,8 +3969,10 @@
   "loyalty": "ambitious",
   "source": "신당서",
   "note": "발해 무왕. 당을 선제 공격",
-  "age": 49,
-  "lifespan": 55,
+  "troop": "inf",
+  "naval": false,
+  "age": 5,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -3706,8 +3996,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "도교 숭상에 반발해 백제로 옮김",
-  "age": 14,
-  "lifespan": 88,
+  "troop": "str",
+  "naval": false,
+  "age": 46,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -3731,8 +4023,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "궁예의 측근",
-  "age": 39,
-  "lifespan": 65,
+  "troop": "str",
+  "naval": false,
+  "age": 31,
+  "lifespan": 80,
   "ruler": false
  },
  {
@@ -3756,8 +4050,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "대무신왕대의 재상",
-  "age": 26,
-  "lifespan": 69,
+  "troop": "str",
+  "naval": false,
+  "age": 24,
+  "lifespan": 81,
   "ruler": false
  },
  {
@@ -3781,8 +4077,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "말기의 장수",
-  "age": 36,
-  "lifespan": 75,
+  "troop": "arc",
+  "naval": true,
+  "age": -4,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -3806,8 +4104,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "서경을 지킨 왕실 종친",
-  "age": 31,
-  "lifespan": 65,
+  "troop": "arc",
+  "naval": false,
+  "age": 30,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -3831,8 +4131,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "선비의 침입을 막아냄",
-  "age": 34,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": false,
+  "age": 45,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -3856,8 +4158,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "황조가를 지은 고구려 2대 왕",
-  "age": 40,
-  "lifespan": 68,
+  "troop": "cav",
+  "naval": false,
+  "age": 27,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -3881,8 +4185,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "주몽의 건국을 도운 세 벗 중 하나",
-  "age": 38,
-  "lifespan": 75,
+  "troop": "inf",
+  "naval": false,
+  "age": 32,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -3906,8 +4212,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "온달을 장수로 키움",
-  "age": 44,
-  "lifespan": 65,
+  "troop": "cav",
+  "naval": false,
+  "age": 6,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -3931,8 +4239,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "차대왕에게 직간하다 죽음",
-  "age": 29,
-  "lifespan": 71,
+  "troop": "str",
+  "naval": false,
+  "age": 44,
+  "lifespan": 79,
   "ruler": false
  },
  {
@@ -3956,8 +4266,10 @@
   "loyalty": "loyal",
   "source": "고승전",
   "note": "삼론학을 정립한 학승",
-  "age": 52,
-  "lifespan": 82,
+  "troop": "str",
+  "naval": false,
+  "age": 35,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -3981,8 +4293,10 @@
   "loyalty": "mercenary",
   "source": "신당서",
   "note": "무왕의 아우. 당에 망명",
-  "age": 0,
-  "lifespan": 58,
+  "troop": "inf",
+  "naval": false,
+  "age": 48,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -4006,8 +4320,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "천제의 아들로 전하는 북부여의 시조",
-  "age": 39,
-  "lifespan": 65,
+  "troop": "str",
+  "naval": false,
+  "age": 34,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -4031,8 +4347,10 @@
   "loyalty": "loyal",
   "source": "일본서기",
   "note": "쇼토쿠 태자의 스승",
-  "age": 39,
-  "lifespan": 68,
+  "troop": "str",
+  "naval": false,
+  "age": 42,
+  "lifespan": 81,
   "ruler": false
  },
  {
@@ -4056,8 +4374,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "기장 출신으로 왕건 추대에 앞장섬",
-  "age": 26,
-  "lifespan": 59,
+  "troop": "inf",
+  "naval": false,
+  "age": -6,
+  "lifespan": 52,
   "ruler": false
  },
  {
@@ -4081,8 +4401,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "요동에서 고구려에 투항",
-  "age": 40,
-  "lifespan": 76,
+  "troop": "str",
+  "naval": false,
+  "age": 31,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -4106,8 +4428,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "왕건 추대 사기장의 하나",
-  "age": 25,
-  "lifespan": 58,
+  "troop": "arc",
+  "naval": false,
+  "age": 38,
+  "lifespan": 54,
   "ruler": false
  },
  {
@@ -4131,8 +4455,10 @@
   "loyalty": "loyal",
   "source": "신당서",
   "note": "발해 문왕. 제도를 정비",
-  "age": 14,
-  "lifespan": 88,
+  "troop": "arc",
+  "naval": false,
+  "age": 38,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -4156,7 +4482,9 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "궁예·왕건을 섬긴 문신",
-  "age": 24,
+  "troop": "str",
+  "naval": false,
+  "age": 46,
   "lifespan": 63,
   "ruler": false
  },
@@ -4181,8 +4509,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "주몽의 어머니",
-  "age": 33,
-  "lifespan": 69,
+  "troop": "inf",
+  "naval": false,
+  "age": 38,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -4206,8 +4536,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "미천왕대의 장수",
-  "age": 31,
-  "lifespan": 84,
+  "troop": "inf",
+  "naval": false,
+  "age": 34,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -4231,7 +4563,9 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "대무신왕에게 계책을 올림",
-  "age": 30,
+  "troop": "str",
+  "naval": false,
+  "age": 35,
   "lifespan": 73,
   "ruler": false
  },
@@ -4256,8 +4590,10 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "고려 초의 장수",
-  "age": 30,
-  "lifespan": 56,
+  "troop": "cav",
+  "naval": false,
+  "age": 43,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -4281,7 +4617,9 @@
   "loyalty": "loyal",
   "source": "고려사",
   "note": "충주 호족",
-  "age": 30,
+  "troop": "str",
+  "naval": false,
+  "age": 35,
   "lifespan": 73,
   "ruler": false
  },
@@ -4306,8 +4644,10 @@
   "loyalty": "loyal",
   "source": "삼국사기(설화)",
   "note": "동부여의 왕. 주몽을 거두어 기름",
-  "age": 41,
-  "lifespan": 78,
+  "troop": "cav",
+  "naval": false,
+  "age": 43,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -4331,8 +4671,10 @@
   "loyalty": "loyal",
   "source": "삼국사기(설화)",
   "note": "낙랑공주 설화의 주인공",
-  "age": 37,
-  "lifespan": 53,
+  "troop": "arc",
+  "naval": false,
+  "age": 11,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -4356,8 +4698,10 @@
   "loyalty": "loyal",
   "source": "삼국사기(설화)",
   "note": "자명고를 찢고 죽음",
-  "age": 29,
-  "lifespan": 71,
+  "troop": "arc",
+  "naval": false,
+  "age": 25,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -4381,8 +4725,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "궁예의 심복",
-  "age": 33,
-  "lifespan": 75,
+  "troop": "inf",
+  "naval": false,
+  "age": 30,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -4406,8 +4752,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "주몽의 건국 동반자",
-  "age": 37,
-  "lifespan": 65,
+  "troop": "inf",
+  "naval": true,
+  "age": 14,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -4431,8 +4779,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "유리왕대의 대보",
-  "age": 46,
-  "lifespan": 72,
+  "troop": "str",
+  "naval": false,
+  "age": -3,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -4456,8 +4806,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "건국기의 장수",
-  "age": -5,
-  "lifespan": 52,
+  "troop": "inf",
+  "naval": false,
+  "age": 44,
+  "lifespan": 53,
   "ruler": false
  },
  {
@@ -4481,8 +4833,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "태조왕대의 장수",
-  "age": -6,
-  "lifespan": 60,
+  "troop": "inf",
+  "naval": false,
+  "age": 25,
+  "lifespan": 50,
   "ruler": false
  },
  {
@@ -4506,8 +4860,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "당과의 전쟁기 장수",
-  "age": 20,
-  "lifespan": 79,
+  "troop": "inf",
+  "naval": false,
+  "age": 31,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -4531,8 +4887,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "주몽의 건국 동반자",
-  "age": 33,
-  "lifespan": 75,
+  "troop": "inf",
+  "naval": false,
+  "age": 35,
+  "lifespan": 44,
   "ruler": false
  },
  {
@@ -4557,8 +4915,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "율령 반포와 불교 공인",
-  "age": 35,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 33,
+  "lifespan": 59,
   "ruler": false
  },
  {
@@ -4582,8 +4942,10 @@
   "loyalty": "loyal",
   "source": "삼국사기·순수비",
   "note": "관산성에서 성왕을 잡음. 김유신의 조부",
+  "troop": "inf",
+  "naval": true,
   "age": 61,
-  "lifespan": 70,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -4608,8 +4970,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "이두를 정리한 원효의 아들",
+  "troop": "str",
+  "naval": false,
   "age": 18,
-  "lifespan": 80,
+  "lifespan": 59,
   "ruler": false
  },
  {
@@ -4633,8 +4997,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "통일 후 체제를 정비",
-  "age": 35,
-  "lifespan": 81,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
+  "lifespan": 88,
   "ruler": false
  },
  {
@@ -4658,8 +5024,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "오랜 재위 동안 백제와 대치",
+  "troop": "str",
+  "naval": false,
   "age": 33,
-  "lifespan": 76,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -4684,8 +5052,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "신라의 시조",
-  "age": 36,
-  "lifespan": 60,
+  "troop": "cav",
+  "naval": false,
+  "age": 37,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -4709,8 +5079,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "여러 전투에 종군한 화랑 출신 장수",
-  "age": 31,
-  "lifespan": 71,
+  "troop": "cav",
+  "naval": false,
+  "age": 36,
+  "lifespan": 54,
   "ruler": false
  },
  {
@@ -4734,8 +5106,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "주술로 이름난 승려",
-  "age": 50,
-  "lifespan": 64,
+  "troop": "str",
+  "naval": false,
+  "age": 42,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -4760,8 +5134,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "국호와 왕호를 정하고 우산국을 복속",
-  "age": 24,
-  "lifespan": 73,
+  "troop": "cav",
+  "naval": false,
+  "age": 34,
+  "lifespan": 51,
   "ruler": false
  },
  {
@@ -4785,8 +5161,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "김유신의 아버지",
+  "troop": "inf",
+  "naval": false,
   "age": 44,
-  "lifespan": 64,
+  "lifespan": 58,
   "ruler": false
  },
  {
@@ -4810,8 +5188,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "점찰법회를 연 율사",
-  "age": 49,
-  "lifespan": 84,
+  "troop": "str",
+  "naval": false,
+  "age": 5,
+  "lifespan": 78,
   "ruler": false
  },
  {
@@ -4836,8 +5216,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "김씨 왕위 세습을 확립",
-  "age": 37,
-  "lifespan": 52,
+  "troop": "cav",
+  "naval": true,
+  "age": 13,
+  "lifespan": 83,
   "ruler": false
  },
  {
@@ -4861,8 +5243,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "화랑세기를 지음",
-  "age": 30,
-  "lifespan": 71,
+  "troop": "str",
+  "naval": false,
+  "age": 26,
+  "lifespan": 79,
   "ruler": false
  },
  {
@@ -4886,8 +5270,10 @@
   "loyalty": "mercenary",
   "source": "고려사",
   "note": "승주 호족. 고려에 귀부",
-  "age": 36,
-  "lifespan": 76,
+  "troop": "str",
+  "naval": false,
+  "age": 32,
+  "lifespan": 81,
   "ruler": false
  },
  {
@@ -4911,8 +5297,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "경주 김씨의 시조",
-  "age": 28,
-  "lifespan": 72,
+  "troop": "cav",
+  "naval": false,
+  "age": 32,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -4936,8 +5324,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "관창의 아버지. 여러 전투에 종군",
-  "age": 22,
-  "lifespan": 74,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -4961,8 +5351,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "석씨 왕조의 시조",
-  "age": 37,
-  "lifespan": 79,
+  "troop": "inf",
+  "naval": false,
+  "age": 32,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -4986,8 +5378,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "당과의 관계를 다짐",
-  "age": -2,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": true,
+  "age": 29,
+  "lifespan": 58,
   "ruler": false
  },
  {
@@ -5011,8 +5405,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "당에 사신으로 오가다 옥사",
-  "age": 39,
-  "lifespan": 76,
+  "troop": "inf",
+  "naval": false,
+  "age": 7,
+  "lifespan": 60,
   "ruler": false
  },
  {
@@ -5036,8 +5432,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "신무왕을 옹립한 장수",
-  "age": 46,
-  "lifespan": 77,
+  "troop": "cav",
+  "naval": true,
+  "age": 32,
+  "lifespan": 83,
   "ruler": false
  },
  {
@@ -5061,8 +5459,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "웅천주에서 반란을 일으킴",
-  "age": 5,
-  "lifespan": 58,
+  "troop": "inf",
+  "naval": false,
+  "age": 32,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -5086,8 +5486,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "불국사와 석굴암을 세움",
-  "age": 44,
-  "lifespan": 61,
+  "troop": "str",
+  "naval": false,
+  "age": 32,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -5111,8 +5513,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "효행으로 이름을 남김",
-  "age": 43,
-  "lifespan": 69,
+  "troop": "str",
+  "naval": false,
+  "age": 26,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -5136,8 +5540,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "비형랑의 어머니",
-  "age": 24,
-  "lifespan": 64,
+  "troop": "str",
+  "naval": false,
+  "age": 22,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -5161,8 +5567,10 @@
   "loyalty": "loyal",
   "source": "설화",
   "note": "김유신 설화에 등장",
-  "age": 33,
-  "lifespan": 78,
+  "troop": "str",
+  "naval": false,
+  "age": 1,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -5186,8 +5594,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "고구려의 간섭에서 벗어남",
-  "age": 38,
-  "lifespan": 81,
+  "troop": "inf",
+  "naval": false,
+  "age": 48,
+  "lifespan": 59,
   "ruler": false
  },
  {
@@ -5211,8 +5621,10 @@
   "loyalty": "mercenary",
   "source": "삼국사기",
   "note": "고구려에서 신라로 귀부한 승려",
-  "age": 28,
-  "lifespan": 85,
+  "troop": "str",
+  "naval": false,
+  "age": 29,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -5236,8 +5648,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "활로 요괴를 물리친 무사",
+  "troop": "arc",
+  "naval": false,
   "age": 32,
-  "lifespan": 65,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -5261,8 +5675,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "고려에 나라를 넘긴 신라 마지막 왕",
-  "age": 31,
-  "lifespan": 68,
+  "troop": "inf",
+  "naval": false,
+  "age": 40,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -5286,8 +5702,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "장보고의 동료 무장",
-  "age": 25,
-  "lifespan": 72,
+  "troop": "inf",
+  "naval": true,
+  "age": 31,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -5311,8 +5729,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "원효와 얽힌 설화의 인물",
-  "age": 40,
-  "lifespan": 67,
+  "troop": "str",
+  "naval": false,
+  "age": 51,
+  "lifespan": 63,
   "ruler": false
  },
  {
@@ -5336,8 +5756,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "달달박박과 함께 성불",
-  "age": 5,
-  "lifespan": 86,
+  "troop": "str",
+  "naval": false,
+  "age": 44,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -5361,8 +5783,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "염불로 승천했다 전함",
-  "age": -2,
-  "lifespan": 86,
+  "troop": "str",
+  "naval": false,
+  "age": 26,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -5386,8 +5810,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "사벌주에서 봉기",
-  "age": 25,
-  "lifespan": 72,
+  "troop": "cav",
+  "naval": false,
+  "age": 29,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -5411,8 +5837,10 @@
   "loyalty": "ambitious",
   "source": "삼국사기",
   "note": "원종과 함께 봉기",
-  "age": 10,
-  "lifespan": 76,
+  "troop": "arc",
+  "naval": false,
+  "age": 33,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -5436,8 +5864,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "석장사의 조각승",
-  "age": 40,
-  "lifespan": 73,
+  "troop": "str",
+  "naval": false,
+  "age": 46,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -5461,8 +5891,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "형제가 대를 이어 전사",
-  "age": 27,
-  "lifespan": 69,
+  "troop": "inf",
+  "naval": false,
+  "age": 31,
+  "lifespan": 59,
   "ruler": false
  },
  {
@@ -5486,8 +5918,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "헌화가 설화의 주인공",
-  "age": 30,
-  "lifespan": 64,
+  "troop": "arc",
+  "naval": false,
+  "age": 33,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -5511,8 +5945,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "해와 달의 정기로 전함",
-  "age": 45,
-  "lifespan": 76,
+  "troop": "str",
+  "naval": true,
+  "age": 47,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -5536,8 +5972,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "황룡사 벽에 소나무를 그린 화가",
-  "age": 31,
-  "lifespan": 60,
+  "troop": "str",
+  "naval": false,
+  "age": 48,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -5561,8 +5999,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "비담의 난 진압에 참여",
+  "troop": "cav",
+  "naval": true,
   "age": 38,
-  "lifespan": 57,
+  "lifespan": 56,
   "ruler": false
  },
  {
@@ -5586,8 +6026,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "연오랑의 아내",
-  "age": 46,
-  "lifespan": 79,
+  "troop": "str",
+  "naval": false,
+  "age": 35,
+  "lifespan": 81,
   "ruler": false
  },
  {
@@ -5611,8 +6053,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "노힐부득과 함께 수도",
-  "age": 44,
-  "lifespan": 71,
+  "troop": "str",
+  "naval": false,
+  "age": 36,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -5636,8 +6080,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "보덕국의 난에서 전사",
-  "age": 22,
-  "lifespan": 28,
+  "troop": "cav",
+  "naval": false,
+  "age": 39,
+  "lifespan": 49,
   "ruler": false
  },
  {
@@ -5661,8 +6107,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "포상팔국 전투의 공을 사양",
-  "age": 3,
-  "lifespan": 70,
+  "troop": "inf",
+  "naval": false,
+  "age": 42,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -5686,8 +6134,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "칠중성을 지키다 전사",
-  "age": 1,
-  "lifespan": 22,
+  "troop": "arc",
+  "naval": false,
+  "age": 34,
+  "lifespan": 50,
   "ruler": false
  },
  {
@@ -5711,8 +6161,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "속함성에서 끝까지 항전",
-  "age": 23,
-  "lifespan": 34,
+  "troop": "inf",
+  "naval": false,
+  "age": 10,
+  "lifespan": 22,
   "ruler": false
  },
  {
@@ -5736,8 +6188,10 @@
   "loyalty": "loyal",
   "source": "삼국유사",
   "note": "진지왕의 아들로 전하는 설화적 인물",
-  "age": 35,
-  "lifespan": 61,
+  "troop": "cav",
+  "naval": false,
+  "age": 39,
+  "lifespan": 45,
   "ruler": false
  },
  {
@@ -5761,8 +6215,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "방아타령을 지은 가난한 악사",
+  "troop": "str",
+  "naval": false,
   "age": 41,
-  "lifespan": 74,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -5786,8 +6242,10 @@
   "loyalty": "loyal",
   "source": "삼국사기(설화)",
   "note": "박혁거세의 왕비",
-  "age": 38,
-  "lifespan": 88,
+  "troop": "inf",
+  "naval": false,
+  "age": 33,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -5811,8 +6269,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "호랑이 처녀 설화의 주인공",
-  "age": 26,
-  "lifespan": 72,
+  "troop": "str",
+  "naval": false,
+  "age": 22,
+  "lifespan": 69,
   "ruler": false
  },
  {
@@ -5836,8 +6296,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "부정을 거부하다 독살됨",
-  "age": 21,
-  "lifespan": 33,
+  "troop": "str",
+  "naval": false,
+  "age": 27,
+  "lifespan": 36,
   "ruler": false
  },
  {
@@ -5861,8 +6323,10 @@
   "loyalty": "loyal",
   "source": "설화",
   "note": "선덕여왕을 사모하다 불귀신이 됨",
-  "age": 27,
-  "lifespan": 56,
+  "troop": "str",
+  "naval": false,
+  "age": 31,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -5886,8 +6350,10 @@
   "loyalty": "loyal",
   "source": "삼국사기 열전",
   "note": "아달성에서 말갈과 싸우다 전사",
-  "age": 42,
-  "lifespan": 51,
+  "troop": "arc",
+  "naval": true,
+  "age": 41,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -5911,8 +6377,10 @@
   "loyalty": "loyal",
   "source": "삼국유사(설화)",
   "note": "처용가와 처용무의 주인공",
-  "age": 43,
-  "lifespan": 88,
+  "troop": "str",
+  "naval": false,
+  "age": 41,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -5936,8 +6404,10 @@
   "loyalty": "loyal",
   "source": "삼국사기",
   "note": "백제 정벌에 종군",
-  "age": 45,
-  "lifespan": 77,
+  "troop": "inf",
+  "naval": false,
+  "age": 39,
+  "lifespan": 58,
   "ruler": false
  },
  {
@@ -5961,8 +6431,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 30,
-  "lifespan": 79,
+  "troop": "str",
+  "naval": false,
+  "age": 24,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -5987,8 +6459,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 3,
-  "lifespan": 85,
+  "troop": "str",
+  "naval": false,
+  "age": 27,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -6012,8 +6486,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 21,
-  "lifespan": 78,
+  "troop": "inf",
+  "naval": false,
+  "age": 25,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -6037,8 +6513,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 28,
-  "lifespan": 49,
+  "troop": "cav",
+  "naval": false,
+  "age": 23,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -6062,8 +6540,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 26,
-  "lifespan": 59,
+  "troop": "cav",
+  "naval": false,
+  "age": 25,
+  "lifespan": 54,
   "ruler": false
  },
  {
@@ -6088,8 +6568,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -3,
-  "lifespan": 70,
+  "troop": "inf",
+  "naval": true,
+  "age": -17,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -6113,8 +6595,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 30,
-  "lifespan": 74,
+  "troop": "str",
+  "naval": false,
+  "age": 32,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -6138,7 +6622,9 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 5,
+  "troop": "str",
+  "naval": false,
+  "age": 42,
   "lifespan": 78,
   "ruler": false
  },
@@ -6163,8 +6649,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -1,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": false,
+  "age": 38,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -6188,8 +6676,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -11,
-  "lifespan": 72,
+  "troop": "inf",
+  "naval": false,
+  "age": 37,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -6213,8 +6703,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 33,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -6238,8 +6730,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -10,
-  "lifespan": 86,
+  "troop": "str",
+  "naval": false,
+  "age": 33,
+  "lifespan": 57,
   "ruler": false
  },
  {
@@ -6263,8 +6757,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 29,
-  "lifespan": 62,
+  "troop": "inf",
+  "naval": false,
+  "age": 28,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -6288,8 +6784,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 35,
-  "lifespan": 69,
+  "troop": "str",
+  "naval": false,
+  "age": 37,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -6313,8 +6811,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 40,
-  "lifespan": 82,
+  "troop": "str",
+  "naval": false,
+  "age": 13,
+  "lifespan": 87,
   "ruler": false
  },
  {
@@ -6338,8 +6838,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 10,
-  "lifespan": 61,
+  "troop": "cav",
+  "naval": false,
+  "age": 9,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -6363,8 +6865,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 5,
-  "lifespan": 72,
+  "troop": "arc",
+  "naval": false,
+  "age": 23,
+  "lifespan": 79,
   "ruler": false
  },
  {
@@ -6388,8 +6892,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 36,
-  "lifespan": 70,
+  "troop": "arc",
+  "naval": true,
+  "age": 35,
+  "lifespan": 72,
   "ruler": false
  },
  {
@@ -6413,8 +6919,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 36,
-  "lifespan": 51,
+  "troop": "inf",
+  "naval": false,
+  "age": 27,
+  "lifespan": 85,
   "ruler": false
  },
  {
@@ -6438,8 +6946,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 26,
-  "lifespan": 74,
+  "troop": "str",
+  "naval": false,
+  "age": 31,
+  "lifespan": 60,
   "ruler": false
  },
  {
@@ -6464,8 +6974,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 33,
-  "lifespan": 67,
+  "troop": "cav",
+  "naval": false,
+  "age": 30,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -6490,8 +7002,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -3,
-  "lifespan": 76,
+  "troop": "str",
+  "naval": false,
+  "age": 27,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -6516,8 +7030,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 33,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": true,
+  "age": 21,
+  "lifespan": 60,
   "ruler": false
  },
  {
@@ -6541,8 +7057,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 33,
-  "lifespan": 72,
+  "troop": "inf",
+  "naval": false,
+  "age": -14,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -6566,8 +7084,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 29,
-  "lifespan": 67,
+  "troop": "str",
+  "naval": false,
+  "age": -10,
+  "lifespan": 68,
   "ruler": false
  },
  {
@@ -6591,8 +7111,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 23,
-  "lifespan": 75,
+  "troop": "str",
+  "naval": false,
+  "age": 25,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -6616,8 +7138,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 28,
-  "lifespan": 70,
+  "troop": "inf",
+  "naval": false,
+  "age": 21,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -6641,8 +7165,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 3,
-  "lifespan": 63,
+  "troop": "cav",
+  "naval": false,
+  "age": 8,
+  "lifespan": 80,
   "ruler": false
  },
  {
@@ -6666,8 +7192,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": -15,
-  "lifespan": 83,
+  "troop": "inf",
+  "naval": true,
+  "age": -10,
+  "lifespan": 65,
   "ruler": false
  },
  {
@@ -6691,8 +7219,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 20,
-  "lifespan": 59,
+  "troop": "arc",
+  "naval": true,
+  "age": 25,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -6716,8 +7246,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 32,
-  "lifespan": 77,
+  "troop": "str",
+  "naval": false,
+  "age": 3,
+  "lifespan": 74,
   "ruler": false
  },
  {
@@ -6741,8 +7273,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 22,
-  "lifespan": 65,
+  "troop": "inf",
+  "naval": false,
+  "age": -15,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -6766,8 +7300,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 31,
-  "lifespan": 69,
+  "troop": "str",
+  "naval": false,
+  "age": 10,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -6791,8 +7327,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -4,
-  "lifespan": 67,
+  "troop": "inf",
+  "naval": true,
+  "age": 21,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -6816,8 +7354,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 29,
-  "lifespan": 57,
+  "troop": "inf",
+  "naval": false,
+  "age": -12,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -6841,8 +7381,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": -15,
-  "lifespan": 65,
+  "troop": "inf",
+  "naval": false,
+  "age": 9,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -6866,8 +7408,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -4,
-  "lifespan": 71,
+  "troop": "str",
+  "naval": false,
+  "age": -1,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -6891,8 +7435,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 33,
-  "lifespan": 63,
+  "troop": "str",
+  "naval": false,
+  "age": -11,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -6916,8 +7462,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 20,
-  "lifespan": 73,
+  "troop": "cav",
+  "naval": false,
+  "age": 8,
+  "lifespan": 82,
   "ruler": false
  },
  {
@@ -6941,8 +7489,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 24,
-  "lifespan": 57,
+  "troop": "inf",
+  "naval": false,
+  "age": -6,
+  "lifespan": 78,
   "ruler": false
  },
  {
@@ -6966,8 +7516,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 36,
-  "lifespan": 63,
+  "troop": "str",
+  "naval": false,
+  "age": 38,
+  "lifespan": 75,
   "ruler": false
  },
  {
@@ -6991,8 +7543,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 11,
-  "lifespan": 68,
+  "troop": "str",
+  "naval": false,
+  "age": -10,
+  "lifespan": 70,
   "ruler": false
  },
  {
@@ -7016,8 +7570,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": 29,
-  "lifespan": 57,
+  "troop": "inf",
+  "naval": true,
+  "age": -1,
+  "lifespan": 73,
   "ruler": false
  },
  {
@@ -7041,8 +7597,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -14,
-  "lifespan": 74,
+  "troop": "cav",
+  "naval": false,
+  "age": -3,
+  "lifespan": 60,
   "ruler": false
  },
  {
@@ -7067,8 +7625,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 31,
-  "lifespan": 61,
+  "troop": "arc",
+  "naval": false,
+  "age": 35,
+  "lifespan": 56,
   "ruler": false
  },
  {
@@ -7092,8 +7652,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 36,
-  "lifespan": 72,
+  "troop": "arc",
+  "naval": false,
+  "age": 22,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -7117,8 +7679,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 42,
-  "lifespan": 84,
+  "troop": "str",
+  "naval": false,
+  "age": 31,
+  "lifespan": 71,
   "ruler": false
  },
  {
@@ -7142,8 +7706,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 23,
-  "lifespan": 66,
+  "troop": "arc",
+  "naval": false,
+  "age": 30,
+  "lifespan": 77,
   "ruler": false
  },
  {
@@ -7167,8 +7733,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 27,
-  "lifespan": 78,
+  "troop": "arc",
+  "naval": false,
+  "age": -7,
+  "lifespan": 56,
   "ruler": false
  },
  {
@@ -7192,8 +7760,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 40,
-  "lifespan": 73,
+  "troop": "cav",
+  "naval": false,
+  "age": 2,
+  "lifespan": 88,
   "ruler": false
  },
  {
@@ -7217,8 +7787,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -14,
-  "lifespan": 62,
+  "troop": "cav",
+  "naval": false,
+  "age": 7,
+  "lifespan": 58,
   "ruler": false
  },
  {
@@ -7242,8 +7814,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 41,
-  "lifespan": 79,
+  "troop": "inf",
+  "naval": false,
+  "age": -1,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -7267,8 +7841,10 @@
   "loyalty": "ambitious",
   "source": "가상",
   "note": "",
-  "age": -2,
-  "lifespan": 68,
+  "troop": "arc",
+  "naval": false,
+  "age": 34,
+  "lifespan": 60,
   "ruler": false
  },
  {
@@ -7292,8 +7868,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 19,
-  "lifespan": 61,
+  "troop": "cav",
+  "naval": false,
+  "age": -16,
+  "lifespan": 85,
   "ruler": false
  },
  {
@@ -7317,8 +7895,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": -12,
-  "lifespan": 86,
+  "troop": "str",
+  "naval": false,
+  "age": 26,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -7342,8 +7922,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 30,
-  "lifespan": 66,
+  "troop": "str",
+  "naval": false,
+  "age": 33,
+  "lifespan": 76,
   "ruler": false
  },
  {
@@ -7367,8 +7949,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 38,
-  "lifespan": 82,
+  "troop": "inf",
+  "naval": false,
+  "age": -6,
+  "lifespan": 67,
   "ruler": false
  },
  {
@@ -7392,8 +7976,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 11,
-  "lifespan": 77,
+  "troop": "inf",
+  "naval": false,
+  "age": 30,
+  "lifespan": 66,
   "ruler": false
  },
  {
@@ -7417,8 +8003,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 33,
-  "lifespan": 70,
+  "troop": "arc",
+  "naval": false,
+  "age": 34,
+  "lifespan": 55,
   "ruler": false
  },
  {
@@ -7442,8 +8030,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 34,
-  "lifespan": 66,
+  "troop": "cav",
+  "naval": false,
+  "age": -4,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -7467,8 +8057,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 41,
-  "lifespan": 70,
+  "troop": "inf",
+  "naval": false,
+  "age": 29,
+  "lifespan": 61,
   "ruler": false
  },
  {
@@ -7492,8 +8084,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 27,
-  "lifespan": 65,
+  "troop": "arc",
+  "naval": false,
+  "age": 21,
+  "lifespan": 62,
   "ruler": false
  },
  {
@@ -7517,8 +8111,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 28,
-  "lifespan": 72,
+  "troop": "inf",
+  "naval": false,
+  "age": 36,
+  "lifespan": 64,
   "ruler": false
  },
  {
@@ -7542,8 +8138,10 @@
   "loyalty": "loyal",
   "source": "가상",
   "note": "",
-  "age": 34,
-  "lifespan": 72,
+  "troop": "cav",
+  "naval": false,
+  "age": 38,
+  "lifespan": 54,
   "ruler": false
  },
  {
@@ -7567,8 +8165,10 @@
   "loyalty": "mercenary",
   "source": "가상",
   "note": "",
-  "age": 41,
-  "lifespan": 67,
+  "troop": "str",
+  "naval": false,
+  "age": -16,
+  "lifespan": 73,
   "ruler": false
  }
 ]

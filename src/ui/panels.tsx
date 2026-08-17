@@ -32,6 +32,7 @@ import {
   hasInstitution,
 } from '../core/state';
 import { victoryStatus } from '../core/victory';
+import { TROOP_LABEL, TROOP_MARK } from '../core/types';
 import type { Command, DevKey, GameState, OfficerState } from '../core/types';
 import { fmt, fmtTroops } from '../core/util';
 import { useGame } from './store';
@@ -117,6 +118,18 @@ function OfficerChip({
           <b>
             {def.name}
             {def.ruler && ' 王'}
+            {/*
+             * 병종 계열은 바뀌지 않으므로 이름 옆이 제자리다.
+             * 한자 한 글자 + 한글 이름을 title 로 — 기호만으로 전달하지 않는다.
+             */}
+            <i className="troop" title={TROOP_LABEL[def.troop]} aria-label={TROOP_LABEL[def.troop]}>
+              {TROOP_MARK[def.troop]}
+            </i>
+            {def.naval && (
+              <i className="troop navy" title="수군을 이끌 수 있다" aria-label="수군 가능">
+                船
+              </i>
+            )}
           </b>
           <span className="faint" style={{ fontSize: 11 }}>
             {ROLE_LABEL[def.role] ?? ''} · {officer.acted ? '행동함' : officer.armyId ? '출진 중' : '대기'}

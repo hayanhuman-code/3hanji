@@ -1165,6 +1165,28 @@ select.btn {
   line-height: 1.7;
   color: var(--meok-mid);
 }
+/*
+ * 병종 계열 표시 — 한자 한 글자 (騎 步 弓 策 / 船).
+ * 장수의 계열은 평생 바뀌지 않으므로 이름 옆에 붙박이로 둔다.
+ */
+.troop {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 0 3px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--meok-thin);
+  color: var(--meok-mid);
+  vertical-align: 1px;
+}
+/* 수군은 물빛으로. 바닷길을 여는 사람은 몇 안 된다 */
+.troop.navy {
+  border-color: var(--su);
+  color: var(--su);
+}
+
 /* 초상화 자리표시자 — 이름 첫 글자. 문서 §6.4 의 3급 방식이다. */
 .officer-chip .portrait {
   width: 30px;

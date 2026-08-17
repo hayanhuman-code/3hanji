@@ -54,6 +54,10 @@ interface Source300 {
   age: number;
   lifespan: number;
   ruler: boolean;
+  /** 병종 계열 — 기병 cav / 보병 inf / 궁병 arc / 책략 str. 전직 없음 */
+  troop: 'cav' | 'inf' | 'arc' | 'str';
+  /** 수군 부대를 이끌 수 있는가. 없으면 배에 탑승만 가능하다 */
+  naval: boolean;
 }
 
 interface Legacy {
@@ -257,6 +261,96 @@ function homeFor(o: Source300): string | null {
  * 4. 합치기
  * ================================================================== */
 
+/* ================================================================== *
+ * 병종 계열 — 46명 쪽에만 있는 인물용
+ *
+ * 300명 로스터는 상류 파이프라인(build_officers.py)이 troop/naval 을 이미
+ * 붙여 준다. 그 값을 그대로 쓴다. 문제는 그 로스터에 없는 46명 쪽 인물
+ * 10명인데, 여기서 같은 규칙으로 배정한다.
+ *
+ * 특기 id 는 **우리 쪽으로 정규화된 것**을 쓴다 (SKILL_ALIAS 를 이미 거쳤다).
+ * 상류 표를 그대로 베끼면 siege·last_stand 처럼 우리가 이름을 바꾼 것이
+ * 조용히 안 걸린다.
+ * ================================================================== */
+
+type Troop = 'cav' | 'inf' | 'arc' | 'str';
+
+const TROOP_BY_SKILL: Record<string, Troop> = {
+  cav: 'cav',
+  forced_march: 'cav',
+  raid: 'cav',
+  conquest: 'cav',
+  archery: 'arc',
+  ambush: 'arc',
+  valor: 'inf',
+  resolve: 'inf',
+  rearguard: 'inf',
+  spear: 'inf',
+  siegecraft: 'inf',
+  fortify: 'inf',
+  duel: 'inf',
+  insurgency: 'inf',
+};
+
+/** 수군을 이끌 수 있게 하는 특기 (정규화 뒤 이름) */
+const NAVAL_SKILLS = new Set(['naval']);
+
+/**
+ * 46명 쪽 인물의 계열. 사료상 성격이 뚜렷한 사람은 못 박는다.
+ * 나머지는 특기 → 역할 → 능력치 순으로 정해진다.
+ */
+const LEGACY_TROOP_FIX: Record<string, [Troop, boolean]> = {
+  go_yeonsu: ['inf', false], // 주필산에서 15만을 이끈 야전 지휘관
+  go_hyejin: ['cav', false],
+  seondohae: ['str', false], // 김춘추를 빼돌린 모사
+  go_heul: ['inf', false],
+  yangwon: ['str', false],
+  pyeongwon_wang: ['str', false],
+  chugun: ['cav', false],
+  godeokgwan: ['inf', false],
+  buyeo_chang: ['cav', false], // 위덕왕. 관산성에서 직접 기병을 몰았다
+  wang_hyorin: ['str', false],
+};
+
+/**
+ * 특기·역할·능력치로 계열을 정한다. 난수를 쓰지 않는다 —
+ * 생성기는 몇 번을 돌려도 같은 결과를 내야 한다(그것이 생성기를 두는 이유다).
+ */
+function assignTroop(
+  id: string,
+  role: Source300['role'],
+  stats: Stats,
+  skills: string[]
+): [Troop, boolean] {
+  const fixed = LEGACY_TROOP_FIX[id];
+  if (fixed) return fixed;
+
+  const naval = skills.some((s) => NAVAL_SKILLS.has(s));
+  if (role === 'civil' || role === 'monk' || role === 'artisan') return ['str', naval];
+
+  // 전투 특기가 있으면 가장 많이 나온 계열로
+  const votes = skills.map((s) => TROOP_BY_SKILL[s]).filter(Boolean) as Troop[];
+  if (votes.length) {
+    const count = new Map<Troop, number>();
+    for (const v of votes) count.set(v, (count.get(v) ?? 0) + 1);
+    let best: Troop = votes[0];
+    for (const [k, n] of count) if (n > (count.get(best) ?? 0)) best = k;
+    return [best, naval];
+  }
+
+  // 지력이 무력을 크게 앞서는 무장만 책략계로 샌다
+  if (stats.int >= stats.war + 24) return ['str', naval];
+
+  const w: Record<Troop, number> = {
+    cav: Math.max(1, stats.lead + stats.war - 104),
+    inf: Math.max(1, stats.war * 1.25 - 32),
+    arc: Math.max(1, stats.int * 0.85 + stats.war * 0.45 - 44),
+    str: 0,
+  };
+  const best = (['cav', 'inf', 'arc'] as const).reduce((a, b) => (w[b] > w[a] ? b : a));
+  return [best, naval];
+}
+
 interface OutOfficer {
   id: string;
   name: string;
@@ -276,6 +370,10 @@ interface OutOfficer {
   home: string | null;
   source: string;
   note: string;
+  /** 병종 계열. 한 번 정해지면 바뀌지 않는다 (전투 기획서 §3.1) */
+  troop: Troop;
+  /** 수군을 이끌 수 있는가 (§3.4) */
+  naval: boolean;
 }
 
 const legacyById = new Map<string, Legacy>();
@@ -312,6 +410,9 @@ for (const o of roster) {
     home: free ? homeFor(o) : l?.home ? (CASTLE_ALIAS[l.home] ?? l.home) : null,
     source: o.source,
     note: o.note,
+    // 300명 로스터는 상류 파이프라인이 이미 배정해 두었다. 손대지 않는다.
+    troop: o.troop,
+    naval: o.naval,
   });
 
   if (appear !== null && retire !== null && appear >= retire) {
@@ -328,6 +429,8 @@ for (const l of legacy) {
     warnings.push(`46명 쪽 인물이 300명 로스터에도 LEGACY_ONLY_META 에도 없습니다: ${l.id}`);
     continue;
   }
+  const skills = normalizeSkills(l.skills);
+  const [troop, naval] = assignTroop(l.id, meta.role, l.stats, skills);
   out.push({
     id: l.id,
     name: l.name,
@@ -340,11 +443,13 @@ for (const l of legacy) {
     age: null,
     lifespan: null,
     stats: l.stats,
-    skills: normalizeSkills(l.skills),
+    skills,
     loyalty_type: l.loyalty_type,
     home: l.home ? (CASTLE_ALIAS[l.home] ?? l.home) : null,
     source: meta.source,
     note: l.note ?? '',
+    troop,
+    naval,
   });
 }
 
@@ -365,6 +470,11 @@ console.log(`  등급: 1급 ${out.filter((o) => o.tier === 1).length} / 2급 ${o
 console.log(`  재야 ${out.filter((o) => !o.faction).length}명 · 군주 ${out.filter((o) => o.ruler).length}명`);
 console.log(`  역사 모드 생존: 551년 ${alive(551)} · 612년 ${alive(612)} · 642년 ${alive(642)} · 660년 ${alive(660)}`);
 console.log(`  압축 모드 원년: 성인 ${compressed} · 차세대 ${nextGen}`);
+const byTroop = (t: Troop) => out.filter((o) => o.troop === t).length;
+console.log(
+  `  병종: 보병 ${byTroop('inf')} · 책략 ${byTroop('str')} · 기병 ${byTroop('cav')} · 궁병 ${byTroop('arc')}` +
+    ` · 수군 가능 ${out.filter((o) => o.naval).length}`
+);
 console.log(`  특기 ${usedSkills.size}종`);
 for (const w of warnings) console.warn(`  ! ${w}`);
 

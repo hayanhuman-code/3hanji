@@ -24,7 +24,7 @@ import {
 import { KNOWN_EFFECTS, parseEffect } from '../src/core/effects';
 import { SKILLS } from '../src/core/formulas';
 import { validateCondition } from '../src/core/dsl';
-import type { UnitClass } from '../src/core/types';
+import { TROOP_LABEL, TROOPS, type UnitClass } from '../src/core/types';
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -160,6 +160,34 @@ for (const o of OFFICERS) {
     err(w, `알 수 없는 loyalty_type: ${o.loyalty_type}`);
   if (o.home && !castleIds.has(o.home)) err(w, `없는 home 거점: ${o.home}`);
   if (!o.faction && !o.home) warn(w, '재야인데 home 이 없어 탐색으로 찾을 수 없습니다');
+  // 전투 v2 — 계열은 넷 중 하나여야 하고, 없는 사람이 있으면 안 된다.
+  if (!TROOPS.includes(o.troop)) err(w, `알 수 없는 병종 계열: ${o.troop}`);
+  if (typeof o.naval !== 'boolean') err(w, 'naval 이 참·거짓이 아닙니다');
+  // 책략계는 수군을 이끌 수 없다 — 배 위에서 계략을 부리는 그림은 아직 없다.
+  // (명랑처럼 사료상 수군 색채가 있는 인물은 상류에서 못 박아 두었다)
+}
+
+/*
+ * 계열 분포. 한쪽으로 쏠리면 그 계열 편성을 짤 수 없어 진형이 사라진다.
+ * 상류 파이프라인(build_officers.py)이 300명에 배정한 값 + 46명 쪽 10명이다.
+ */
+{
+  const w = 'officers/병종';
+  const count = (t: (typeof TROOPS)[number]) => OFFICERS.filter((o) => o.troop === t).length;
+  const total = TROOPS.reduce((s, t) => s + count(t), 0);
+  if (total !== OFFICERS.length) err(w, `계열이 없는 인물이 있습니다 (${total}/${OFFICERS.length})`);
+  for (const t of TROOPS) {
+    const share = count(t) / OFFICERS.length;
+    if (share < 0.08) warn(w, `${TROOP_LABEL[t]}가 ${count(t)}명(${Math.round(share * 100)}%)뿐입니다 — 그 계열 편성을 못 짭니다`);
+    if (share > 0.45) warn(w, `${TROOP_LABEL[t]}가 ${count(t)}명(${Math.round(share * 100)}%)으로 쏠려 있습니다`);
+  }
+  const navy = OFFICERS.filter((o) => o.naval).length;
+  if (navy === 0) err(w, '수군을 이끌 수 있는 인물이 하나도 없습니다 — 수로 13개를 쓸 수 없습니다');
+  // 세력마다 수군 장수가 있어야 그 나라가 바닷길을 쓴다.
+  for (const f of factionIds) {
+    const mine = OFFICERS.filter((o) => o.faction === f && o.naval).length;
+    if (mine === 0) warn(w, `${f} 에 수군을 이끌 인물이 없습니다`);
+  }
 }
 
 /* ---------------------------------- 병종 ---------------------------------- */

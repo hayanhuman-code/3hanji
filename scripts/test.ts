@@ -15,7 +15,8 @@ import { createGame, factionCastles, factionTroops } from '../src/core/state';
 import { deserialize, serialize } from '../src/core/save';
 import { beginNextTurn, completeEvent, resolveTurn } from '../src/core/turn';
 import { findPath } from '../src/core/util';
-import { castleDef, CASTLES } from '../src/core/data';
+import { castleDef, CASTLES, OFFICERS } from '../src/core/data';
+import { TROOPS } from '../src/core/types';
 import {
   canPass,
   findMarchPath,
@@ -462,6 +463,53 @@ test('로드한 상태에서 이어서 돌려도 같은 결과가 나온다', ()
     JSON.stringify(direct.castles),
     '저장을 거치면 결과가 달라집니다'
   );
+});
+
+/* ================================================================== *
+ * 병종 계열 (전투 기획서 §3)
+ *
+ * 장수는 계열이 고정된다. 전직도 레벨업도 없다 — 강해지는 것은 나라다.
+ * 여기서 지키려는 것은 「편성이 성립하는가」다. 한 계열이 말라 버리면
+ * 3열 진형을 짤 수 없고, 수군 장수가 없으면 바닷길 13개가 죽는다.
+ * ================================================================== */
+
+section('병종 계열');
+
+test('모든 인물이 계열을 갖고 값이 넷 중 하나다', () => {
+  const bad = OFFICERS.filter((o) => !TROOPS.includes(o.troop));
+  assertEqual(bad.length, 0, `계열이 이상한 인물: ${bad.slice(0, 3).map((o) => o.id).join(', ')}`);
+});
+
+test('네 계열 어느 것도 말라 있지 않다', () => {
+  for (const t of TROOPS) {
+    const n = OFFICERS.filter((o) => o.troop === t).length;
+    assert(n >= 25, `${t} 계열이 ${n}명뿐이라 편성을 못 짭니다`);
+  }
+});
+
+test('세력마다 수군을 이끌 인물이 있다', () => {
+  for (const f of ['goguryeo', 'baekje', 'silla', 'gaya']) {
+    const n = OFFICERS.filter((o) => o.faction === f && o.naval).length;
+    assert(n > 0, `${f} 에 수군 장수가 없어 바닷길을 못 씁니다`);
+  }
+});
+
+test('사료상 못 박은 인물의 계열이 지켜진다', () => {
+  const want: Record<string, string> = {
+    gwanggaeto: 'cav', // 광개토대왕은 언제까지나 기병이다
+    eulji: 'str', // 을지문덕 — 수계의 주인
+    yangmanchun: 'inf', // 안시성 농성
+    gyebaek: 'inf',
+    kimyusin: 'cav',
+    jangbogo: 'arc',
+  };
+  for (const [id, troop] of Object.entries(want)) {
+    const o = OFFICERS.find((x) => x.id === id);
+    if (!o) continue; // 명부에 없으면 이 검사의 관심사가 아니다
+    assertEqual(o.troop, troop, `${id} 의 계열이 바뀌었습니다`);
+  }
+  const jang = OFFICERS.find((o) => o.id === 'jangbogo');
+  if (jang) assert(jang.naval, '장보고가 수군을 못 이끕니다');
 });
 
 /* ================================================================== *

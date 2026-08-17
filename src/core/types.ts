@@ -117,6 +117,31 @@ export interface MapData {
 export type OfficerRole = 'general' | 'civil' | 'royal' | 'monk' | 'artisan';
 
 /**
+ * 병종 계열 — 기병(騎) · 보병(步) · 궁병(弓) · 책략(策).
+ *
+ * 이것이 전투 v2 의 뼈대다. 장수는 계열이 고정되고, 계열마다 국가가 따로
+ * 기술 단계를 올린다. 넷을 다 올릴 자원은 없으므로 무엇을 키울지가 곧 전략이다.
+ */
+export type Troop = 'cav' | 'inf' | 'arc' | 'str';
+
+export const TROOPS: readonly Troop[] = ['inf', 'cav', 'arc', 'str'] as const;
+
+/** 화면 표기 — 한자 한 글자 (문서 §7: 이모지 금지) */
+export const TROOP_MARK: Record<Troop, string> = {
+  inf: '步',
+  cav: '騎',
+  arc: '弓',
+  str: '策',
+};
+
+export const TROOP_LABEL: Record<Troop, string> = {
+  inf: '보병계',
+  cav: '기병계',
+  arc: '궁병계',
+  str: '책략계',
+};
+
+/**
  * 인물 명부는 **두 벌의 창(window)** 을 갖는다.
  *
  *  - 역사 시나리오(642·551) → `appear` ~ `retire` (실제 활동 연도)
@@ -150,6 +175,16 @@ export interface OfficerDef {
   };
   skills: string[];
   loyalty_type: LoyaltyType;
+  /**
+   * 병종 계열 (전투 기획서 §3.1). **전직도 변경도 없다.**
+   * 장수가 강해지는 것이 아니라, 나라가 강해지면 그가 이끄는 병종이 좋아진다.
+   */
+  troop: Troop;
+  /**
+   * 수군 부대를 이끌 수 있는가 (§3.4). false 면 배에 탑승만 가능하다.
+   * 수군 장수가 없으면 바닷길을 쓸 수 없다 — 수로 13개가 존재하는 이유다.
+   */
+  naval: boolean;
   /** 재야 인물이 숨어 있는 거점 (탐색으로 발견) */
   home?: CastleId | null;
   portrait?: string | null;

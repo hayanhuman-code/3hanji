@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { BattleScreen } from './ui/BattleScreen';
 import { GameScreen } from './ui/GameScreen';
 import { TitleScreen } from './ui/TitleScreen';
+import { FieldBattle } from './ui/field/FieldBattle';
 import { FieldSim } from './ui/field/FieldSim';
 import { useGame } from './ui/store';
 
 export default function App() {
   const screen = useGame((s) => s.screen);
-  const battle = useGame((s) => s.battle);
+  const field = useGame((s) => s.field);
   const message = useGame((s) => s.message);
   const notify = useGame((s) => s.notify);
 
@@ -22,8 +22,8 @@ export default function App() {
     <>
       {screen === 'field' ? (
         <FieldSim />
-      ) : screen === 'sandbox' || (screen === 'game' && battle) ? (
-        <BattleScreen />
+      ) : screen === 'game' && field ? (
+        <FieldBattle />
       ) : screen === 'game' ? (
         <GameScreen />
       ) : (

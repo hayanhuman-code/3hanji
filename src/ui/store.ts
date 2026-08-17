@@ -7,17 +7,10 @@
  */
 
 import { create } from 'zustand';
-import type { BattleResult, BattleState } from '../core/battle/battleState';
-import { createBattle } from '../core/battle/battleState';
-import {
-  attackUnit as coreAttackUnit,
-  attackWall as coreAttackWall,
-  endSideTurn,
-  runAITurn,
-  runBattleToEnd,
-  moveUnit as coreMoveUnit,
-  withdraw as coreWithdraw,
-} from '../core/battle/battleEngine';
+import { fieldStats } from '../core/field/bridge';
+import { createField } from '../core/field/setup';
+import { runToEnd } from '../core/field/sim';
+import type { FieldState } from '../core/field/types';
 import { applyDomesticCommand, validateCommand } from '../core/domestic';
 import { applyDiplomacy, validateDiplomacy } from '../core/diplomacy';
 import { applyMarch, validateMarch } from '../core/military';
@@ -26,9 +19,8 @@ import { createGame, type NewGameConfig } from '../core/state';
 import { loadFromStorage, saveToStorage } from '../core/save';
 import { beginNextTurn, completeBattle, completeEvent, resolveTurn } from '../core/turn';
 import type { EventDef, Command, GameState, PendingEvent, CastleId } from '../core/types';
-import type { Axial } from '../core/battle/hex';
 
-export type Screen = 'title' | 'game' | 'sandbox' | 'field';
+export type Screen = 'title' | 'game' | 'field';
 export type SidePanel = 'castle' | 'officers' | 'diplomacy' | 'institutions' | 'chronicle';
 
 interface EventPrompt {
@@ -40,9 +32,11 @@ interface Store {
   screen: Screen;
   revision: number;
   state: GameState | null;
-  battle: BattleState | null;
-  /** 전투가 전략 턴의 일부인가(true) 단독 시뮬레이터인가(false) */
-  battleIsLive: boolean;
+  /**
+   * 지금 벌어지고 있는 전장. 전략 턴이 여기서 멈춰 서 있다.
+   * (단독 시뮬레이터는 이 자리를 쓰지 않는다 — 제 화면 안에서 판을 만든다)
+   */
+  field: FieldState | null;
   event: EventPrompt | null;
   showReport: boolean;
   selected: CastleId | null;
@@ -63,30 +57,17 @@ interface Store {
   chooseEvent: (index: number) => void;
   closeReport: () => void;
 
-  startSandbox: (battle: BattleState) => void;
-  battleMove: (unitId: string, to: Axial) => void;
-  battleAttack: (unitId: string, targetId: string) => void;
-  battleAttackWall: (unitId: string, target: Axial) => void;
-  battleEndTurn: () => void;
-  battleDelegate: () => void;
-  battleWithdraw: () => void;
-  battleFinish: () => void;
+  /** 전장을 한 틱 이상 진행했다고 알린다 (코어가 제자리에서 고치므로) */
+  fieldTouch: () => void;
+  /** 즉시결판 — 같은 시뮬레이션을 렌더링 없이 끝까지 */
+  fieldSettle: () => void;
+  /** 결과를 전략맵에 반영하고 지도로 돌아간다 */
+  fieldFinish: () => void;
 }
 
 export const useGame = create<Store>((set, get) => {
   /** 코어를 건드린 뒤 구독자에게 알린다. */
   const touch = () => set((s) => ({ revision: s.revision + 1 }));
-
-  /**
-   * 플레이어 차례가 될 때까지(또는 전투가 끝날 때까지) AI 를 진행시킨다.
-   * 수비 측으로 붙는 전투는 적 차례로 시작하므로, 이걸 하지 않으면 화면이 멈춘 채로 있게 된다.
-   */
-  const advanceToPlayer = (b: BattleState) => {
-    let guard = 0;
-    while (!b.finished && b.playerSide && b.activeSide !== b.playerSide && guard++ < 100) {
-      runAITurn(b);
-    }
-  };
 
   /** 턴 처리를 진행하다 UI 가 필요한 지점에서 멈춘다. */
   const drive = () => {
@@ -95,9 +76,7 @@ export const useGame = create<Store>((set, get) => {
     for (;;) {
       const step = resolveTurn(state);
       if (step.kind === 'battle') {
-        const b = createBattle(step.setup);
-        advanceToPlayer(b);
-        set({ battle: b, battleIsLive: true, busy: false });
+        set({ field: createField(step.setup), busy: false });
         touch();
         return;
       }
@@ -117,8 +96,7 @@ export const useGame = create<Store>((set, get) => {
     screen: 'title',
     revision: 0,
     state: null,
-    battle: null,
-    battleIsLive: false,
+    field: null,
     event: null,
     showReport: false,
     selected: null,
@@ -136,7 +114,7 @@ export const useGame = create<Store>((set, get) => {
         screen: 'game',
         selected: first?.id ?? null,
         panel: 'castle',
-        battle: null,
+        field: null,
         event: null,
         showReport: false,
         message: null,
@@ -158,7 +136,7 @@ export const useGame = create<Store>((set, get) => {
         state,
         screen: 'game',
         selected: first?.id ?? null,
-        battle: null,
+        field: null,
         event: null,
         showReport: state.phase === 'report',
         message: null,
@@ -238,71 +216,23 @@ export const useGame = create<Store>((set, get) => {
       touch();
     },
 
-    /* ------------------------------ 전투 ------------------------------ */
+    /* ------------------------------ 전장 ------------------------------ */
 
-    startSandbox: (battle) => {
-      advanceToPlayer(battle);
-      set({ battle, battleIsLive: false, screen: 'sandbox' });
+    fieldTouch: touch,
+
+    fieldSettle: () => {
+      const f = get().field;
+      const state = get().state;
+      if (!f || !state) return;
+      runToEnd(f, fieldStats(state));
       touch();
     },
 
-    battleMove: (unitId, to) => {
-      const b = get().battle;
-      if (!b) return;
-      coreMoveUnit(b, unitId, to);
-      touch();
-    },
-
-    battleAttack: (unitId, targetId) => {
-      const b = get().battle;
-      if (!b) return;
-      coreAttackUnit(b, unitId, targetId);
-      touch();
-    },
-
-    battleAttackWall: (unitId, target) => {
-      const b = get().battle;
-      if (!b) return;
-      coreAttackWall(b, unitId, target);
-      touch();
-    },
-
-    battleEndTurn: () => {
-      const b = get().battle;
-      if (!b || b.finished) return;
-      endSideTurn(b);
-      // 플레이어 차례가 다시 올 때까지 AI 를 돌린다.
-      let guard = 0;
-      while (!b.finished && b.activeSide !== b.playerSide && guard++ < 100) {
-        runAITurn(b);
-      }
-      touch();
-    },
-
-    battleDelegate: () => {
-      const b = get().battle;
-      if (!b) return;
-      runBattleToEnd(b);
-      touch();
-    },
-
-    battleWithdraw: () => {
-      const b = get().battle;
-      if (!b || !b.playerSide) return;
-      coreWithdraw(b, b.playerSide);
-      touch();
-    },
-
-    battleFinish: () => {
-      const { battle, state, battleIsLive } = get();
-      if (!battle?.result) return;
-      if (!battleIsLive || !state) {
-        set({ battle: null, screen: battleIsLive ? 'game' : 'title' });
-        touch();
-        return;
-      }
-      completeBattle(state, battle.result as BattleResult);
-      set({ battle: null, busy: true });
+    fieldFinish: () => {
+      const { field, state } = get();
+      if (!field?.result || !state) return;
+      completeBattle(state, field.result);
+      set({ field: null, busy: true });
       setTimeout(drive, 10);
     },
   };

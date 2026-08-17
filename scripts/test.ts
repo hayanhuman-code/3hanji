@@ -6,9 +6,6 @@
  */
 
 import { evaluate, validateCondition } from '../src/core/dsl';
-import { createBattle } from '../src/core/battle/battleState';
-import { runBattleToEnd } from '../src/core/battle/battleEngine';
-import { hexDistance, offsetToAxial, axialToOffset, pixelToHex, hexToPixel } from '../src/core/battle/hex';
 import { pickAIChoice } from '../src/core/events';
 import { RngCursor, seedFromString } from '../src/core/rng';
 import { createGame, factionCastles, factionTroops } from '../src/core/state';
@@ -26,13 +23,19 @@ import {
   WATER_SPEED,
 } from '../src/core/field/balance';
 import { BATTLEFIELD_IDS, battlefield } from '../src/core/field/battlefield';
+import { buildFieldSetup, fieldPossible } from '../src/core/field/bridge';
+import { TIER_CAP } from '../src/core/field/balance';
+import { applyDomesticCommand, validateCommand } from '../src/core/domestic';
 import { createField } from '../src/core/field/setup';
 import { runToEnd, unitDefense, unitPower } from '../src/core/field/sim';
 import { findFieldPath } from '../src/core/field/pathfind';
 import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
+import type { PendingBattle } from '../src/core/types';
 import {
+  applyFieldResult,
   canPass,
   findMarchPath,
+  resolveFieldAuto,
   nearestFriendlyCastle,
   needsDeclaration,
   retreatArmy,
@@ -43,7 +46,6 @@ import { atWar } from '../src/core/state';
 import { T, contrast, textOn } from '../src/ui/tokens';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { BattleSetup } from '../src/core/battle/battleState';
 
 let passed = 0;
 let failed = 0;
@@ -70,39 +72,6 @@ function assertEqual<T>(actual: T, expected: T, msg = ''): void {
 function section(title: string): void {
   console.log(`\n${title}`);
 }
-
-/* ================================================================== *
- * 헥스 기하
- * ================================================================== */
-
-section('헥스 기하');
-
-test('offset ↔ axial 왕복 변환', () => {
-  for (let col = 0; col < 13; col++) {
-    for (let row = 0; row < 9; row++) {
-      const back = axialToOffset(offsetToAxial(col, row));
-      assertEqual(back.col, col, `col ${col},${row}`);
-      assertEqual(back.row, row, `row ${col},${row}`);
-    }
-  }
-});
-
-test('헥스 거리는 인접 칸에서 1', () => {
-  const a = offsetToAxial(5, 4);
-  assertEqual(hexDistance(a, { q: a.q + 1, r: a.r }), 1);
-  assertEqual(hexDistance(a, { q: a.q, r: a.r + 1 }), 1);
-  assertEqual(hexDistance(a, a), 0);
-});
-
-test('픽셀 ↔ 헥스 왕복 변환', () => {
-  for (let q = -4; q <= 4; q++) {
-    for (let r = 0; r < 9; r++) {
-      const p = hexToPixel({ q, r }, 20);
-      const back = pixelToHex(p.x, p.y, 20);
-      assert(back.q === q && back.r === r, `(${q},${r}) → (${back.q},${back.r})`);
-    }
-  }
-});
 
 /* ================================================================== *
  * 조건식 DSL
@@ -192,124 +161,6 @@ test('육로만으로도 본토는 하나로 이어진다', () => {
     const path = findPath(land[0].id, to.id, (id) => castleDef(id).routes.land);
     assert(path !== null, `육로만으로 ${land[0].id} → ${to.id} 가 끊깁니다`);
   }
-});
-
-/* ================================================================== *
- * 전술 전투 (단독 실행)
- * ================================================================== */
-
-section('전술 전투 — 전략 모듈 없이 단독 실행');
-
-function makeSetup(over: Partial<BattleSetup> = {}): BattleSetup {
-  return {
-    castle: 'test',
-    castleName: '시험성',
-    siege: false,
-    season: 0,
-    terrain: 'plain',
-    mountainFortress: false,
-    wallDev: 60,
-    attackerFaction: 'goguryeo',
-    defenderFaction: 'silla',
-    attacker: [{ unitType: 'infantry', count: 6000 }],
-    defender: [{ unitType: 'infantry', count: 6000 }],
-    attackerMorale: 70,
-    defenderMorale: 70,
-    attackerTraining: 60,
-    defenderTraining: 60,
-    playerSide: null,
-    seed: 1234,
-    ...over,
-  };
-}
-
-test('전투는 반드시 끝난다', () => {
-  for (let seed = 0; seed < 20; seed++) {
-    const b = createBattle(makeSetup({ seed: seed * 977 }));
-    const result = runBattleToEnd(b);
-    assert(b.finished, `seed ${seed}: 전투가 끝나지 않았습니다`);
-    assert(result.winner === 'attacker' || result.winner === 'defender', '승자가 없습니다');
-    assert(result.attackerLoss >= 0 && result.defenderLoss >= 0, '피해가 음수입니다');
-  }
-});
-
-test('같은 시드는 같은 결과를 낸다 (결정론)', () => {
-  const a = runBattleToEnd(createBattle(makeSetup({ seed: 777 })));
-  const b = runBattleToEnd(createBattle(makeSetup({ seed: 777 })));
-  assertEqual(a.winner, b.winner, '승자가 다릅니다');
-  assertEqual(a.attackerLoss, b.attackerLoss, '공격 측 피해가 다릅니다');
-  assertEqual(a.defenderLoss, b.defenderLoss, '수비 측 피해가 다릅니다');
-});
-
-test('장창보병은 개마무사를 막아 세운다 (병종 상성)', () => {
-  let spearWins = 0;
-  for (let s = 0; s < 20; s++) {
-    const b = createBattle(
-      makeSetup({
-        seed: s * 131,
-        attacker: [{ unitType: 'gaema', count: 5000 }],
-        defender: [{ unitType: 'spear', count: 5000 }],
-      })
-    );
-    if (runBattleToEnd(b).winner === 'defender') spearWins++;
-  }
-  assert(spearWins >= 12, `장창보병 승률이 너무 낮습니다 (${spearWins}/20)`);
-});
-
-test('개마무사는 궁병을 짓밟는다 (병종 상성 반대편)', () => {
-  let cavWins = 0;
-  for (let s = 0; s < 20; s++) {
-    const b = createBattle(
-      makeSetup({
-        seed: s * 313,
-        attacker: [{ unitType: 'gaema', count: 5000 }],
-        defender: [{ unitType: 'archer', count: 5000 }],
-      })
-    );
-    if (runBattleToEnd(b).winner === 'attacker') cavWins++;
-  }
-  assert(cavWins >= 12, `기병 승률이 너무 낮습니다 (${cavWins}/20)`);
-});
-
-test('산성 농성은 같은 병력의 강공을 막아낸다 (기획서 §6.3)', () => {
-  let held = 0;
-  for (let s = 0; s < 20; s++) {
-    const b = createBattle(
-      makeSetup({
-        seed: s * 719,
-        siege: true,
-        terrain: 'mountain',
-        mountainFortress: true,
-        wallDev: 90,
-        attacker: [{ unitType: 'infantry', count: 8000 }],
-        defender: [{ unitType: 'infantry', count: 8000 }],
-      })
-    );
-    if (runBattleToEnd(b).winner === 'defender') held++;
-  }
-  assert(held >= 16, `산성이 너무 쉽게 떨어집니다 (수비 ${held}/20)`);
-});
-
-test('압도적 병력은 산성도 무너뜨린다', () => {
-  let taken = 0;
-  for (let s = 0; s < 20; s++) {
-    const b = createBattle(
-      makeSetup({
-        seed: s * 421,
-        siege: true,
-        terrain: 'mountain',
-        mountainFortress: true,
-        wallDev: 90,
-        attacker: [
-          { unitType: 'infantry', count: 24000 },
-          { unitType: 'ram', count: 4000 },
-        ],
-        defender: [{ unitType: 'infantry', count: 6000 }],
-      })
-    );
-    if (runBattleToEnd(b).winner === 'attacker') taken++;
-  }
-  assert(taken >= 12, `대군이 성을 못 떨어뜨립니다 (함락 ${taken}/20)`);
 });
 
 /* ================================================================== *
@@ -721,6 +572,144 @@ test('고구려 기병은 1단계부터 더 세다', () => {
   );
   assert(FACTION_AFFINITY.gaya.inf > FACTION_AFFINITY.goguryeo.inf, '가야 보병이 세지 않습니다');
   assert(FACTION_AFFINITY.baekje.navy > FACTION_AFFINITY.goguryeo.navy, '백제 수군이 세지 않습니다');
+});
+
+/* ================================================================== *
+ * 전략 ↔ 전장 이음매
+ *
+ * 두 층 사이가 어긋나면 「전투는 이겼는데 병력이 안 돌아온다」 같은 일이 난다.
+ * 이 절은 그 통역이 숫자를 흘리지 않는지를 본다.
+ * ================================================================== */
+
+section('전략 ↔ 전장 이음매');
+
+test('거점과 전장이 1:1 로 맞는다', () => {
+  const ids = new Set(BATTLEFIELD_IDS);
+  for (const c of CASTLES) {
+    assert(ids.has(c.id), `${c.id} 의 전장이 없습니다`);
+  }
+  assertEqual(BATTLEFIELD_IDS.length, CASTLES.length, '전장 수와 거점 수가 다릅니다');
+});
+
+test('군대를 전장 편성으로 옮기면 병력 총합이 보존된다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 31 });
+  const from = factionCastles(s, 'silla')[0];
+  const target = castleDef(from.id).neighbors.find((n) => s.castles[n].owner === 'baekje');
+  if (!target) return; // 이 시나리오에 백제와 맞댄 곳이 없으면 넘어간다
+  const officers = from.officers.slice(0, 3);
+  const troops = Math.min(6000, from.troops - 500);
+  s.armies['a1'] = {
+    id: 'a1',
+    faction: 'silla',
+    commander: officers[0],
+    officers,
+    units: [{ unitType: 'infantry', count: troops }],
+    location: from.id,
+    path: [target],
+    target,
+    grain: 1000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+  const setup = buildFieldSetup(s, {
+    id: 'b1',
+    castle: target,
+    attacker: 'silla',
+    defender: 'baekje',
+    attackerArmies: ['a1'],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  });
+  const sum = setup.attacker.reduce((a, e) => a + e.troops, 0);
+  assertEqual(sum, troops, '전장으로 넘긴 병력 합계가 다릅니다');
+  assert(setup.attacker.length <= 12, '한쪽이 12부대를 넘었습니다');
+  // 계열은 장수를 따른다 — 무엇을 징병했든 상관없다 (§1.2)
+  for (const e of setup.attacker) {
+    assertEqual(e.officer in s.officers, true, '없는 인물이 편성되었습니다');
+  }
+});
+
+test('한쪽에 장수가 없으면 전장이 서지 않는다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 32 });
+  const target = factionCastles(s, 'baekje')[0];
+  const setup = buildFieldSetup(s, {
+    id: 'b2',
+    castle: target.id,
+    attacker: 'silla',
+    defender: 'baekje',
+    attackerArmies: [],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  });
+  assertEqual(fieldPossible(setup), false, '이끌 사람 없이 전장이 섰습니다');
+});
+
+test('병종 개발은 나라마다 상한이 다르다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'goguryeo', seed: 33 });
+  const f = s.factions.goguryeo;
+  for (const t of TROOPS) assertEqual(f.troopTiers[t], 1, `${t} 가 1단계로 시작하지 않습니다`);
+  // 자원을 넉넉히 주고 상한까지 올려 본다
+  f.resources.gold = 999999;
+  f.resources.iron = 999999;
+  const cap = TIER_CAP.goguryeo.cav;
+  for (let i = 0; i < 6; i++) {
+    const err = validateCommand(s, { kind: 'armament', faction: 'goguryeo', troop: 'cav' });
+    if (err) break;
+    applyDomesticCommand(s, { kind: 'armament', faction: 'goguryeo', troop: 'cav' }, new RngCursor(1));
+  }
+  assertEqual(f.troopTiers.cav, cap, '고구려 기병이 상한까지 안 올라갔습니다');
+  assert(
+    validateCommand(s, { kind: 'armament', faction: 'goguryeo', troop: 'cav' }) !== null,
+    '상한을 넘겨 올릴 수 있습니다'
+  );
+});
+
+test('전장 결과가 전략맵의 병력을 줄인다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 34 });
+  const from = factionCastles(s, 'silla')[0];
+  // 지킬 사람이 있는 이웃 성을 고른다 — 부대는 장수를 통해서만 존재한다
+  const target = castleDef(from.id).neighbors.find(
+    (n) => s.castles[n].owner && s.castles[n].owner !== 'silla' && s.castles[n].officers.length > 0
+  );
+  if (!target) return;
+  const defender = s.castles[target].owner!;
+  const officers = from.officers.slice(0, 3);
+  const troops = Math.min(8000, from.troops - 500);
+  s.armies['a1'] = {
+    id: 'a1',
+    faction: 'silla',
+    commander: officers[0],
+    officers,
+    units: [{ unitType: 'infantry', count: troops }],
+    location: from.id,
+    path: [target],
+    target,
+    grain: 1000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+  const pending: PendingBattle = {
+    id: 'b3',
+    castle: target,
+    attacker: 'silla',
+    defender,
+    attackerArmies: ['a1'],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  };
+  const result = resolveFieldAuto(s, pending);
+  assert(result !== null, '전투가 성립하지 않았습니다');
+  assert(result!.attackerLoss >= 0 && result!.defenderLoss >= 0, '피해가 음수입니다');
+  applyFieldResult(s, pending, result!, new RngCursor(7));
+  const after = s.armies['a1'];
+  const left = after ? after.units.reduce((a, u) => a + u.count, 0) : 0;
+  assert(left < troops, '전투를 치렀는데 병력이 그대로입니다');
+  assert(left >= 0, '병력이 음수가 되었습니다');
 });
 
 /* ================================================================== *

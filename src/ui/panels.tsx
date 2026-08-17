@@ -19,7 +19,7 @@ import {
 import { CHINA_ID, CHINA_NAME } from '../core/diplomacy';
 import { B, SKILLS, conscriptCost, loyaltyFactor, maxTroops } from '../core/formulas';
 
-import { stockCap, validateCommand } from '../core/domestic';
+import { armamentCost, stockCap, validateCommand } from '../core/domestic';
 import { OPEN_SEA_PORTS, seaClosed } from '../core/military';
 import { foresightHints } from '../core/events';
 import {
@@ -32,7 +32,8 @@ import {
   hasInstitution,
 } from '../core/state';
 import { victoryStatus } from '../core/victory';
-import { TROOP_LABEL, TROOP_MARK } from '../core/types';
+import { TROOPS, TROOP_LABEL, TROOP_MARK } from '../core/types';
+import { TIER_CAP, TIER_NAME } from '../core/field/balance';
 import type { Command, DevKey, GameState, OfficerState } from '../core/types';
 import { fmt, fmtTroops } from '../core/util';
 import { useGame } from './store';
@@ -719,6 +720,58 @@ export function DiplomacyPanel({ state }: { state: GameState }) {
  * 제도 패널
  * ------------------------------------------------------------------ */
 
+/**
+ * 병종 개발 (§2.1).
+ *
+ * 장수를 강하게 만드는 명령은 없다. 대신 나라가 강해진다 — 여기서 올린 단계가
+ * 그 계열 장수 **전원**의 위력이 된다. 넷을 다 올릴 자원은 없으므로 이 칸이
+ * 그 나라가 어떤 전쟁을 하겠다는 선언이 된다.
+ */
+function ArmamentBlock({ state }: { state: GameState }) {
+  const issue = useGame((s) => s.issue);
+  const faction = state.playerFaction;
+  const f = state.factions[faction];
+
+  return (
+    <div className="card" style={{ padding: 12 }}>
+      <div className="row between">
+        <b>병종 개발</b>
+        <span className="faint num" style={{ fontSize: 11 }}>
+          철 {fmt(f.resources.iron)}
+        </span>
+      </div>
+      <p className="faint" style={{ fontSize: 11.5, margin: '4px 0 8px' }}>
+        올린 단계는 그 계열 장수 전원에게 그대로 붙는다. 나라마다 올릴 수 있는 한계가 다르다.
+      </p>
+      {TROOPS.map((t) => {
+        const tier = f.troopTiers[t];
+        const cap = TIER_CAP[faction][t];
+        const err = validateCommand(state, { kind: 'armament', faction, troop: t });
+        const cost = armamentCost(tier);
+        return (
+          <div key={t} className="tier-row" style={{ gridTemplateColumns: '92px 1fr auto' }}>
+            <span>
+              <i className="mark">{TROOP_MARK[t]}</i> {TROOP_LABEL[t]}
+            </span>
+            <span className="faint" style={{ fontSize: 11.5 }}>
+              {tier}단계 · {TIER_NAME[t][tier]}
+              {tier >= cap && <span className="faint"> (한계)</span>}
+            </span>
+            <button
+              className="btn small"
+              disabled={!!err}
+              title={err ?? `재화 ${fmt(cost.gold)} · 철 ${fmt(cost.iron)}`}
+              onClick={() => issue({ kind: 'armament', faction, troop: t })}
+            >
+              {tier >= cap ? '—' : `${fmt(cost.gold)}/${fmt(cost.iron)}`}
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function InstitutionPanel({ state }: { state: GameState }) {
   const issue = useGame((s) => s.issue);
   const faction = state.playerFaction;
@@ -740,6 +793,8 @@ export function InstitutionPanel({ state }: { state: GameState }) {
           큰 정책은 귀족회의의 지지를 받아야 한다. 지지도가 {B.coupThreshold} 아래로 내려가면 정변이 일어난다.
         </p>
       </div>
+
+      <ArmamentBlock state={state} />
 
       {list.map((def) => {
         const owned = f.institutions.includes(def.id);

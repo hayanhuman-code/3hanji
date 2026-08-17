@@ -30,15 +30,15 @@ import { driftRelations } from './diplomacy';
 import { checkEvents, pickAIChoice, resolveEventChoice } from './events';
 import { B, castleIncome, fieldUpkeep, garrisonUpkeep, hasSkill } from './formulas';
 import {
-  applyBattleResult,
-  buildBattleSetup,
+  applyFieldResult,
   captureCastle,
   disbandArmy,
-  resolveAutoBattle,
+  resolveFieldAuto,
   resolveMovement,
   resolveSieges,
   tickTruces,
 } from './military';
+import { buildFieldSetup, fieldPossible } from './field/bridge';
 import { RngCursor } from './rng';
 import {
   addChronicle,
@@ -54,7 +54,7 @@ import {
 } from './state';
 import { removeOfficerFromWorld } from './effects';
 import { checkVictory } from './victory';
-import type { BattleResult, BattleSetup } from './battle/battleState';
+import type { FieldResult, FieldSetup } from './field/types';
 import type {
   BattleSummary,
   FactionId,
@@ -67,7 +67,7 @@ import type {
 import { clamp } from './util';
 
 export type TurnStep =
-  | { kind: 'battle'; pending: PendingBattle; setup: BattleSetup }
+  | { kind: 'battle'; pending: PendingBattle; setup: FieldSetup }
   | { kind: 'event'; pending: PendingEvent; def: ReturnType<typeof eventDef> }
   | { kind: 'done' }
   | { kind: 'gameover' };
@@ -124,12 +124,22 @@ export function resolveTurn(state: GameState): TurnStep {
         state.pendingBattles.shift();
         continue;
       }
-      if (pending.manual) {
-        return { kind: 'battle', pending, setup: buildBattleSetup(state, pending) };
+      const setup = buildFieldSetup(state, pending);
+      if (!fieldPossible(setup)) {
+        // 한쪽에 이끌 사람이 없다 — 부대는 장수를 통해서만 존재하므로 전장이 안 선다
+        const rng = rngOf(state);
+        if (pending.siege) {
+          captureCastle(state, pending.castle, pending.attacker, rng);
+          commit(state, rng);
+          addLog(state, null, 'battle', `${castleName(pending.castle)}에 맞설 장수가 없었다.`);
+        }
+        state.pendingBattles.shift();
+        continue;
       }
+      if (pending.manual) return { kind: 'battle', pending, setup };
       const rng = rngOf(state);
-      const result = resolveAutoBattle(state, pending);
-      ledger(state).push(applyBattleResult(state, pending, result, rng));
+      const result = resolveFieldAuto(state, pending);
+      if (result) ledger(state).push(applyFieldResult(state, pending, result, rng));
       commit(state, rng);
       state.pendingBattles.shift();
     }
@@ -185,11 +195,11 @@ function isBattleStillValid(state: GameState, p: PendingBattle): boolean {
 }
 
 /** 수동 전투가 끝났을 때 UI 가 호출한다. */
-export function completeBattle(state: GameState, result: BattleResult): void {
+export function completeBattle(state: GameState, result: FieldResult): void {
   const pending = state.pendingBattles[0];
   if (!pending) return;
   const rng = rngOf(state);
-  ledger(state).push(applyBattleResult(state, pending, result, rng));
+  ledger(state).push(applyFieldResult(state, pending, result, rng));
   commit(state, rng);
   state.pendingBattles.shift();
 }

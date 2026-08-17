@@ -41,6 +41,7 @@ import {
   hasInstitution,
 } from './state';
 import type {
+  ArmamentCommand,
   Command,
   ConscriptCommand,
   DevelopCommand,
@@ -51,8 +52,11 @@ import type {
   RecruitCommand,
   SearchCommand,
   StockpileCommand,
+  Tier,
   TrainCommand,
 } from './types';
+import { TROOP_LABEL } from './types';
+import { TIER_CAP, TIER_NAME } from './field/balance';
 import { clamp } from './util';
 
 const DEV_LABEL: Record<string, string> = {
@@ -144,6 +148,17 @@ export function validateCommand(state: GameState, cmd: Command): string | null {
     case 'captive': {
       const t = state.officers[cmd.targetOfficer];
       if (!t || t.status !== 'captured' || t.captor !== cmd.faction) return '휘하의 포로가 아닙니다.';
+      return null;
+    }
+    case 'armament': {
+      const cur = f.troopTiers[cmd.troop];
+      const cap = TIER_CAP[cmd.faction][cmd.troop];
+      if (cur >= 4) return `${TROOP_LABEL[cmd.troop]}는 이미 최고 단계입니다.`;
+      if (cur >= cap)
+        return `${TROOP_LABEL[cmd.troop]}는 이 나라에서 ${cap}단계까지만 올릴 수 있습니다.`;
+      const cost = armamentCost(cur);
+      if (f.resources.gold < cost.gold) return '재화가 부족합니다.';
+      if (f.resources.iron < cost.iron) return '철이 부족합니다.';
       return null;
     }
     case 'institution': {
@@ -247,11 +262,34 @@ export function applyDomesticCommand(
       }
       return `${def.name}은(는) 끝내 고개를 숙이지 않았다.`;
     }
+    case 'armament':
+      return doArmament(state, cmd);
     case 'institution':
       return doInstitution(state, cmd, rng);
     default:
       return null;
   }
+}
+
+/**
+ * n단계에서 n+1단계로 올리는 비용.
+ * 단계마다 가팔라져, 한 계열을 끝까지 올린 나라는 다른 계열이 1~2단계에 머문다.
+ */
+export function armamentCost(current: number): { gold: number; iron: number } {
+  const k = Math.pow(B.armamentStep, current - 1);
+  return { gold: Math.round(B.armamentGold * k), iron: Math.round(B.armamentIron * k) };
+}
+
+function doArmament(state: GameState, cmd: ArmamentCommand): string {
+  const f = state.factions[cmd.faction];
+  const cost = armamentCost(f.troopTiers[cmd.troop]);
+  f.resources.gold -= cost.gold;
+  f.resources.iron -= cost.iron;
+  const next = (f.troopTiers[cmd.troop] + 1) as Tier;
+  f.troopTiers[cmd.troop] = next;
+  const name = TIER_NAME[cmd.troop][next];
+  addLog(state, cmd.faction, 'domestic', `${TROOP_LABEL[cmd.troop]}를 ${next}단계로 올렸다 — ${name}.`);
+  return `${TROOP_LABEL[cmd.troop]} ${next}단계 — ${name}.`;
 }
 
 function capitalOf(state: GameState, faction: string): string | undefined {

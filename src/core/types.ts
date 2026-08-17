@@ -126,6 +126,14 @@ export type Troop = 'cav' | 'inf' | 'arc' | 'str';
 
 export const TROOPS: readonly Troop[] = ['inf', 'cav', 'arc', 'str'] as const;
 
+/**
+ * 국가 병종 단계 1~4 (§2.1).
+ *
+ * 전장 쪽 타입이 아니라 여기 두는 이유: 이 값은 세력 상태에 저장되어
+ * 전략맵에서 자라고, 전장은 그것을 읽어 갈 뿐이다.
+ */
+export type Tier = 1 | 2 | 3 | 4;
+
 /** 화면 표기 — 한자 한 글자 (문서 §7: 이모지 금지) */
 export const TROOP_MARK: Record<Troop, string> = {
   inf: '步',
@@ -421,6 +429,14 @@ export interface FactionState {
   flags: string[];
   /** AI 여부 */
   isAI: boolean;
+  /**
+   * 국가 병종 단계 1~4 (전투 문서 §1.2·§2.1).
+   *
+   * **강해지는 것은 장수가 아니라 나라다.** 장수 능력치는 평생 거의 그대로이고,
+   * 그 사람이 이끄는 부대의 위력은 여기서 온다. 그래서 「좋은 장수 모으기」가
+   * 아니라 「나라를 키우기」가 강해지는 길이 된다.
+   */
+  troopTiers: Record<Troop, Tier>;
 }
 
 export interface Relation {
@@ -641,6 +657,18 @@ export interface DiplomacyCommand {
   gold?: number;
 }
 
+/**
+ * 병종 개발 — 국가 병종 단계를 한 칸 올린다 (§2.1).
+ *
+ * 장수를 강하게 만드는 명령이 없는 대신 이것이 있다. 어느 계열을 올릴지가
+ * 그 나라가 어떤 전쟁을 하겠다는 선언이 된다.
+ */
+export interface ArmamentCommand {
+  kind: 'armament';
+  faction: FactionId;
+  troop: Troop;
+}
+
 export interface InstitutionCommand {
   kind: 'institution';
   faction: FactionId;
@@ -660,6 +688,7 @@ export type Command =
   | RecruitCommand
   | CaptiveCommand
   | DiplomacyCommand
+  | ArmamentCommand
   | InstitutionCommand;
 
 export type CommandKind = Command['kind'];

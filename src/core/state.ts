@@ -140,6 +140,8 @@ export function createGame(config: NewGameConfig): GameState {
       alive: owns,
       flags: [],
       isAI: def.id !== config.playerFaction,
+      // 모두 1단계에서 시작한다. 여기서부터 무엇을 키울지가 갈린다 (§2.1)
+      troopTiers: { inf: 1, cav: 1, arc: 1, str: 1 },
     };
   }
 

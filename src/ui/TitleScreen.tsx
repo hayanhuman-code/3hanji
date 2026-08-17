@@ -4,17 +4,14 @@
 
 import { useState } from 'react';
 import { PLAYABLE_FACTIONS, SCENARIOS, castleName, factionDef } from '../core/data';
-import { createBattle } from '../core/battle/battleState';
 import { hasSave } from '../core/save';
 import { readSaveFile } from '../core/save';
-import { seedFromString } from '../core/rng';
 import { useGame } from './store';
 
 export function TitleScreen() {
   const newGame = useGame((s) => s.newGame);
   const loadSaved = useGame((s) => s.loadSaved);
   const adoptState = useGame((s) => s.adoptState);
-  const startSandbox = useGame((s) => s.startSandbox);
   const notify = useGame((s) => s.notify);
   const setScreen = useGame((s) => s.setScreen);
 
@@ -171,51 +168,6 @@ export function TitleScreen() {
             전장 시뮬레이터 (전투 v2)
           </button>
 
-          <button
-            className="btn ghost"
-            onClick={() =>
-              startSandbox(
-                createBattle({
-                  castle: 'ansi',
-                  castleName: '안시성',
-                  siege: true,
-                  season: 0,
-                  terrain: 'mountain',
-                  mountainFortress: true,
-                  wallDev: 95,
-                  attackerFaction: 'baekje',
-                  defenderFaction: 'goguryeo',
-                  attacker: [
-                    { unitType: 'infantry', count: 16000 },
-                    { unitType: 'archer', count: 6000 },
-                    { unitType: 'ram', count: 4000 },
-                  ],
-                  defender: [
-                    { unitType: 'infantry', count: 5000 },
-                    { unitType: 'maekgung', count: 4000 },
-                    {
-                      unitType: 'gaema',
-                      count: 2000,
-                      officer: {
-                        id: 'yang_manchun',
-                        name: '양만춘',
-                        stats: { lead: 88, war: 80, int: 82, pol: 70, chr: 78 },
-                        skills: ['fortify', 'archery'],
-                      },
-                    },
-                  ],
-                  attackerMorale: 72,
-                  defenderMorale: 85,
-                  attackerTraining: 65,
-                  defenderTraining: 80,
-                  playerSide: 'defender',
-                  seed: seedFromString('ansi-sandbox'),
-                })
-              )
-            }
-          >
-            전투 시뮬레이터 (안시성 농성)
-          </button>
         </div>
 
         <p className="faint" style={{ marginTop: 26, fontSize: 12, maxWidth: 660 }}>

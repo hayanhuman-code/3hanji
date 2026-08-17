@@ -16,7 +16,7 @@
  * 전투 길이가 계산이 아니라 결과가 된다.
  */
 
-import type { FactionId, OfficerId, Troop } from '../types';
+import type { FactionId, OfficerId, Tier, Troop } from '../types';
 
 /* ------------------------------------------------------------------ *
  * 전장
@@ -83,8 +83,8 @@ export type Row = 'front' | 'mid' | 'rear';
 /** 태세 (§4.7) */
 export type Stance = 'charge' | 'hold' | 'shoot' | 'wait';
 
-/** 국가 병종 단계 1~4 (§2.1) */
-export type Tier = 1 | 2 | 3 | 4;
+/** 국가 병종 단계 1~4 (§2.1). 세력 상태에 저장되므로 정의는 core/types 에 있다 */
+export type { Tier } from '../types';
 
 /**
  * 전장 위의 한 부대.

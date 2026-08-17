@@ -36,6 +36,8 @@ import type {
   OfficerState,
   UnitStack,
 } from './types';
+import { TROOPS } from './types';
+import { TIER_CAP } from './field/balance';
 import { sum } from './util';
 
 const DEV_ORDER: DevKey[] = ['agri', 'commerce', 'barracks', 'wall'];
@@ -86,6 +88,7 @@ export function runFactionAI(state: GameState, faction: FactionId, rng: RngCurso
   }
 
   aiInstitutions(state, faction, rng);
+  aiArmament(state, faction, rng);
 }
 
 /* ------------------------------------------------------------------ *
@@ -569,6 +572,34 @@ function bestEnvoy(state: GameState, faction: FactionId): OfficerState | undefin
     const b = officerDef(best.id).stats;
     return a.pol + a.chr > b.pol + b.chr ? o : best;
   });
+}
+
+/**
+ * 병종 개발 — AI 도 나라를 키운다 (§2.1).
+ *
+ * 아무 계열이나 올리지 않는다. **제 나라가 잘하는 것부터** 올린다.
+ * 그래야 고구려는 기병으로, 백제는 수군과 궁병으로 싸우는 나라가 되어
+ * 판마다 상대의 색이 달라진다. TIER_CAP 이 그 성향을 이미 담고 있으므로
+ * 상한이 높은 계열을 먼저 고르면 된다.
+ */
+function aiArmament(state: GameState, faction: FactionId, rng: RngCursor): void {
+  const f = state.factions[faction];
+  // 병력을 먹여 살릴 돈이 먼저다. 개발은 여유가 있을 때만
+  if (f.resources.gold < 2500 || f.resources.iron < 200) return;
+  if (!rng.chance(0.4)) return;
+
+  const caps = TIER_CAP[faction];
+  const order = [...TROOPS].sort((a, b) => {
+    const room = caps[b] - f.troopTiers[b] - (caps[a] - f.troopTiers[a]);
+    return room !== 0 ? room : caps[b] - caps[a];
+  });
+  for (const troop of order) {
+    const cmd: Command = { kind: 'armament', faction, troop };
+    if (validateCommand(state, cmd)) continue;
+    const text = applyDomesticCommand(state, cmd, rng);
+    if (text) addLog(state, faction, 'domestic', text);
+    return;
+  }
 }
 
 function aiInstitutions(state: GameState, faction: FactionId, rng: RngCursor): void {

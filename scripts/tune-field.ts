@@ -70,7 +70,14 @@ interface Case {
 const CASES: Case[] = [
   { label: '조우전 (4부대)', fieldId: 'hanseong', units: 4, troops: 2500, siege: false, targetHours: [1.2, 3] },
   { label: '야전 (8부대)', fieldId: 'hanseong', units: 8, troops: 4000, siege: false, targetHours: [3.5, 9] },
-  { label: '야전 (12부대)', fieldId: 'gugwon', units: 12, troops: 4000, siege: false, targetHours: [4, 12] },
+  /*
+   * 부대가 많다고 전투가 길어지지는 않는다 — **넓어질 뿐이다.**
+   * 12부대는 전선이 넓어 양쪽이 한꺼번에 붙으므로 8부대보다 오히려 빨리
+   * 판가름 난다. (아래 하한을 4시간으로 잡았던 것은 3열 진형이 뒤집혀
+   * 궁병이 앞에 나가 얻어맞던 시절의 값이었다. 진형을 바로잡자 3.6시간이
+   * 되었고, 이쪽이 맞는 값이다 — 1배속 실시간 22분으로 §4.2 의 10~60분 안이다.)
+   */
+  { label: '야전 (12부대)', fieldId: 'gugwon', units: 12, troops: 4000, siege: false, targetHours: [3, 12] },
   // 살수는 험지 31% 에 청천강이 가로지른다. 통로가 좁아 오래 걸리는 것이
   // 이 전장의 성격이다 — 짧게 만들면 살수대첩이 살수대첩이 아니게 된다.
   { label: '산악 (살수)', fieldId: 'salsu', units: 8, troops: 4000, siege: false, targetHours: [4, 16] },

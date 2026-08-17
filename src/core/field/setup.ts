@@ -8,14 +8,22 @@
 
 import { officerDef } from '../data';
 import { CLASS, F, NAVY_SPEC } from './balance';
-import { battlefield, edgeEntry, fieldSizeM, oppositeEdge, passable } from './battlefield';
+import { battlefield, edgeEntry, fieldSizeM, oppositeEdge, passable, tileSize } from './battlefield';
 import type { FieldEntry, FieldState, FieldUnit, Row, Side } from './types';
 import type { FieldSetup } from './types';
 
-/** 열이 적으로부터 떨어진 거리(m). 전열이 가장 가깝다 */
-const ROW_DEPTH: Record<Row, number> = { front: 0, mid: 420, rear: 900 };
+/**
+ * 열이 적으로부터 떨어진 거리(m). 전열이 가장 가깝다.
+ *
+ * 깊이는 **궁병 사거리(430m)** 가 정한다. 후열이 그보다 멀리 서면 전열 너머로
+ * 화살이 안 닿아 진형에 뜻이 없어진다. 예전에는 420/900 이었는데, 후열 궁병이
+ * 전열이 붙어 싸우는 동안 아무것도 못 하고 서 있었다.
+ */
+const ROW_DEPTH: Record<Row, number> = { front: 0, mid: 200, rear: 400 };
 /** 예비대는 뒤에 더 뺀다 (§4.7) */
-const RESERVE_DEPTH = 700;
+const RESERVE_DEPTH = 500;
+/** 진형 전체가 차지하는 깊이 — 아래 간격 계산에 쓴다 */
+const FORMATION_DEPTH = ROW_DEPTH.rear + RESERVE_DEPTH;
 /** 양측 시작 간격(m). 7km 전장에서 마주 보고 들어온다 */
 const START_GAP = 4200;
 
@@ -76,8 +84,13 @@ function buildSide(
       const tier = tiers[troop];
       // 옆으로 벌리기 — 가운데를 기준으로 좌우 대칭
       const lateral = (i - (list.length - 1) / 2) * F.separation * 1.15;
-      const bx = axis.ox + axis.dx * depth + px * lateral;
-      const by = axis.oy + axis.dy * depth + py * lateral;
+      /*
+       * **깊이는 적에게서 멀어지는 쪽으로 잰다.** axis 는 적을 향하므로 빼야 한다.
+       * 더하고 있었더니 후열이 적에게 가장 가까이 서서, 궁병과 책사가 보병 앞에
+       * 나가 얻어맞았다 — 3열 진형이 통째로 뒤집혀 있었다.
+       */
+      const bx = axis.ox - axis.dx * depth + px * lateral;
+      const by = axis.oy - axis.dy * depth + py * lateral;
       const at = nudgeToPassable(f, bx, by, navy);
 
       units.push({
@@ -118,6 +131,28 @@ function buildSide(
 }
 
 /**
+ * 성의 한가운데(m). 성벽·성문 타일의 무게중심으로 잡는다.
+ * 성벽이 없는 전장이면 null — 그때는 그냥 야전이다.
+ */
+function keepCenter(f: ReturnType<typeof battlefield>): { x: number; y: number } | null {
+  const [tw, th] = tileSize(f);
+  let sx = 0;
+  let sy = 0;
+  let n = 0;
+  for (let ty = 0; ty < f.tiles.length; ty++) {
+    const row = f.tiles[ty];
+    for (let tx = 0; tx < row.length; tx++) {
+      if (row[tx] === 'W' || row[tx] === 'G') {
+        sx += (tx + 0.5) * tw;
+        sy += (ty + 0.5) * th;
+        n++;
+      }
+    }
+  }
+  return n > 0 ? { x: sx / n, y: sy / n } : null;
+}
+
+/**
  * 편성 → 판.
  *
  * 진입 방향은 전략맵에서 실제로 이어진 길에서 온다(§5.4). approaches 가
@@ -141,11 +176,31 @@ export function createField(setup: FieldSetup): FieldState {
   dx /= len;
   dy /= len;
 
-  // 양측을 START_GAP 만큼 떼어 놓는다. 그 사이를 행군해 오는 것이 1국면이다
+  /*
+   * 양측을 떼어 놓는다. 그 사이를 행군해 오는 것이 1국면이다.
+   *
+   * 다만 **진형이 판 밖으로 밀려나면 안 된다.** 남북으로 붙는 전장은 축이
+   * 5km 뿐이라 4.2km 를 벌리면 뒤쪽 열과 예비대가 지도 밖으로 나가고,
+   * nudgeToPassable 이 그것들을 전열 코앞으로 끌어당겨 진형이 뭉개졌다.
+   * 축의 길이를 재서 들어갈 만큼만 벌린다.
+   */
+  const axisLen = Math.abs(dx) * w + Math.abs(dy) * h;
+  const gap = Math.max(1600, Math.min(START_GAP, axisLen - 2 * (FORMATION_DEPTH + 200)));
+
   const cx = w / 2;
   const cy = h / 2;
-  const atkOrigin = { ox: cx - dx * (START_GAP / 2), oy: cy - dy * (START_GAP / 2) };
-  const defOrigin = { ox: cx + dx * (START_GAP / 2), oy: cy + dy * (START_GAP / 2) };
+  const atkOrigin = { ox: cx - dx * (gap / 2), oy: cy - dy * (gap / 2) };
+  /*
+   * 농성하는 쪽은 성 안에 선다.
+   *
+   * 이걸 안 하면 「공방전」이라 적어 놓고 수비군이 성벽 **바깥**에 나와 서 있게
+   * 된다. 성문 바로 뒤에 서게 두어, 공격군이 성벽을 마주 보고 오게 만든다.
+   * (§6 의 포위·성문 규칙 자체는 아직 없다 — 자리만 제대로 잡는 것이다)
+   */
+  const keep = setup.siege ? keepCenter(f) : null;
+  const defOrigin = keep
+    ? { ox: keep.x - dx * 260, oy: keep.y - dy * 260 }
+    : { ox: cx + dx * (gap / 2), oy: cy + dy * (gap / 2) };
 
   const units = [
     ...buildSide(setup, 'attacker', setup.attacker, f, { ...atkOrigin, dx, dy }),

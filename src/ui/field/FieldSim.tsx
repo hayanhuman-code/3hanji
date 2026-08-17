@@ -24,7 +24,8 @@ const FACTIONS: FactionId[] = ['goguryeo', 'baekje', 'silla', 'gaya'];
 const ROWS: Row[] = ['front', 'mid', 'rear'];
 
 const STATS = new Map(OFFICERS.map((o) => [o.id, o.stats]));
-const statsOf = (id: string) => STATS.get(id) ?? { lead: 60, war: 60, int: 60 };
+// 지휘관 없는 수비대는 통솔 40 상당으로 돈다 (§3.5)
+const statsOf = (id: string) => STATS.get(id) ?? { lead: 40, war: 40, int: 40 };
 const intOf = (id: string) => statsOf(id).int;
 
 /** 그 계열이 제자리로 삼는 열 */

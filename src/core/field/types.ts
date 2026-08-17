@@ -17,6 +17,7 @@
  */
 
 import type { FactionId, OfficerId, Tier, Troop } from '../types';
+import type { SiegeContext, SiegeMethod, SiegeState, SiegeTrait } from './siege';
 
 /* ------------------------------------------------------------------ *
  * 전장
@@ -103,6 +104,11 @@ export interface FieldUnit {
   troop: Troop;
   /** 수군으로 편성되었는가. 그러면 물 위를 다니고 육상 상성 밖에 선다 */
   navy: boolean;
+  /**
+   * 지휘관이 이 부대의 계열이 아니다 (§3.5 지휘 적성 페널티).
+   * 무력 반영이 절반으로 줄고 계열 특기가 안 붙는다. 통솔·지력은 그대로다.
+   */
+  offClass: boolean;
   /** 국가 병종 단계 — 이 부대의 위력을 정하는 가장 큰 값 */
   tier: Tier;
   faction: FactionId;
@@ -173,6 +179,8 @@ export interface FieldResult {
   /** 사로잡힌 장수 */
   captured: OfficerId[];
   ticks: number;
+  /** 공성전이면 어떻게 함락됐는가 (§6.3). 재측정에서 분포를 본다 */
+  siegeMethod: SiegeMethod | null;
 }
 
 export interface FieldState {
@@ -192,6 +200,15 @@ export interface FieldState {
   season: 0 | 1 | 2 | 3;
   /** 공성전인가. 성벽·성문 타일이 뜻을 갖는다 */
   siege: boolean;
+  /**
+   * 공성전의 판 (§6). 야전이면 null.
+   *
+   * 성벽·성문 HP 와 병량이 여기 있다. 이 값이 있는 동안 전투는 「누가 더
+   * 센가」가 아니라 「어떻게 들어갈 것인가」의 문제가 된다.
+   */
+  siegeState: SiegeState | null;
+  /** 성 밖에서 온 값들 (수비 총대장·지형). 공성 AI 가 읽는다 */
+  siegeCtx: SiegeContext;
   attackerFaction: FactionId;
   defenderFaction: FactionId;
   /** 플레이어가 맡은 쪽. null 이면 관전 */
@@ -213,7 +230,19 @@ export interface FieldEntry {
   reserve: boolean;
   /** 수군으로 낼 것인가. 장수가 naval 이어야 한다 */
   navy?: boolean;
+  /**
+   * 계열을 지정한다 — **주둔 수비대 전용** (§3.5).
+   *
+   * 출진 부대의 계열은 장수를 따르지만, 주둔군은 장수의 사병이 아니라
+   * 국가의 병력이므로 거점 구성표가 정한다. 비워 두면 장수를 따른다.
+   */
+  troop?: Troop;
+  /** 이름을 따로 준다 — 지휘관 없는 수비대(「城兵」) */
+  name?: string;
 }
+
+/** 지휘관 없는 부대의 officer 자리. 통솔 40 상당으로 자동 운용된다 (§3.5) */
+export const NO_OFFICER = '';
 
 export interface FieldSetup {
   fieldId: string;
@@ -225,6 +254,12 @@ export interface FieldSetup {
   defenderFaction: FactionId;
   /** 세력별 병종 단계 */
   tiers: Record<Side, Record<Troop, Tier>>;
+  /** 공성전일 때 — 성곽 개발도와 성 안의 병량 (§6.2) */
+  wallDev?: number;
+  grain?: number;
+  /** 수비 총대장의 매력·성향. 내응 성공률에 쓴다 (§6.3-④) */
+  wardenChr?: number;
+  wardenTrait?: SiegeTrait;
   attacker: FieldEntry[];
   defender: FieldEntry[];
 }

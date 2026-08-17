@@ -26,7 +26,7 @@ if (Number.isFinite(override) && override > 0) {
 }
 
 const STATS = new Map(OFFICERS.map((o) => [o.id, o.stats]));
-const statsOf = (id: string) => STATS.get(id)!;
+const statsOf = (id: string) => STATS.get(id) ?? { lead: 40, war: 40, int: 40 };
 
 /** 그 세력에서 계열별로 좋은 인물을 뽑는다 */
 function pick(faction: FactionId, troop: Troop, n: number, skip: Set<string>): string[] {
@@ -64,6 +64,10 @@ interface Case {
   units: number;
   troops: number;
   siege: boolean;
+  /** 성곽 개발도 (§6.2 — 성벽 HP 를 정한다) */
+  wallDev?: number;
+  /** 성 안의 비축 병량. 포위를 얼마나 버티는가 */
+  grain?: number;
   targetHours: [number, number];
 }
 
@@ -81,9 +85,15 @@ const CASES: Case[] = [
   // 살수는 험지 31% 에 청천강이 가로지른다. 통로가 좁아 오래 걸리는 것이
   // 이 전장의 성격이다 — 짧게 만들면 살수대첩이 살수대첩이 아니게 된다.
   { label: '산악 (살수)', fieldId: 'salsu', units: 8, troops: 4000, siege: false, targetHours: [4, 16] },
-  // 공성은 아직 §6 규칙(포위·성문·원군)이 없다. 지금은 성벽 지형만 걸려 있어
-  // 야전과 크게 다르지 않다. 규칙을 붙인 뒤에 다시 잰다.
-  { label: '공성 (안시성) *규칙 전', fieldId: 'ansi', units: 10, troops: 5000, siege: true, targetHours: [3, 40] },
+  /*
+   * 공성전은 §6 규칙으로 돈다 — 성문을 깨거나, 굶기거나, 계략을 쓰거나,
+   * 사서 열어야 들어간다. 「하루 이상」이 목표다.
+   *
+   * 안시성은 성곽 95 에 산성이라 정면으로는 잘 안 깨진다. 그것이 이 성의
+   * 성격이고, 그래서 포위가 정답이 되도록 짜여 있다(§5.2).
+   */
+  { label: '공성 (안시성 · 성곽95)', fieldId: 'ansi', units: 10, troops: 5000, siege: true, wallDev: 95, grain: 9000, targetHours: [6, 40] },
+  { label: '공성 (한성 · 성곽60)', fieldId: 'hanseong', units: 10, troops: 5000, siege: true, wallDev: 60, grain: 5000, targetHours: [3, 40] },
 ];
 
 function run(c: Case, seed: number) {
@@ -92,6 +102,10 @@ function run(c: Case, seed: number) {
     seed,
     season: 0,
     siege: c.siege,
+    wallDev: c.wallDev,
+    grain: c.grain,
+    wardenChr: 70,
+    wardenTrait: 'loyal',
     playerSide: null,
     attackerFaction: 'goguryeo',
     defenderFaction: 'silla',

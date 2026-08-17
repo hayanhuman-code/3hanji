@@ -9,6 +9,7 @@
 import { officerDef } from '../data';
 import { CLASS, F, NAVY_SPEC } from './balance';
 import { battlefield, edgeEntry, fieldSizeM, oppositeEdge, passable, tileSize } from './battlefield';
+import { createSiegeState } from './siege';
 import type { FieldEntry, FieldState, FieldUnit, Row, Side } from './types';
 import type { FieldSetup } from './types';
 
@@ -78,9 +79,19 @@ function buildSide(
     const [row, kind] = key.split(':') as [Row, string];
     const depth = ROW_DEPTH[row] + (kind === 'r' ? RESERVE_DEPTH : 0);
     list.forEach((e, i) => {
-      const def = officerDef(e.officer);
-      const navy = !!e.navy && def.naval;
-      const troop = def.troop;
+      /*
+       * 지휘관이 없는 수비대가 있다 (§3.5). 주둔군은 장수의 사병이 아니므로
+       * 아무도 없어도 존재하고, 통솔 40 상당으로 자동 운용된다.
+       */
+      const def = e.officer ? officerDef(e.officer) : null;
+      const navy = !!e.navy && (def?.naval ?? true);
+      /*
+       * **계열은 출진 부대만 장수를 따른다** (§3.5).
+       * 주둔 수비대는 거점 구성표가 정한 계열로 오고, 그 계열이 아닌 장수가
+       * 맡으면 온전히 못 이끈다 — 그것이 offClass 다.
+       */
+      const troop = e.troop ?? def?.troop ?? 'inf';
+      const offClass = !!def && !!e.troop && def.troop !== e.troop;
       const tier = tiers[troop];
       // 옆으로 벌리기 — 가운데를 기준으로 좌우 대칭
       const lateral = (i - (list.length - 1) / 2) * F.separation * 1.15;
@@ -94,12 +105,13 @@ function buildSide(
       const at = nudgeToPassable(f, bx, by, navy);
 
       units.push({
-        id: `${side}-${e.officer}`,
+        id: `${side}-${e.officer || `garrison${i}-${row}`}`,
         side,
         officer: e.officer,
-        name: def.name,
+        name: e.name ?? def?.name ?? '城兵',
         troop,
         navy,
+        offClass,
         tier,
         faction,
         troops: e.troops,
@@ -216,6 +228,20 @@ export function createField(setup: FieldSetup): FieldState {
     phase: 'march',
     season: setup.season,
     siege: setup.siege,
+    /*
+     * 공성전이면 성벽·성문·병량이 여기서 선다 (§6.2).
+     * 이것이 null 이 아닌 동안 전투는 「어떻게 들어갈 것인가」의 문제가 된다.
+     */
+    siegeState:
+      setup.siege && keep
+        ? createSiegeState(setup.wallDev ?? 50, setup.grain ?? 2000, f.mountainous >= 0.25)
+        : null,
+    siegeCtx: {
+      wardenChr: setup.wardenChr ?? 50,
+      wardenTrait: setup.wardenTrait ?? null,
+      // 강이 흐르는 전장이라야 수공이 성립한다 (§6.3-③)
+      riverside: f.hasRiver,
+    },
     attackerFaction: setup.attackerFaction,
     defenderFaction: setup.defenderFaction,
     playerSide: setup.playerSide,
@@ -237,9 +263,10 @@ export function validateEntries(entries: FieldEntry[]): string | null {
   if (entries.length > 12) return '한 번에 12부대까지만 낼 수 있습니다.';
   const seen = new Set<string>();
   for (const e of entries) {
+    if (e.troops <= 0) return '병력이 없는 부대가 있습니다.';
+    if (!e.officer) continue; // 지휘관 없는 수비대 (§3.5)
     if (seen.has(e.officer)) return '같은 인물을 두 번 낼 수 없습니다.';
     seen.add(e.officer);
-    if (e.troops <= 0) return '병력이 없는 부대가 있습니다.';
     const def = officerDef(e.officer);
     if (e.navy && !def.naval) return `${def.name}은(는) 수군을 이끌 수 없습니다.`;
   }

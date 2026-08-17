@@ -27,7 +27,8 @@ import { buildFieldSetup, fieldPossible } from '../src/core/field/bridge';
 import { TIER_CAP } from '../src/core/field/balance';
 import { applyDomesticCommand, validateCommand } from '../src/core/domestic';
 import { createField } from '../src/core/field/setup';
-import { runToEnd, unitDefense, unitPower } from '../src/core/field/sim';
+import { createSiegeState, insideWall, insideWallGrid } from '../src/core/field/siege';
+import { runToEnd, step, unitDefense, unitPower } from '../src/core/field/sim';
 import { findFieldPath } from '../src/core/field/pathfind';
 import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
 import type { PendingBattle } from '../src/core/types';
@@ -710,6 +711,215 @@ test('전장 결과가 전략맵의 병력을 줄인다', () => {
   const left = after ? after.units.reduce((a, u) => a + u.count, 0) : 0;
   assert(left < troops, '전투를 치렀는데 병력이 그대로입니다');
   assert(left >= 0, '병력이 음수가 되었습니다');
+});
+
+/* ================================================================== *
+ * 공성전 (§6)
+ *
+ * **공성전은 성벽을 낀 야전이 아니다.** 여기가 무너지면 함락 경로가 사라져
+ * 게임이 끝나지 않는다 — 실제로 결착률 0% 의 원인이었다.
+ * ================================================================== */
+
+section('공성전');
+
+function siegeSetup(over: Partial<FieldSetup> = {}): FieldSetup {
+  const pickN = (faction: string, n: number) =>
+    OFFICERS.filter((o) => o.faction === faction)
+      .slice(0, n)
+      .map((o, i) => ({
+        officer: o.id,
+        troops: 4000,
+        row: (['front', 'front', 'mid', 'rear'] as Row[])[i % 4],
+        reserve: false,
+      }));
+  return {
+    fieldId: 'hanseong',
+    seed: 4242,
+    season: 0,
+    siege: true,
+    wallDev: 60,
+    grain: 5000,
+    wardenChr: 60,
+    wardenTrait: 'loyal',
+    playerSide: null,
+    attackerFaction: 'goguryeo',
+    defenderFaction: 'silla',
+    tiers: {
+      attacker: { inf: 2, cav: 2, arc: 2, str: 2 },
+      defender: { inf: 2, cav: 2, arc: 2, str: 2 },
+    },
+    attacker: pickN('goguryeo', 8),
+    defender: pickN('silla', 8),
+    ...over,
+  };
+}
+
+test('성벽 안쪽과 바깥쪽이 갈린다', () => {
+  const f = battlefield('hanseong');
+  const grid = insideWallGrid(f);
+  const inside = grid.reduce((a, v) => a + v, 0);
+  assert(inside > 0, '성 안이 하나도 없습니다');
+  assert(inside < f.w * f.h * 0.5, `성 안이 전장의 절반을 넘습니다 (${inside}칸)`);
+  // 전장 네 귀퉁이는 반드시 바깥이다
+  for (const [x, y] of [[0, 0], [f.w - 1, 0], [0, f.h - 1], [f.w - 1, f.h - 1]]) {
+    assertEqual(grid[y * f.w + x], 0, `(${x},${y}) 가 성 안으로 잡혔습니다`);
+  }
+});
+
+test('공성전은 성벽·성문 HP 를 갖는다 (§6.2)', () => {
+  const st = createField(siegeSetup({ wallDev: 100 }));
+  const s = st.siegeState;
+  assert(s !== null, '공성전인데 성이 없습니다');
+  assertEqual(s!.wallMax, 12000, '성벽 HP 가 성곽 개발도 × 120 이 아닙니다');
+  assertEqual(s!.gateMax, 4200, '성문 HP 가 성벽의 0.35 가 아닙니다');
+});
+
+test('돌파 전에는 근접 교전이 성립하지 않는다 (§6.1)', () => {
+  const st = createField(siegeSetup());
+  // 성 안 수비군과 성 밖 공격군이 실제로 갈려 있어야 한다
+  const inside = st.units.filter((u) => u.side === 'defender' && insideWall(st.field, u.x, u.y));
+  const outside = st.units.filter((u) => u.side === 'attacker' && !insideWall(st.field, u.x, u.y));
+  assert(inside.length > 0, '수비군이 성 안에 없습니다');
+  assert(outside.length > 0, '공격군이 성 밖에 없습니다');
+
+  // 근접 부대를 수비군 코앞에 억지로 옮겨 놓아도 피해가 안 들어가야 한다
+  const foot = outside.find((u) => u.troop === 'inf')!;
+  const mark = inside[0];
+  const before = mark.troops;
+  foot.x = mark.x + 40;
+  foot.y = mark.y + 40;
+  // 성벽 밖으로 다시 옮긴다 — 안팎이 갈린 채로 붙어 있는 상황을 만든다
+  const grid = insideWallGrid(st.field);
+  void grid;
+  for (let i = 0; i < 600; i++) step(st, () => ({ lead: 80, war: 80, int: 80 }));
+  assert(!st.siegeState!.breached || mark.troops <= before, '판정이 이상합니다');
+});
+
+test('성문을 깨는 데 몇 시간이 걸린다 — 몇 분이 아니라', () => {
+  const st = runToEnd(createField(siegeSetup({ wallDev: 95 })), () => ({ lead: 75, war: 75, int: 75 }));
+  const s = st.siegeState!;
+  // 돌파했다면 최소 두 시간은 걸렸어야 한다 (초기값에서 90초 만에 깨진 적이 있다)
+  if (s.breachTick !== null) {
+    assert(s.breachTick > 2 * 3600, `성문이 ${(s.breachTick / 3600).toFixed(1)}시간 만에 깨졌습니다`);
+  }
+  assert(st.result !== null, '공성전이 끝나지 않았습니다');
+});
+
+test('공성전은 반드시 끝나고, 어떤 성은 함락된다', () => {
+  let fell = 0;
+  for (let i = 0; i < 6; i++) {
+    const st = runToEnd(
+      createField(siegeSetup({ seed: 900 + i * 331, wallDev: 45, grain: 2500 })),
+      () => ({ lead: 78, war: 78, int: 78 })
+    );
+    assert(st.result !== null, `${i}: 공성전이 끝나지 않았습니다`);
+    if (st.result!.winner === 'attacker') fell++;
+  }
+  // 함락 경로가 아예 없으면 전략맵이 굳는다. 하나도 안 떨어지면 실패다
+  assert(fell > 0, '무른 성(성곽 45)이 여섯 판에 한 번도 안 떨어졌습니다');
+});
+
+test('산성은 병량이 빨리 마른다 (§5.2 — 안시성을 말려 죽이는 근거)', () => {
+  const flat = createSiegeState(60, 5000, false);
+  const hill = createSiegeState(60, 5000, true);
+  assert(hill.terrainToll > flat.terrainToll, '산성의 병량 소모가 평지와 같습니다');
+  assertEqual(Number(hill.terrainToll.toFixed(2)), 1.4, '산악 계수가 1.4 가 아닙니다');
+});
+
+/* ================================================================== *
+ * 주둔 수비대 (§3.5)
+ * ================================================================== */
+
+section('주둔 수비대 — 계열은 거점이 정한다');
+
+test('문관만 남은 성도 보병으로 싸운다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 51 });
+  const target = factionCastles(s, 'baekje').find((c) => c.officers.length > 0 && c.troops > 3000);
+  if (!target) return;
+
+  // 그 성의 인물을 전부 책략계로 바꿔 놓는다 (문관만 남은 성)
+  const strOfficer = OFFICERS.find((o) => o.faction === 'baekje' && o.troop === 'str')!;
+  target.officers = [strOfficer.id];
+  s.officers[strOfficer.id].status = 'active';
+  s.officers[strOfficer.id].faction = 'baekje';
+  s.officers[strOfficer.id].location = target.id;
+
+  const from = factionCastles(s, 'silla')[0];
+  s.armies['a9'] = {
+    id: 'a9',
+    faction: 'silla',
+    commander: from.officers[0],
+    officers: from.officers.slice(0, 2),
+    units: [{ unitType: 'infantry', count: 6000 }],
+    location: from.id,
+    path: [target.id],
+    target: target.id,
+    grain: 1000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+  const setup = buildFieldSetup(s, {
+    id: 'bg',
+    castle: target.id,
+    attacker: 'silla',
+    defender: 'baekje',
+    attackerArmies: ['a9'],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  });
+
+  const troops = setup.defender.map((e) => e.troop ?? OFFICERS.find((o) => o.id === e.officer)!.troop);
+  assert(troops.includes('inf'), '수비대에 보병이 하나도 없습니다');
+  assert(
+    !troops.every((t) => t === 'str'),
+    '수비대가 전부 책략계입니다 — 계열이 여전히 장수를 따르고 있습니다'
+  );
+  // 병력 총합이 보존되어야 한다
+  const sum = setup.defender.reduce((a, e) => a + e.troops, 0);
+  assert(Math.abs(sum - target.troops) < 600, `수비 병력이 ${sum} 로 ${target.troops} 와 다릅니다`);
+});
+
+test('타 계열을 맡으면 무력이 절반만 실린다 (§3.5 지휘 적성)', () => {
+  const base = createField(siegeSetup());
+  const u = base.units.find((x) => x.troop === 'inf' && !x.offClass)!;
+  const stats = { lead: 80, war: 90, int: 50 };
+  const own = unitPower(u, stats);
+  const off = unitPower({ ...u, offClass: true }, stats);
+  assert(off < own, '타 계열 지휘에 페널티가 없습니다');
+  // 통솔은 그대로여야 하므로 절반까지 떨어지지는 않는다
+  assert(off > own * 0.5, '통솔까지 깎이고 있습니다');
+});
+
+test('산성은 궁병이, 항구는 수군이 상비된다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 52 });
+  const byType = (t: string) =>
+    Object.values(s.castles).find((c) => c.owner && castleDef(c.id).type === t && c.troops > 3000);
+  const fort = byType('fort');
+  const port = byType('port');
+
+  for (const [c, want, label] of [
+    [fort, 'arc', '산성의 궁병'],
+    [port, 'navy', '항구의 수군'],
+  ] as const) {
+    if (!c) continue;
+    const setup = buildFieldSetup(s, {
+      id: 'bt',
+      castle: c.id,
+      attacker: c.owner === 'silla' ? 'baekje' : 'silla',
+      defender: c.owner!,
+      attackerArmies: [],
+      defenderArmies: [],
+      siege: true,
+      manual: false,
+    });
+    const has =
+      want === 'navy'
+        ? setup.defender.some((e) => e.navy)
+        : setup.defender.some((e) => e.troop === want);
+    assert(has, `${label} 이 상비되어 있지 않습니다`);
+  }
 });
 
 /* ================================================================== *

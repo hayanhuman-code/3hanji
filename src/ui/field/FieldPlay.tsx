@@ -25,7 +25,16 @@ import {
   withdraw,
   type SchemeId,
 } from '../../core/field/orders';
+import {
+  SIEGE_SCHEMES,
+  castSiegeScheme,
+  infiltrate,
+  setSiegeMode,
+  siegeSchemeError,
+  type SiegeSchemeId,
+} from '../../core/field/siege';
 import { step, unitTitle, type StatsLookup } from '../../core/field/sim';
+import { RngCursor } from '../../core/rng';
 import type { FieldState, Side, Stance, Tier } from '../../core/field/types';
 import { TICKS_PER_SEC } from '../../core/field/types';
 import { TROOP_MARK, type Troop } from '../../core/types';
@@ -128,6 +137,9 @@ export function FieldPlay({
   const mins = Math.floor((state.tick % 3600) / 60);
   const atk = state.attackerFaction;
   const def = state.defenderFaction;
+  const sg = state.siegeState;
+  const warden = state.siegeCtx;
+  const riverside = state.field.hasRiver;
 
   return (
     <div className="field">
@@ -226,11 +238,99 @@ export function FieldPlay({
             </div>
           )}
 
-          {side && (
+          {/*
+            공성전의 첫 판단은 태세가 아니라 **어떻게 들어갈 것인가**다 (§6.3).
+            그래서 성 상태와 네 수단을 태세보다 위에 둔다.
+          */}
+          {side === 'attacker' && sg && !sg.breached && (
             <>
               <div className="section-label" style={{ marginTop: 0 }}>
-                전군 태세
+                성 — {state.field.name}
               </div>
+              <div className="siege-gauge">
+                <span>성문</span>
+                <span className="bar">
+                  <i style={{ width: `${(sg.gateHp / Math.max(1, sg.gateMax)) * 100}%` }} />
+                </span>
+                <span className="num">{Math.round(sg.gateHp).toLocaleString()}</span>
+              </div>
+              <div className="siege-gauge">
+                <span>성벽</span>
+                <span className="bar">
+                  <i style={{ width: `${(sg.wallHp / Math.max(1, sg.wallMax)) * 100}%` }} />
+                </span>
+                <span className="num">{Math.round(sg.wallHp).toLocaleString()}</span>
+              </div>
+              <div className="siege-gauge">
+                <span>병량</span>
+                <span className={`bar ${sg.grain <= 0 ? 'low' : ''}`}>
+                  <i style={{ width: `${(sg.grain / Math.max(1, sg.grainMax)) * 100}%` }} />
+                </span>
+                <span className="num">{Math.round(sg.grain).toLocaleString()}</span>
+              </div>
+
+              <div className="row" style={{ gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
+                <button
+                  className={`btn small${sg.mode === 'assault' ? ' on' : ''}`}
+                  title="성문을 친다. 빠르지만 비싸다 — 보병 4단계의 공성병기가 정석이다"
+                  onClick={() => {
+                    setSiegeMode(state, sg, 'assault');
+                    changed();
+                  }}
+                >
+                  강공
+                </button>
+                <button
+                  className={`btn small${sg.mode === 'encircle' ? ' on' : ''}`}
+                  title="사방을 막아 병량을 말린다. 산성은 소모가 1.4배라 이쪽이 정답이 된다"
+                  onClick={() => {
+                    setSiegeMode(state, sg, 'encircle');
+                    changed();
+                  }}
+                >
+                  포위
+                </button>
+                <button
+                  className="btn small"
+                  disabled={sg.infiltrated}
+                  title="첩자를 넣어 성문을 연다. 한 번뿐이고, 야심가가 지키는 성일수록 잘 통한다"
+                  onClick={() => {
+                    const rng = new RngCursor(state.rngCursor);
+                    infiltrate(state, sg, warden.wardenChr, warden.wardenTrait, rng);
+                    state.rngCursor = rng.seed;
+                    changed();
+                  }}
+                >
+                  내응
+                </button>
+              </div>
+
+              <div className="row" style={{ gap: 4, marginTop: 4, flexWrap: 'wrap' }}>
+                {(Object.keys(SIEGE_SCHEMES) as SiegeSchemeId[]).map((id) => {
+                  const err = siegeSchemeError(state, sg, id, tiers.str, riverside);
+                  return (
+                    <button
+                      key={id}
+                      className="btn small"
+                      disabled={!!err}
+                      title={err ?? SIEGE_SCHEMES[id].desc}
+                      onClick={() => {
+                        const e = castSiegeScheme(state, sg, id, tiers.str, riverside, 0.85);
+                        if (e) notify?.(e);
+                        changed();
+                      }}
+                    >
+                      {SIEGE_SCHEMES[id].name}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {side && (
+            <>
+              <div className="section-label">전군 태세</div>
               <div className="row" style={{ flexWrap: 'wrap', gap: 4 }}>
                 {(Object.keys(STANCE) as Stance[]).map((s) => (
                   <button

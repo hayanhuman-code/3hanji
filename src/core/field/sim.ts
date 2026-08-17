@@ -29,6 +29,7 @@ import {
 } from './balance';
 import { onWater, passable, specAt, terrainAt } from './battlefield';
 import { findFieldPath, lineOfMarch } from './pathfind';
+import { SIEGE, gatePoint, insideWall, stepSiege } from './siege';
 import type { FieldState, FieldUnit, Side } from './types';
 
 /** 경로를 다시 내는 주기(틱). 목표가 움직이므로 가끔 고쳐야 한다 */
@@ -54,9 +55,20 @@ export function unitRange(u: FieldUnit): number {
  * 장수가 부대에 보태는 몫.
  * 책략계만 지력을 본다 — 계략으로 싸우는 사람에게 무력을 묻지 않는다.
  */
-function officerAttack(stats: { lead: number; war: number; int: number }, troop: Troop): number {
+function officerAttack(
+  stats: { lead: number; war: number; int: number },
+  troop: Troop,
+  offClass = false
+): number {
   if (troop === 'str') return (stats.int * 0.7) / 100;
-  return (stats.war * 0.6 + stats.lead * 0.4) / 100;
+  /*
+   * 지휘 적성 (§3.5) — **타 계열을 맡으면 무력이 절반만 실린다.**
+   * 통솔은 그대로다. 책략계 문관이 보병 수비대를 맡으면 통솔로 버티되
+   * 공격력은 낮다. 12,000 을 두고 깨지지는 않지만, 무장이 지키는 성보다
+   * 확실히 무르다 — 그게 맞는 그림이다.
+   */
+  const war = offClass ? stats.war * 0.5 : stats.war;
+  return (war * 0.6 + stats.lead * 0.4) / 100;
 }
 
 function officerDefense(stats: { lead: number; war: number }): number {
@@ -89,7 +101,7 @@ export function unitPower(
     s.attack *
     TIER_POWER[u.tier] *
     affinity(u) *
-    officerAttack(stats, u.troop) *
+    officerAttack(stats, u.troop, u.offClass) *
     ROW_FIT[u.row][u.troop]! *
     fatigueFactor(u)
   );
@@ -114,6 +126,39 @@ export function unitDefense(
 
 /** 물 위에서는 수군만 제 몫을 한다 (balance.ts 의 ④-b 참조) */
 const waterKey = (u: FieldUnit): Troop | 'navy' => (u.navy ? 'navy' : u.troop);
+
+/** 원거리 계열인가 — 성벽 너머로 쏠 수 있는 쪽 */
+const ranged = (u: FieldUnit) => u.troop === 'arc' || u.troop === 'str';
+
+/**
+ * **공성전의 핵심 판정** (§6.1).
+ *
+ * 돌파 전에는 성 안팎이 갈려 있어 근접 교전이 성립하지 않는다. 원거리만
+ * 오간다. 이 한 줄이 없으면 공성전이 「수비 보정 얹은 야전」이 되고,
+ * 그러면 함락 경로가 없어 게임이 끝나지 않는다 — 실제로 결착률 0% 였다.
+ */
+/**
+ * 여기에 발을 디딜 수 있는가.
+ *
+ * 지형 판정에 하나를 더 얹는다 — **돌파 전에는 성문을 지날 수 없다.**
+ * 성문 타일은 통행 가능한 땅이라, 이걸 막지 않으면 공격군이 성문을 두드리는
+ * 대신 그냥 걸어 들어간다.
+ */
+function canStand(st: FieldState, x: number, y: number, navy: boolean): boolean {
+  if (!passable(st.field, x, y, navy)) return false;
+  const s = st.siegeState;
+  if (s && !s.breached && terrainAt(st.field, x, y) === 'G') return false;
+  return true;
+}
+
+function siegeBlocks(st: FieldState, u: FieldUnit, v: FieldUnit): boolean {
+  const s = st.siegeState;
+  if (!s || s.breached) return false;
+  const uIn = insideWall(st.field, u.x, u.y);
+  const vIn = insideWall(st.field, v.x, v.y);
+  if (uIn === vIn) return false; // 같은 쪽에 있으면 평소대로 싸운다
+  return !ranged(u); // 성벽을 사이에 두면 활과 계략만 닿는다
+}
 
 /** 화면에도 쓰는 이름 — 「고구려 개마무사」 */
 export function unitTitle(u: FieldUnit): string {
@@ -187,6 +232,28 @@ function desiredPoint(st: FieldState, u: FieldUnit, tgt: FieldUnit | null): { x:
     const back = u.side === 'attacker' ? -1 : 1;
     return { x: u.x + st.axis.dx * back * 1000, y: u.y + st.axis.dy * back * 1000 };
   }
+  /*
+   * 공성전에서 돌파 전에는 **적이 아니라 성문으로 간다** (§6.1).
+   * 성 안의 적을 향해 걷게 두면 성벽에 코를 박고 서 있게 된다.
+   * 원거리 계열은 사거리 안에 붙어 성벽 너머로 쏜다.
+   */
+  const sg = st.siegeState;
+  if (sg && !sg.breached && !u.reserve) {
+    const gate = gatePoint(st);
+    if (u.side === 'attacker' && gate) {
+      if (sg.mode === 'encircle') {
+        // 포위 — 성문 앞을 막되 붙지는 않는다
+        const gx = gate.x - st.axis.dx * 700;
+        const gy = gate.y - st.axis.dy * 700;
+        return Math.hypot(u.x - gx, u.y - gy) < 260 ? null : { x: gx, y: gy };
+      }
+      if (ranged(u) && tgt && Math.hypot(tgt.x - u.x, tgt.y - u.y) <= spec(u).range) return null;
+      return gate;
+    }
+    // 수비 측은 성 안에서 나가지 않는다
+    if (u.side === 'defender' && insideWall(st.field, u.x, u.y)) return null;
+  }
+
   if (!tgt) return null;
   const s = spec(u);
   const d = Math.hypot(tgt.x - u.x, tgt.y - u.y);
@@ -230,6 +297,7 @@ function applyDamage(
   statsOf: StatsLookup,
   rng: RngCursor
 ) {
+  if (siegeBlocks(st, u, v)) return;
   const uWet = onWater(st.field, u.x, u.y);
   const vWet = onWater(st.field, v.x, v.y);
   const atk = unitPower(u, statsOf(u.officer), uWet);
@@ -239,7 +307,15 @@ function applyDamage(
   const uGround = specAt(st.field, u.x, u.y);
   const vGround = specAt(st.field, v.x, v.y);
   const terrainAtk = u.troop === 'arc' ? uGround.arc : u.troop === 'cav' ? uGround.cav : uGround.melee;
-  const terrainDef = vGround.defense;
+  /*
+   * 시가전 (§6.4) — 성문이 깨진 뒤에는 성 안의 수비 이점이 급락한다.
+   * 이것이 없으면 돌파해 놓고도 안 뚫려 공성전이 영영 안 끝난다.
+   */
+  const street =
+    st.siegeState?.breached && insideWall(st.field, v.x, v.y)
+      ? SIEGE.streetDefense / Math.max(1, vGround.defense)
+      : 1;
+  const terrainDef = vGround.defense * street;
 
   const stanceAtk = STANCE[u.stance].attack[u.troop] ?? 1;
   // 견고는 방어를 올리는 동시에 받는 피해 자체를 깎는다 — 두 갈래로 듣는다
@@ -368,6 +444,7 @@ function finish(st: FieldState, winner: Side | null) {
     // 무너진 채 남은 쪽의 장수는 사로잡힌다
     captured: st.units.filter((u) => u.dead && u.side !== winner).map((u) => u.officer),
     ticks: st.tick,
+    siegeMethod: st.siegeState?.method ?? null,
   };
   log(
     st,
@@ -386,6 +463,9 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
   if (st.phase === 'done') return;
   const rng = new RngCursor(st.rngCursor);
   st.tick++;
+
+  // 공성전은 야전 판정 앞에 온다 — 성문이 깎이고 병량이 마르고 항복이 난다
+  if (st.siegeState) stepSiege(st, st.siegeState, rng);
 
   const winterToll = st.season === 3 ? SEASON.winterToll : 1;
 
@@ -452,7 +532,7 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
           const stepLen = base * fatigueFactor(u);
           const nx = u.x + (dx / d) * stepLen;
           const ny = u.y + (dy / d) * stepLen;
-          if (passable(st.field, nx, ny, u.navy)) {
+          if (canStand(st, nx, ny, u.navy)) {
             u.x = nx;
             u.y = ny;
             moved = true;
@@ -468,7 +548,7 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
             for (const sign of [1, -1]) {
               const ax = u.x + (-dy / d) * stepLen * sign;
               const ay = u.y + (dx / d) * stepLen * sign;
-              if (passable(st.field, ax, ay, u.navy)) {
+              if (canStand(st, ax, ay, u.navy)) {
                 u.x = ax;
                 u.y = ay;
                 moved = true;
@@ -491,7 +571,16 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
     const stance = STANCE[u.stance];
     const engaged = !!tgt && Math.hypot(tgt.x - u.x, tgt.y - u.y) <= s.range;
     const toll = ground.toll * winterToll;
-    u.fatigue += ((engaged ? F.fatigueEngaged : moved ? F.fatigueMarch : 0) + stance.fatigue) * toll;
+    /*
+     * 서 있으면 숨을 돌린다 (§4.11 — 「대기·견고로 회복」).
+     *
+     * 회복이 아예 없던 탓에 공성전에서 **한 번도 싸우지 않은 부대가 피로 100 에
+     * 닿아 스스로 무너졌다.** 하루가 넘는 전투에서는 쌓이기만 하는 값이
+     * 곧 제한 시간이 되어 버린다. 붙어 있지도 걷지도 않는 동안만 준다.
+     */
+    const idle = !engaged && !moved ? F.fatigueRest : 0;
+    u.fatigue +=
+      ((engaged ? F.fatigueEngaged : moved ? F.fatigueMarch : 0) + stance.fatigue - idle) * toll;
     u.fatigue = Math.max(0, Math.min(F.fatigueMax, u.fatigue));
     if (!engaged) u.morale = Math.min(100, u.morale + stance.moraleRecover);
 
@@ -517,6 +606,22 @@ export function step(st: FieldState, statsOf: StatsLookup): void {
   const d = alive(st, 'defender');
   const aStand = a.filter((u) => !u.routed);
   const dStand = d.filter((u) => !u.routed);
+
+  /*
+   * 공성전의 승패는 야전과 다르다 (§6.6).
+   * 공격측 승 = 입성 후 수비 전멸 · 항복
+   * 공격측 패 = 전 부대 붕괴 · 제한 라운드(90) 초과
+   */
+  const sg = st.siegeState;
+  if (sg) {
+    if (sg.surrendered) return finish(st, 'attacker');
+    if (!aStand.length) return finish(st, 'defender');
+    if (sg.breached && !dStand.length) return finish(st, 'attacker');
+    // 못 뚫은 채 시간이 다하면 물러난다 — 성은 그대로 남는다
+    if (st.tick >= SIEGE.maxRounds * SIEGE.roundSeconds) return finish(st, 'defender');
+    return;
+  }
+
   if (!aStand.length && !dStand.length) finish(st, null);
   else if (!aStand.length) finish(st, 'defender');
   else if (!dStand.length) finish(st, 'attacker');

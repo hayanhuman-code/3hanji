@@ -11,20 +11,112 @@
  * 나라가 올린 병종 단계가 그 위에 곱해진다.
  */
 
-import { officerDef } from '../data';
+import { castleDef, officerDef } from '../data';
 import { seedFromString } from '../rng';
 import { armyTroops } from '../state';
 import type { FactionId, GameState, OfficerId, PendingBattle, Tier, Troop } from '../types';
+import { TROOP_LABEL } from '../types';
 import { battlefield } from './battlefield';
 import type { FieldEntry, FieldResult, FieldSetup, Row, Side } from './types';
-import { MAX_UNITS } from './types';
+import { MAX_UNITS, NO_OFFICER } from './types';
 
 /** 계열이 제자리로 삼는 열 (§4.5) */
 const HOME_ROW: Record<Troop, Row> = { inf: 'front', cav: 'mid', arc: 'rear', str: 'rear' };
 
+/**
+ * 거점 유형별 주둔 수비대 구성 (§3.5).
+ *
+ * **출진 부대의 계열은 장수를 따르지만 주둔군은 아니다.** 주둔군은 그 인물의
+ * 사병이 아니라 국가의 병력이다. 이 표가 없으면 문관 하나만 남은 성의
+ * 12,000 이 전부 책략계가 되어 기병 6,000 에게 깨진다.
+ *
+ * 산성에 궁병이 많고 기병이 적은 것은 지형 때문이다(산악에서 기병 -50%).
+ * 항구에는 수군이 상비된다 — **거점의 성격이 수비대 구성으로 드러난다.**
+ */
+const GARRISON: Record<string, Array<{ troop: Troop; navy?: boolean; share: number }>> = {
+  capital: [
+    { troop: 'inf', share: 0.45 },
+    { troop: 'arc', share: 0.3 },
+    { troop: 'cav', share: 0.25 },
+  ],
+  major: [
+    { troop: 'inf', share: 0.5 },
+    { troop: 'arc', share: 0.3 },
+    { troop: 'cav', share: 0.2 },
+  ],
+  fort: [
+    { troop: 'inf', share: 0.45 },
+    { troop: 'arc', share: 0.45 },
+    { troop: 'cav', share: 0.1 },
+  ],
+  port: [
+    { troop: 'inf', share: 0.4 },
+    { troop: 'arc', share: 0.25 },
+    { troop: 'cav', share: 0.05 },
+    { troop: 'inf', navy: true, share: 0.3 },
+  ],
+};
+
+/**
+ * 주둔 수비대를 부대로 나눈다.
+ *
+ * 성에 있는 장수를 **계열이 맞는 부대에 먼저** 붙인다. 남는 부대는 지휘관
+ * 없이 선다(통솔 40 상당). 「어느 성에 누구를 두는가」가 전략 판단이 되는
+ * 자리다 — 양만춘을 안시성에서 빼고 문관을 넣으면 성이 눈에 띄게 물러진다.
+ */
+function garrisonEntries(castleId: string, troops: number, officers: OfficerId[]): FieldEntry[] {
+  const plan = GARRISON[castleDef(castleId).type] ?? GARRISON.major;
+  const free = [...officers];
+  const out: FieldEntry[] = [];
+
+  for (const part of plan) {
+    const n = Math.round(troops * part.share);
+    if (n < 200) continue;
+
+    // 계열이 맞는 사람 → 수군이면 naval 인 사람 → 아무나 → 없으면 무지휘
+    let pick = free.findIndex((id) => {
+      const d = officerDef(id);
+      return d.troop === part.troop && (!part.navy || d.naval);
+    });
+    if (pick < 0 && part.navy) pick = free.findIndex((id) => officerDef(id).naval);
+    if (pick < 0) pick = free.length ? 0 : -1;
+    const officer = pick >= 0 ? free.splice(pick, 1)[0] : NO_OFFICER;
+
+    out.push({
+      officer,
+      troops: n,
+      row: part.navy ? 'front' : HOME_ROW[part.troop],
+      reserve: false,
+      navy: part.navy,
+      troop: part.troop,
+      name: officer ? undefined : part.navy ? '수군' : `${TROOP_LABEL[part.troop]} 수비대`,
+    });
+  }
+
+  /*
+   * 구성표에 못 들어간 장수도 성을 지킨다. 남은 병력을 그들에게 나눠 준다 —
+   * 이쪽은 자기 계열을 이끌므로 페널티가 없다.
+   */
+  const used = out.reduce((a, e) => a + e.troops, 0);
+  const left = troops - used;
+  if (left > 400 && free.length) {
+    const each = Math.floor(left / free.length);
+    for (const id of free) {
+      out.push({ officer: id, troops: each, row: HOME_ROW[officerDef(id).troop], reserve: false });
+    }
+  }
+  return out.filter((e) => e.troops > 0);
+}
+
 /** 이 인물의 성장분까지 반영한 능력치 — 전장이 부를 조회 함수 */
 export function fieldStats(state: GameState) {
   return (id: string) => {
+    /*
+     * 지휘관 없는 수비대 (§3.5). 장수가 아예 없어도 주둔군은 존재한다 —
+     * 국가의 병력이지 그 인물의 사병이 아니기 때문이다. 통솔 40 상당으로
+     * 자동 운용되고, 사기 회복은 없다.
+     */
+    if (!id) return { lead: 40, war: 40, int: 40 };
     const def = officerDef(id);
     const g = state.officers[id]?.growth ?? {};
     return {
@@ -138,10 +230,22 @@ export function buildFieldSetup(state: GameState, pending: PendingBattle): Field
     defenderOfficers.push(...army.officers);
     defCommander ??= army.commander;
   }
-  if (pending.siege && castle.owner === pending.defender) {
-    defenderTroops += castle.troops;
-    defenderOfficers.push(...castle.officers);
-  }
+  // 성 안의 주둔군은 **따로** 짠다 — 야전 부대와 계열 규칙이 다르다 (§3.5)
+  const holdsCastle = pending.siege && castle.owner === pending.defender;
+  const garrison = holdsCastle
+    ? garrisonEntries(
+        pending.castle,
+        castle.troops,
+        castle.officers.filter((id) => state.officers[id]?.status === 'active')
+      )
+    : [];
+
+  /*
+   * 성의 값 (§6.2). 성곽 개발도가 성벽 HP 를, 비축 병량이 농성 기간을 정한다.
+   * 수비 총대장의 매력·성향은 내응 성공률에 쓴다 (§6.3-④) — **야심가가
+   * 지키는 성은 정면으로 깨는 것보다 사서 여는 쪽이 싸다.**
+   */
+  const warden = castle.officers[0] ? officerDef(castle.officers[0]) : null;
 
   return {
     fieldId: pending.castle,
@@ -161,9 +265,30 @@ export function buildFieldSetup(state: GameState, pending: PendingBattle): Field
       attacker: tiersOf(state, pending.attacker),
       defender: tiersOf(state, pending.defender),
     },
+    wallDev: castle.dev.wall,
+    grain: castle.stock,
+    wardenChr: warden?.stats.chr ?? 50,
+    wardenTrait: warden?.loyalty_type ?? null,
     attacker: markReserve(entriesFor(state, attackerOfficers, attackerTroops, commander)),
-    defender: markReserve(entriesFor(state, defenderOfficers, defenderTroops, defCommander)),
+    defender: capUnits([
+      ...markReserve(entriesFor(state, defenderOfficers, defenderTroops, defCommander)),
+      ...garrison,
+    ]),
   };
+}
+
+/**
+ * 한쪽 12부대를 넘지 않게 추린다. 넘치면 작은 부대들을 큰 쪽에 합친다 —
+ * 잘라 내면 그 병력이 전략맵에서 증발한다.
+ */
+function capUnits(entries: FieldEntry[]): FieldEntry[] {
+  if (entries.length <= MAX_UNITS) return entries;
+  const sorted = [...entries].sort((a, b) => b.troops - a.troops);
+  const keep = sorted.slice(0, MAX_UNITS);
+  for (const [i, e] of sorted.slice(MAX_UNITS).entries()) {
+    keep[i % MAX_UNITS].troops += e.troops;
+  }
+  return keep;
 }
 
 /**

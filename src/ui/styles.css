@@ -1872,6 +1872,34 @@ table.grid td.n {
   font-size: 10px;
 }
 
+/* 성 상태 — 성문·성벽·병량. 공성전에서 가장 먼저 보는 세 값이다 */
+.siege-gauge {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--meok-mid);
+  padding: 1px 0;
+}
+.siege-gauge .bar {
+  height: 6px;
+  background: var(--ji-deep);
+  border: 1px solid var(--meok-thin);
+}
+.siege-gauge .bar > i {
+  display: block;
+  height: 100%;
+  background: var(--meok-mid);
+}
+/* 병량이 다하면 진사 — 굶주림이 시작됐다는 뜻이다 */
+.siege-gauge .bar.low > i {
+  background: var(--jinsa);
+}
+.siege-gauge .num {
+  font-size: 10.5px;
+}
+
 /* 세력색 견본. `.card .swatch` 와 달리 아무 데서나 쓴다 */
 .swatch {
   display: inline-block;

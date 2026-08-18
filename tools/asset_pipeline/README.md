@@ -50,6 +50,14 @@ python tools/asset_pipeline/process.py --tone-only
    이미지 테두리에 연결된 픽셀만 플러드필로 제거한다(스프라이트 내부의 비슷한
    회색은 보존). 제거 후 테두리 잔존율이 `BG_RESIDUE_LIMIT`를 넘으면
    rembg가 설치된 경우 rembg로 폴백한다.
+4¼. **[성벽 부품 전용] `obj_wall_h`·`obj_wall_v`·`obj_wall_corner`** —
+   배경 제거 후 내용물 bbox 를 완전히 잘라내고, 코너의 팔 두께를 실측해
+   가로/세로 벽을 같은 두께의 띠로 만들어 코너와 같은 변(하단/우측)에
+   정렬한다. 가로벽은 끝 기둥(`WALL_H_SPAN`), 세로벽은 지붕 끝단
+   장식(`WALL_V_BAND`)을 잘라 중앙 반복 구간만 쓴다. 극단적 축소이므로
+   이 부품들만 NEAREST 대신 면적평균(BOX)으로 눌러 벽돌 결을 남긴다.
+   렌더러에서 이어 쓸 때: 띠는 바깥 변에 붙어 있으므로 북쪽 변은 가로벽을
+   상하 반전, 서쪽 변은 세로벽을 좌우 반전해 쓴다(코너는 반전 조합).
 4½. **[타일] 배경화 톤 다운** — 지형은 무대, 유닛이 주인공. 전체 타일의
    채도·대비를 낮추고 살짝 밝히며(`TONE_*`), 완전 검정 픽셀을
    `TONE_BLACK_FLOOR` 밝기까지 끌어올린다(숲·산의 검은 구멍 완화).
@@ -67,6 +75,7 @@ python tools/asset_pipeline/process.py --tone-only
 | `processed/_tiling_preview.png` | 각 타일 3×3 이어붙임 — 이음새 확인용 |
 | `processed/_faction_preview.png` | 유닛별 원본 + 고구려/백제/신라 나란히 |
 | `processed/_visibility_preview.png` | 어두운 지형(`VISIBILITY_TILES`) 3×3 위에 3진영 보병 — 가독성 확인용 |
+| `processed/_wall_assembly_preview.png` | 성벽 부품으로 ㅁ자 성곽 조립 (모서리 4 + 벽 + 성문 + 망루) — 이음 검증용 |
 
 ## 설정 항목 (`process.py` 상단 설정부)
 
@@ -78,6 +87,9 @@ python tools/asset_pipeline/process.py --tone-only
 | `BG_REFERENCE` | (145,145,145) | 배경 기준색 (자동 추정 실패 시 폴백) |
 | `BG_THRESHOLD` | 40 | 배경으로 간주할 색 거리 |
 | `BG_RESIDUE_LIMIT` | 0.02 | rembg 폴백을 발동하는 테두리 잔존 비율 |
+| `WALL_H_SPAN` | (0.065, 0.935) | 가로벽: bbox 중 사용할 가로 구간 (끝 기둥 제거) |
+| `WALL_V_BAND` | (0.175, 0.775) | 세로벽: bbox 중 사용할 세로 구간 (지붕 끝단 제거) |
+| `WALL_T_DEFAULT` | 9 | 코너 실측 실패 시 벽 두께(px) |
 | `TONE_SATURATION` | 0.70 | 톤 다운: 채도 배율 (-30%) |
 | `TONE_CONTRAST` | 0.65 | 톤 다운: 대비 배율 (-35%, 중심 128) |
 | `TONE_BRIGHTNESS` | 6 | 톤 다운: 밝기 가산 |

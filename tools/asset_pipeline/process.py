@@ -142,6 +142,17 @@ FACTIONS = {
 # 밝기 → 램프 단계 매핑에 쓰는 원본 밝기 범위 (SWAP_SOURCE 명암 폭 기준)
 SWAP_LUMA_RANGE = (8.0, 125.0)
 
+# [성벽 부품] obj_wall_* 전용 처리 ---------------------------------------
+# 원본은 여백이 많아 그대로 축소하면 이어붙일 때 끊긴다. 배경 제거 후
+# 내용물 bbox 를 완전히 잘라내고, 코너의 팔 두께를 실측해 가로/세로 벽을
+# 같은 두께의 띠로 만들어 코너와 같은 변(하단/우측)에 정렬한다.
+#
+# 가로벽: 좌우 끝의 마감 기둥을 잘라 중앙 반복 구간만 (좌우가 칸 경계에 닿음)
+WALL_H_SPAN = (0.065, 0.935)   # bbox 가로 사용 구간 (비율)
+# 세로벽: 위아래 지붕 끝단 장식을 잘라 중앙 반복 구간만 (상하가 칸 경계에 닿음)
+WALL_V_BAND = (0.175, 0.775)   # bbox 세로 사용 구간 (비율)
+WALL_T_DEFAULT = 9             # 코너 실측 실패 시 벽 두께(px, 32 기준)
+
 # [타일] 배경화 톤 다운 — 지형은 무대, 유닛이 주인공 --------------------
 # 원본 processed/tile_*.png 는 보존하고 processed/toned/ 에 별도 출력한다.
 TONE_SATURATION = 0.70   # 채도 배율 (-30%)
@@ -214,6 +225,70 @@ def quantize(im: Image.Image, colors: int = QUANT_COLORS) -> Image.Image:
         a[a[..., 3] == 0] = 0
         out = Image.fromarray(a, "RGBA")
     return out
+
+
+def _content_bbox(im: Image.Image) -> Image.Image:
+    """불투명 내용물의 바운딩 박스로 완전히 잘라낸다."""
+    a = np.array(im)
+    ys, xs = np.nonzero(a[..., 3] > 0)
+    if len(xs) == 0:
+        return im
+    return im.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
+
+
+# 코너에서 실측한 팔 두께(px, 32 기준). 코너를 먼저 처리해 채운다.
+_wall_arm: dict[str, int] = {}
+
+
+def process_wall_piece(im: Image.Image, stem: str, size: tuple[int, int]) -> Image.Image:
+    """[성벽 부품 전용] bbox 크롭 → 반복 구간 절취 → 코너와 두께·정렬 맞춤.
+
+    - corner: bbox 를 그대로 32×32 로. 팔 두께(하단 h팔·우측 v팔)를 실측해 둔다
+    - h: 끝 기둥을 잘라낸 중앙 구간을 (32 × 팔두께) 로 눌러 타일 하단에 정렬
+    - v: 지붕 끝단을 잘라낸 중앙 구간을 (팔두께 × 32) 로 눌러 타일 우측에 정렬
+    이렇게 하면 코너의 하단 변은 h와, 우측 변은 v와 두께가 맞는다.
+    """
+    im = _content_bbox(im)
+    w, h = size
+
+    # 성벽은 극단적 축소(1300→32px 급)라 NEAREST 는 벽돌 무늬가 점멸한다.
+    # 부품에 한해 면적평균(BOX)으로 눌러 결을 남기고, 양자화로 색을 정리한다.
+    # BOX 가 만든 반투명 경계는 이진화해 픽셀아트의 딱 떨어지는 변을 지킨다.
+    def shrink(img: Image.Image, sz: tuple[int, int]) -> Image.Image:
+        a = np.array(img.resize(sz, Image.Resampling.BOX))
+        a[..., 3] = np.where(a[..., 3] >= 128, 255, 0)
+        a[a[..., 3] == 0] = 0
+        return Image.fromarray(a, "RGBA")
+
+    if stem == "obj_wall_corner":
+        out = quantize(shrink(im, size))
+        a = np.array(out)
+        # 안쪽 단면에서 팔 두께를 실측 (가장자리 열은 테이퍼가 있어 피한다)
+        th_ = _wall_arm["h"] = max(2, int((a[:, 3, 3] > 0).sum()))
+        tv_ = _wall_arm["v"] = max(2, int((a[3, :, 3] > 0).sum()))
+        # 팔 끝 2열/2행을 안쪽 단면으로 복제 — 직선벽과의 이음 단면을 일치시킨다
+        a[-th_:, 0] = a[-th_:, 2]
+        a[-th_:, 1] = a[-th_:, 2]
+        a[0, -tv_:] = a[2, -tv_:]
+        a[1, -tv_:] = a[2, -tv_:]
+        return Image.fromarray(a, "RGBA")
+
+    canvas = Image.new("RGBA", size, (0, 0, 0, 0))
+    if stem == "obj_wall_h":
+        t = _wall_arm.get("h", WALL_T_DEFAULT)
+        x0, x1 = (int(im.width * f) for f in WALL_H_SPAN)
+        # 끝 기둥의 상하 돌출이 bbox 에 남긴 투명 여백을 다시 잘라낸다
+        band = _content_bbox(im.crop((x0, 0, x1, im.height)))
+        band = quantize(shrink(band, (w, t)))
+        canvas.paste(band, (0, h - t))  # 코너의 h팔과 같은 하단 정렬
+    else:  # obj_wall_v
+        t = _wall_arm.get("v", WALL_T_DEFAULT)
+        y0, y1 = (int(im.height * f) for f in WALL_V_BAND)
+        # 지붕 처마 폭이 bbox 에 남긴 좌우 투명 여백을 다시 잘라낸다
+        band = _content_bbox(im.crop((0, y0, im.width, y1)))
+        band = quantize(shrink(band, (t, h)))
+        canvas.paste(band, (w - t, 0))  # 코너의 v팔과 같은 우측 정렬
+    return canvas
 
 
 def tone_down_tile(im: Image.Image) -> Image.Image:
@@ -404,6 +479,11 @@ def process_one(path: Path) -> dict | None:
         steps.append(f"scale:{size[0]}x{size[1]}")
         im = quantize(im)
         steps.append(f"quant:{QUANT_COLORS}")
+    elif stem.startswith("obj_wall_"):  # 성벽 부품 — 이어붙임 정합 전용 처리
+        im, bg_note = remove_background(im.convert("RGBA"), path.name)
+        steps.append(bg_note)
+        im = process_wall_piece(im, stem, size)
+        steps.append("wall:bbox크롭+정합")
     else:  # object / unit / portrait
         im, bg_note = remove_background(im.convert("RGBA"), path.name)
         steps.append(bg_note)
@@ -578,7 +658,66 @@ def make_previews() -> list[Path]:
     if rows:
         _stack_rows(rows).save(p4)
 
-    return [p1, p2, p3, p4]
+    p5 = make_wall_assembly_preview()
+    return [p for p in (p1, p2, p3, p4, p5) if p]
+
+
+def make_wall_assembly_preview() -> Path | None:
+    """성벽 부품 검증 — 녹색 배경 위에 ㅁ자 성곽 한 채를 조립한다.
+
+    코너 원본(팔이 왼쪽·위로 뻗는 우하 코너)을 뒤집어 네 모서리를 만들고,
+    벽 띠가 항상 성곽 바깥쪽 변에 붙도록 가로벽은 북쪽 변에서 상하 반전,
+    세로벽은 서쪽 변에서 좌우 반전한다. 끊김·어긋남이 보이면
+    WALL_H_SPAN·WALL_V_BAND 를 조정한다.
+    """
+    def load(name: str) -> Image.Image | None:
+        p = OUT_DIR / f"{name}.png"
+        return Image.open(p).convert("RGBA") if p.exists() else None
+
+    wh, wv, wc = load("obj_wall_h"), load("obj_wall_v"), load("obj_wall_corner")
+    if not (wh and wv and wc):
+        return None
+    gate, tower = load("obj_gate"), load("obj_tower")
+
+    cols, rows_n, t = 7, 5, 32
+    grass_path = OUT_DIR / "toned" / "tile_grass.png"
+    grass = Image.open(grass_path).convert("RGBA") if grass_path.exists() else None
+    board = Image.new("RGBA", (cols * t, rows_n * t), (96, 150, 96, 255))
+    if grass:
+        for gy in range(rows_n):
+            for gx in range(cols):
+                board.paste(grass, (gx * t, gy * t))
+
+    FLIP_H = Image.Transpose.FLIP_LEFT_RIGHT
+    FLIP_V = Image.Transpose.FLIP_TOP_BOTTOM
+    corner = {  # (칸 x, 칸 y) → 변형된 코너
+        (cols - 1, rows_n - 1): wc,                       # 우하 — 원본 방향
+        (0, rows_n - 1): wc.transpose(FLIP_H),            # 좌하
+        (cols - 1, 0): wc.transpose(FLIP_V),              # 우상
+        (0, 0): wc.transpose(Image.Transpose.ROTATE_180),  # 좌상
+    }
+    top_h = wh.transpose(FLIP_V)   # 북쪽 변 — 띠를 바깥(위)으로
+    west_v = wv.transpose(FLIP_H)  # 서쪽 변 — 띠를 바깥(왼쪽)으로
+
+    def put(img: Image.Image, gx: int, gy: int) -> None:
+        board.paste(img, (gx * t, gy * t), img)
+
+    for gx in range(1, cols - 1):
+        put(top_h, gx, 0)
+        put(wh, gx, rows_n - 1)
+    for gy in range(1, rows_n - 1):
+        put(west_v, 0, gy)
+        put(wv, cols - 1, gy)
+    for (gx, gy), img in corner.items():
+        put(img, gx, gy)
+    if gate:  # 남쪽 변 한가운데 성문 (2칸 폭)
+        board.paste(gate, ((cols // 2 - 1) * t, (rows_n - 1) * t), gate)
+    if tower:  # 북서 코너 위에 망루
+        put(tower, 0, 0)
+
+    p = OUT_DIR / "_wall_assembly_preview.png"
+    _scale(board.convert("RGB")).save(p)
+    return p
 
 
 # ---------------------------------------------------------------------------

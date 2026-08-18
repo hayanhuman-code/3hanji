@@ -142,6 +142,13 @@ FACTIONS = {
 # 밝기 → 램프 단계 매핑에 쓰는 원본 밝기 범위 (SWAP_SOURCE 명암 폭 기준)
 SWAP_LUMA_RANGE = (8.0, 125.0)
 
+# [타일] 배경화 톤 다운 — 지형은 무대, 유닛이 주인공 --------------------
+# 원본 processed/tile_*.png 는 보존하고 processed/toned/ 에 별도 출력한다.
+TONE_SATURATION = 0.70   # 채도 배율 (-30%)
+TONE_CONTRAST = 0.65     # 명암 대비 배율 (-35%, 중심 128 기준)
+TONE_BRIGHTNESS = 6      # 밝기 가산 (0~255) — 아주 미세하게 밝은 쪽으로
+TONE_BLACK_FLOOR = 30    # 완전 검정 완화: 밝기가 이보다 어두운 픽셀을 끌어올림
+
 # 미리보기 확대 배율
 PREVIEW_SCALE = 4
 # 가독성 미리보기(_visibility_preview.png): 이 지형들 3x3 위에 3진영 유닛 배치
@@ -207,6 +214,40 @@ def quantize(im: Image.Image, colors: int = QUANT_COLORS) -> Image.Image:
         a[a[..., 3] == 0] = 0
         out = Image.fromarray(a, "RGBA")
     return out
+
+
+def tone_down_tile(im: Image.Image) -> Image.Image:
+    """[타일 전용] 배경화 필터 — 채도·대비를 낮추고 살짝 밝힌다.
+
+    유닛 스프라이트와의 시각적 위계를 만들기 위한 후처리다. 검은 픽셀은
+    TONE_BLACK_FLOOR 까지 끌어올려 어두운 지형에서도 윤곽이 뜨지 않게 한다.
+    """
+    a = np.array(im.convert("RGB")).astype(float)
+    luma = a @ np.array([0.299, 0.587, 0.114])
+    # 채도: 픽셀을 자기 밝기(회색)와 섞는다
+    a = luma[..., None] + (a - luma[..., None]) * TONE_SATURATION
+    # 대비: 중심 128 기준으로 눌러 준다
+    a = 128 + (a - 128) * TONE_CONTRAST
+    # 밝기: 미세 가산
+    a = a + TONE_BRIGHTNESS
+    # 검정 완화: 밝기 하한 아래 픽셀을 균등 가산으로 끌어올림
+    luma2 = a @ np.array([0.299, 0.587, 0.114])
+    lift = np.clip(TONE_BLACK_FLOOR - luma2, 0, None)
+    a = a + lift[..., None]
+    return Image.fromarray(np.clip(a, 0, 255).astype("uint8"), "RGB")
+
+
+def run_tone_down() -> list[dict]:
+    """processed/tile_*.png 전체에 배경화 필터를 걸어 processed/toned/ 에 출력."""
+    toned_dir = OUT_DIR / "toned"
+    toned_dir.mkdir(parents=True, exist_ok=True)
+    results = []
+    for path in sorted(OUT_DIR.glob("tile_*.png")):
+        out = tone_down_tile(Image.open(path))
+        out_path = toned_dir / path.name
+        out.save(out_path)
+        results.append({"name": path.name, "colors": count_colors(out)})
+    return results
 
 
 def estimate_bg_color(a: np.ndarray) -> tuple[int, int, int]:
@@ -548,9 +589,17 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--swap-only", action="store_true",
                     help="진영색 팔레트 스왑과 미리보기만 재실행")
+    ap.add_argument("--tone-only", action="store_true",
+                    help="타일 배경화 톤 다운(processed/toned/)만 재실행")
     args = ap.parse_args()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.tone_only:
+        print("=== 타일 톤 다운 (toned/) ===")
+        for r in run_tone_down():
+            print(f"  toned/{r['name']:<24} 색수 {r['colors']}")
+        return 0
 
     if not args.swap_only:
         raw_files = sorted(RAW_DIR.glob("*.png"))
@@ -571,6 +620,10 @@ def main() -> int:
             w, h = r["size"]
             print(f"{r['name']:<24} {r['category']:<9} {ow:>4}x{oh:<5} "
                   f"{w:>3}x{h:<4} {r['colors']:>4}  {' → '.join(r['steps'])}")
+
+        print("\n=== 타일 톤 다운 (toned/) ===")
+        for r in run_tone_down():
+            print(f"  toned/{r['name']:<24} 색수 {r['colors']}")
 
     print("\n=== 진영색 팔레트 스왑 ===")
     for r in run_faction_swaps():

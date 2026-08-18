@@ -14,11 +14,16 @@ python tools/asset_pipeline/process.py
 
 # 진영색 팔레트 스왑 + 미리보기만 재실행 (스왑 설정 튜닝 시)
 python tools/asset_pipeline/process.py --swap-only
+
+# 타일 배경화 톤 다운만 재실행 (톤 설정 튜닝 시)
+python tools/asset_pipeline/process.py --tone-only
 ```
 
 - 입력: `tools/asset_pipeline/raw/` — AI 생성 원본 PNG
 - 출력: `tools/asset_pipeline/processed/` — 게임용 에셋
   - `processed/factions/` — 유닛별 3진영 색상 변형
+  - `processed/toned/` — 타일 배경화(톤 다운)본. 게임은 이쪽을 쓴다
+    (`scripts/sync-assets.mjs` 가 타일에 한해 toned 를 우선 복사)
   - `processed/_work/` — 배경 제거된 원본 해상도 중간물 (`--swap-only`용 캐시, 커밋 안 함)
 
 ## 파일명 규칙과 목표 크기
@@ -45,6 +50,10 @@ python tools/asset_pipeline/process.py --swap-only
    이미지 테두리에 연결된 픽셀만 플러드필로 제거한다(스프라이트 내부의 비슷한
    회색은 보존). 제거 후 테두리 잔존율이 `BG_RESIDUE_LIMIT`를 넘으면
    rembg가 설치된 경우 rembg로 폴백한다.
+4½. **[타일] 배경화 톤 다운** — 지형은 무대, 유닛이 주인공. 전체 타일의
+   채도·대비를 낮추고 살짝 밝히며(`TONE_*`), 완전 검정 픽셀을
+   `TONE_BLACK_FLOOR` 밝기까지 끌어올린다(숲·산의 검은 구멍 완화).
+   원본 `processed/tile_*.png` 는 보존하고 `processed/toned/` 에 출력.
 5. **[유닛] 진영색 팔레트 스왑** — 갑옷·의복 색(`SWAP_SOURCE`)을 진영별 명암
    램프(`FACTIONS`)로 치환해 `processed/factions/unit_이름_진영.png` 3벌 생성.
    양자화로 색이 병합되기 전인 원본 해상도 중간물에서 수행한다.
@@ -69,6 +78,10 @@ python tools/asset_pipeline/process.py --swap-only
 | `BG_REFERENCE` | (145,145,145) | 배경 기준색 (자동 추정 실패 시 폴백) |
 | `BG_THRESHOLD` | 40 | 배경으로 간주할 색 거리 |
 | `BG_RESIDUE_LIMIT` | 0.02 | rembg 폴백을 발동하는 테두리 잔존 비율 |
+| `TONE_SATURATION` | 0.70 | 톤 다운: 채도 배율 (-30%) |
+| `TONE_CONTRAST` | 0.65 | 톤 다운: 대비 배율 (-35%, 중심 128) |
+| `TONE_BRIGHTNESS` | 6 | 톤 다운: 밝기 가산 |
+| `TONE_BLACK_FLOOR` | 30 | 톤 다운: 검정 픽셀 밝기 하한 |
 | `SWAP_SOURCE` | 갈색/보라 계열 | 치환 기준색 (갑옷·의복) |
 | `SWAP_EXCLUDE` | 피부·무기·근흑색 | 전 유닛 공통 보호색 |
 | `SWAP_EXCLUDE_EXTRA` | 말 색 등 | 특정 유닛 전용 보호색 (stem 키) |

@@ -7,7 +7,7 @@
  *
  *   node scripts/sync-assets.mjs   (npm run sync:assets)
  */
-import { cpSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
 const SRC = 'tools/asset_pipeline/processed';
@@ -17,9 +17,17 @@ rmSync(DST, { recursive: true, force: true });
 mkdirSync(join(DST, 'factions'), { recursive: true });
 
 let n = 0;
+let toned = 0;
 for (const f of readdirSync(SRC)) {
   if (f.startsWith('_') || !f.endsWith('.png')) continue;
-  cpSync(join(SRC, f), join(DST, f));
+  // 타일은 배경화 톤 다운본(toned/)이 있으면 그쪽을 쓴다 — 지형은 무대다
+  const tonedPath = join(SRC, 'toned', f);
+  if (f.startsWith('tile_') && existsSync(tonedPath)) {
+    cpSync(tonedPath, join(DST, f));
+    toned++;
+  } else {
+    cpSync(join(SRC, f), join(DST, f));
+  }
   n++;
 }
 for (const f of readdirSync(join(SRC, 'factions'))) {
@@ -27,4 +35,4 @@ for (const f of readdirSync(join(SRC, 'factions'))) {
   cpSync(join(SRC, 'factions', f), join(DST, 'factions', f));
   n++;
 }
-console.log(`sync-assets: ${n}개 파일 → ${DST}`);
+console.log(`sync-assets: ${n}개 파일 → ${DST} (타일 톤 다운본 ${toned}개 적용)`);

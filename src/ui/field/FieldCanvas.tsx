@@ -15,7 +15,24 @@ import { unitRange, unitTitle } from '../../core/field/sim';
 import type { FieldState, FieldUnit, TerrainCode } from '../../core/field/types';
 import { TROOP_MARK } from '../../core/types';
 import { T } from '../tokens';
-import { TERRAIN_TILE, onSpriteLoad, sprite, unitSpriteName } from './sprites';
+import { TERRAIN_TILE, onSpriteLoad, outlinedSprite, sprite, unitSpriteName } from './sprites';
+
+/** 유닛 스프라이트 크기 — 타일 대비 배율. 타일 위로 삐져나와 존재감을 만든다 */
+const UNIT_TILE_SCALE = 1.4;
+/** 제자리 미세 흔들림 — 진폭(px)과 주기(ms). 그림자는 흔들리지 않는다 */
+const BOB_AMP_PX = 1.5;
+const BOB_PERIOD_MS = 1900;
+/** 부대 이동 표시 보간 시간(초) — 틱 사이를 이 시간에 걸쳐 따라잡는다 */
+const MOVE_SMOOTH_SEC = 0.15;
+/** 맵 전체에 얹는 아주 옅은 따뜻한 오버레이 — 사극 톤 */
+const WARM_OVERLAY = 'rgba(212,160,90,0.07)';
+
+/** 부대별 흔들림 위상 — id 해시로 부대마다 어긋나게 */
+const bobPhase = (id: string) => {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return (h % 628) / 100;
+};
 
 /**
  * 지형 색 — 픽셀아트 타일이 없는 코드(바다·성벽 등)와, 에셋 로드 실패 시의
@@ -80,6 +97,9 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
   // 스프라이트가 도착하면 다시 그린다 — 일시정지 중에도 색 블록이 그림으로 바뀌게
   const [spriteGen, setSpriteGen] = useState(0);
   useEffect(() => onSpriteLoad(() => setSpriteGen((g) => g + 1)), []);
+  // 이동 보간용 표시 좌표(m) — 코어의 실좌표를 0.15초에 걸쳐 따라간다
+  const dispRef = useRef(new Map<string, { x: number; y: number }>());
+  const lastFrameRef = useRef(0);
 
   // 스스로의 크기를 잰다. 부모를 재면 접힌 화면에서 어긋난다 (M단계의 교훈)
   useEffect(() => {
@@ -114,6 +134,16 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
     const oy = (box.h - fh * k) / 2;
     const X = (mx: number) => ox + mx * k;
     const Y = (my: number) => oy + my * k;
+
+    /*
+     * 매 프레임 다시 그린다 (rAF) — 미세 흔들림과 이동 보간은 틱과 무관하게
+     * 흘러야 하고, 일시정지 중에도 유닛은 살아 있어야 한다.
+     */
+    const draw = (now: number) => {
+    const dt = Math.min(0.1, Math.max(0, (now - lastFrameRef.current) / 1000));
+    lastFrameRef.current = now;
+    // 실좌표를 따라잡는 보간 계수 — MOVE_SMOOTH_SEC 안에 98% 도달
+    const chase = 1 - Math.pow(0.02, dt / MOVE_SMOOTH_SEC);
 
     ctx.fillStyle = T.hae;
     ctx.fillRect(0, 0, box.w, box.h);
@@ -177,6 +207,22 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       }
     }
 
+    /* --- 표시 좌표 갱신 — 실좌표를 부드럽게 따라간다 (렌더 전용) --- */
+    for (const u of state.units) {
+      if (u.dead) continue;
+      let d = dispRef.current.get(u.id);
+      if (!d || Math.hypot(u.x - d.x, u.y - d.y) > 900) {
+        // 처음 등장하거나 순간 재배치 — 스냅
+        d = { x: u.x, y: u.y };
+        dispRef.current.set(u.id, d);
+      } else {
+        d.x += (u.x - d.x) * chase;
+        d.y += (u.y - d.y) * chase;
+      }
+    }
+    const dispOf = (id: string, fx: number, fy: number) =>
+      dispRef.current.get(id) ?? { x: fx, y: fy };
+
     /* --- 교전선 — 누가 누구와 **붙어 있는지**. 노리는 것만으로는 긋지 않는다 --- */
     ctx.lineWidth = 1.2;
     ctx.strokeStyle = 'rgba(168,50,50,0.5)';
@@ -185,9 +231,11 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       const v = state.units.find((x) => x.id === u.target);
       if (!v || v.dead) continue;
       if (Math.hypot(v.x - u.x, v.y - u.y) > unitRange(u)) continue;
+      const du = dispOf(u.id, u.x, u.y);
+      const dv = dispOf(v.id, v.x, v.y);
       ctx.beginPath();
-      ctx.moveTo(X(u.x), Y(u.y));
-      ctx.lineTo(X(v.x), Y(v.y));
+      ctx.moveTo(X(du.x), Y(du.y));
+      ctx.lineTo(X(dv.x), Y(dv.y));
       ctx.stroke();
     }
 
@@ -204,25 +252,40 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       // 병력이 줄면 블록이 작아진다 (§4.12)
       const w = (15 + ratio * 26) * blockK;
       const h = (12 + ratio * 20) * blockK;
-      const cx = X(u.x);
-      const cy = Y(u.y);
+      const d = dispOf(u.id, u.x, u.y);
+      const cx = X(d.x);
+      const cy = Y(d.y);
 
       // 수군은 아직 스프라이트가 없다 — 船 블록을 그대로 쓴다
-      const img = u.navy ? null : sprite(unitSpriteName(u.troop, u.faction));
+      const name = u.navy ? null : unitSpriteName(u.troop, u.faction);
+      // 외곽선 — 평소엔 먹, 선택되면 밝은 색으로 강조
+      const img = name
+        ? outlinedSprite(name, selected === u.id ? T.onDark : T.meok)
+        : null;
 
       ctx.globalAlpha = u.reserve ? 0.45 : u.routed ? 0.55 : 1;
 
       let bottom: number; // 게이지가 시작하는 y — 스프라이트/블록의 아래끝
       if (img) {
-        // 스프라이트도 병력을 따라 커지고 작아진다 (§4.12 의 어법 유지)
-        const s = (20 + ratio * 22) * blockK;
-        ctx.drawImage(img, cx - s / 2, cy - s / 2, s, s);
-        if (selected === u.id) {
-          ctx.lineWidth = 2.4;
-          ctx.strokeStyle = T.jinsa;
-          ctx.strokeRect(cx - s / 2 - 1, cy - s / 2 - 1, s + 2, s + 2);
-        }
-        bottom = cy + s / 2;
+        // 타일 대비 1.4배 — 병력이 줄면 함께 작아진다 (§4.12 의 어법 유지)
+        const s = th * k * UNIT_TILE_SCALE * (0.75 + 0.25 * ratio);
+        // 발을 서 있는 타일의 하단에 맞춘다 — 위로 삐져나온다
+        bottom = cy + (th * k) / 2;
+
+        // 발밑 그림자 — 지면에 붙어 있다는 감각
+        ctx.save();
+        ctx.fillStyle = 'rgba(30,24,16,0.30)';
+        ctx.beginPath();
+        ctx.ellipse(cx, bottom - s * 0.04, s * 0.32, s * 0.10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // 제자리 미세 흔들림 — 부대별 위상을 어긋내고, 그림자는 땅에 남긴다
+        const bob = Math.round(Math.sin((now / BOB_PERIOD_MS) * Math.PI * 2 + bobPhase(u.id)) * BOB_AMP_PX);
+
+        // 외곽선 판은 원본보다 사방 1px 크다 — 발 위치를 유지하며 얹는다
+        const px = s / (img.height - 2);
+        ctx.drawImage(img, cx - (img.width * px) / 2, bottom - s - px + bob, img.width * px, img.height * px);
       } else {
         // 폴백 — 기존 색 블록 + 병종 한자 (문서 §7 — 이모지 금지)
         ctx.fillStyle = FACTION_COLOR[u.faction] ?? T.meokMid;
@@ -239,7 +302,7 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       }
 
       // 사기 게이지 — 40 아래는 진사 (§4.12). 스프라이트를 가리지 않게 아래에
-      const gw = w;
+      const gw = img ? th * k * UNIT_TILE_SCALE * 0.62 : w;
       const gh = Math.max(2, 3 * blockK);
       const gy = bottom + 2 * blockK;
       ctx.fillStyle = T.jiDeep;
@@ -261,11 +324,13 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       const label = `${sel.name} · ${unitTitle(sel)} · ${Math.round(sel.troops).toLocaleString()}`;
       ctx.font = '11px "Noto Serif KR", serif';
       const tw2 = ctx.measureText(label).width + 12;
-      const lx = Math.min(box.w - tw2 - 4, Math.max(4, X(sel.x) - tw2 / 2));
+      const selD = dispOf(sel.id, sel.x, sel.y);
+      const lx = Math.min(box.w - tw2 - 4, Math.max(4, X(selD.x) - tw2 / 2));
       // 스프라이트 위 여백만큼 띄운다 — 이름표가 그림을 가리지 않게
       const selRatio = Math.max(0.12, sel.troops / sel.maxTroops);
-      const selHalf = ((20 + selRatio * 22) * blockK) / 2;
-      const ly = Math.max(4, Y(sel.y) - selHalf - 24);
+      const selS = th * k * UNIT_TILE_SCALE * (0.75 + 0.25 * selRatio);
+      const selTop = Y(selD.y) + (th * k) / 2 - selS;
+      const ly = Math.max(4, selTop - 24);
       ctx.fillStyle = 'rgba(221,208,178,0.94)';
       ctx.fillRect(lx, ly, tw2, 18);
       ctx.strokeStyle = T.meok;
@@ -275,6 +340,17 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       ctx.textAlign = 'left';
       ctx.fillText(label, lx + 6, ly + 9);
     }
+
+    /* --- 사극 톤 — 맵 전체에 아주 옅은 따뜻한 오버레이 --- */
+    ctx.fillStyle = WARM_OVERLAY;
+    ctx.fillRect(0, 0, box.w, box.h);
+    }; // draw
+
+    let raf = requestAnimationFrame(function step(now) {
+      draw(now);
+      raf = requestAnimationFrame(step);
+    });
+    return () => cancelAnimationFrame(raf);
   }, [state, tick, selected, box, spriteGen]);
 
   /** 화면 좌표 → 전장 미터 */

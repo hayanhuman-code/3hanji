@@ -74,3 +74,41 @@ export function sprite(name: string): HTMLImageElement | null {
   }
   return img.complete && img.naturalWidth > 0 ? img : null;
 }
+
+const outlineCache = new Map<string, HTMLCanvasElement>();
+
+/**
+ * 스프라이트에 1px 외곽선을 입힌 판. 알파 경계를 따라 실루엣을 8방향으로
+ * 번지게 찍은 뒤 원본을 얹는다. 원본 해상도(픽셀 단위)에서 만들어 두고
+ * 확대해 그리므로 외곽선도 픽셀아트 결을 유지한다.
+ */
+export function outlinedSprite(name: string, color: string): HTMLCanvasElement | null {
+  const img = sprite(name);
+  if (!img) return null;
+  const key = `${name}|${color}`;
+  const hit = outlineCache.get(key);
+  if (hit) return hit;
+
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  // 실루엣 — 알파만 남기고 외곽선 색으로 칠한다
+  const sil = document.createElement('canvas');
+  sil.width = w;
+  sil.height = h;
+  const sctx = sil.getContext('2d')!;
+  sctx.drawImage(img, 0, 0);
+  sctx.globalCompositeOperation = 'source-in';
+  sctx.fillStyle = color;
+  sctx.fillRect(0, 0, w, h);
+
+  const out = document.createElement('canvas');
+  out.width = w + 2;
+  out.height = h + 2;
+  const octx = out.getContext('2d')!;
+  for (const [dx, dy] of [[0, 0], [2, 0], [0, 2], [2, 2], [1, 0], [1, 2], [0, 1], [2, 1]]) {
+    octx.drawImage(sil, dx, dy);
+  }
+  octx.drawImage(img, 1, 1);
+  outlineCache.set(key, out);
+  return out;
+}

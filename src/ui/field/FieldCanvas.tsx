@@ -15,6 +15,7 @@ import { unitRange, unitTitle } from '../../core/field/sim';
 import type { FieldState, FieldUnit, TerrainCode } from '../../core/field/types';
 import { TROOP_MARK } from '../../core/types';
 import { T } from '../tokens';
+import { castleLayout } from './castleLayout';
 import { TERRAIN_TILE, onSpriteLoad, outlinedSprite, sprite, unitSpriteName } from './sprites';
 
 /** 유닛 스프라이트 크기 — 타일 대비 배율. 타일 위로 삐져나와 존재감을 만든다 */
@@ -150,6 +151,8 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
 
     /* --- 지형 --- */
     const [tw, th] = tileSize(f);
+    // 성곽 연출 배치 (렌더링 전용, 거점별 캐시) — 내부 길/바닥·장식·망루
+    const castle = castleLayout(f);
     for (let ty = 0; ty < f.tiles.length; ty++) {
       const row = f.tiles[ty];
       for (let tx = 0; tx < row.length; tx++) {
@@ -159,7 +162,7 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
         const ry = Y(ty * th);
         const rw = tw * k + 0.6;
         const rh = th * k + 0.6;
-        const tileName = TERRAIN_TILE[c];
+        const tileName = castle?.overlay.get(ty * row.length + tx) ?? TERRAIN_TILE[c];
         const img = tileName ? sprite(tileName) : null;
         if (img) {
           ctx.drawImage(img, rx, ry, rw, rh);
@@ -185,6 +188,17 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       }
     }
 
+    /* --- 성 내부 장식 — 성벽에 붙은 안뜰 가장자리의 소나무·바위 --- */
+    if (castle) {
+      for (const [i, name] of castle.decor) {
+        const img = sprite(name);
+        if (!img) continue;
+        const tx = i % f.tiles[0].length;
+        const ty = (i / f.tiles[0].length) | 0;
+        ctx.drawImage(img, X(tx * tw), Y(ty * th), tw * k + 0.6, th * k + 0.6);
+      }
+    }
+
     /* --- 성문 — 공성전 맵의 성문 자리에 문루를 세운다 (가로 2타일 규격) --- */
     {
       const gate = sprite('obj_gate');
@@ -203,6 +217,20 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
             const gx = X((tx + span / 2 - wTiles / 2) * tw);
             ctx.drawImage(gate, gx, Y(ty * th), wTiles * tw * k + 0.6, th * k + 0.6);
           }
+        }
+      }
+    }
+
+    /* --- 망루 — 성곽 모서리 성벽 위에 얹는다. 성벽·성문보다 위 레이어 --- */
+    if (castle) {
+      const tower = sprite('obj_tower');
+      if (tower) {
+        const s = th * k * castle.rule.towerScaleTiles;
+        for (const t of castle.towers) {
+          // 하단을 모서리 타일 밑변에 정렬 — 성벽 위에 선 것처럼 위로 솟는다
+          const bx = X((t.tx + 0.5) * tw);
+          const by = Y((t.ty + 1) * th);
+          ctx.drawImage(tower, bx - s / 2, by - s, s, s);
         }
       }
     }

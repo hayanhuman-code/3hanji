@@ -117,28 +117,26 @@ SWAP_LUMA_MIN = 26    # 이보다 어두운 픽셀은 치환하지 않음 (윤�
 SWAP_MIN_CHROMA = 5   # 채널 편차(max-min)가 이 미만인 무채색 픽셀은 치환하지 않음
                       # (배경 회색과 윤곽선 사이의 AA 혼합 픽셀 보호)
 
-# 진영별 명암 램프 (어두운 → 밝은). 원본 픽셀 밝기에 따라 단계 선택.
+# 진영별 명암 램프 (어두운 → 밝은 4단계). 원본 픽셀 밝기에 따라 단계 선택.
 FACTIONS = {
-    "goguryeo": [  # 남색 계열
-        (14, 20, 42),
-        (24, 36, 70),
-        (38, 56, 102),
-        (56, 80, 138),
-        (80, 110, 176),
+    "goguryeo": [  # 검정 (조의선인 컨셉) — 순수 검정 금지, 짙은 회흑색까지만
+        # 원안(#1a1a1f 시작)은 숲 타일 위에서 묻혀서 전체를 한 단계 밝게 시프트
+        (0x2E, 0x2E, 0x36),
+        (0x4A, 0x4A, 0x55),
+        (0x6E, 0x6E, 0x7D),
+        (0x92, 0x92, 0xA5),
     ],
-    "baekje": [  # 금갈색 계열
-        (58, 38, 10),
-        (94, 64, 18),
-        (138, 98, 30),
-        (182, 138, 50),
-        (218, 178, 88),
+    "baekje": [  # 자주색 (자색 도포 컨셉)
+        (0x3D, 0x1F, 0x4D),
+        (0x5C, 0x2E, 0x73),
+        (0x7D, 0x44, 0x99),
+        (0xA0, 0x66, 0xBF),
     ],
-    "silla": [  # 적색 계열
-        (50, 10, 10),
-        (86, 20, 18),
-        (130, 34, 28),
-        (174, 52, 40),
-        (212, 86, 62),
+    "silla": [  # 금색 (금관 컨셉)
+        (0x6E, 0x52, 0x14),
+        (0x9C, 0x7A, 0x1F),
+        (0xC9, 0xA5, 0x2E),
+        (0xE8, 0xC9, 0x5A),
     ],
 }
 # 밝기 → 램프 단계 매핑에 쓰는 원본 밝기 범위 (SWAP_SOURCE 명암 폭 기준)
@@ -146,6 +144,9 @@ SWAP_LUMA_RANGE = (8.0, 125.0)
 
 # 미리보기 확대 배율
 PREVIEW_SCALE = 4
+# 가독성 미리보기(_visibility_preview.png): 이 지형들 3x3 위에 3진영 유닛 배치
+VISIBILITY_TILES = ["tile_forest", "tile_mountain"]
+VISIBILITY_UNIT = "unit_infantry"
 
 
 # ---------------------------------------------------------------------------
@@ -512,7 +513,31 @@ def make_previews() -> list[Path]:
     p3 = OUT_DIR / "_faction_preview.png"
     _stack_rows(rows).save(p3)
 
-    return [p1, p2, p3]
+    # 4) 어두운 지형 위 가독성 확인: 지형 3x3 배경 + 3진영 보병
+    rows = []
+    for tile_name in VISIBILITY_TILES:
+        tile_path = OUT_DIR / f"{tile_name}.png"
+        if not tile_path.exists():
+            continue
+        t = Image.open(tile_path).convert("RGB")
+        bg = Image.new("RGB", (t.width * 3, t.height * 3))
+        for gy in range(3):
+            for gx in range(3):
+                bg.paste(t, (gx * t.width, gy * t.height))
+        x = 0
+        for faction in FACTIONS:
+            fp = FACTION_DIR / f"{VISIBILITY_UNIT}_{faction}.png"
+            if not fp.exists():
+                continue
+            u = Image.open(fp).convert("RGBA")
+            bg.paste(u, (x, (bg.height - u.height) // 2), u)
+            x += u.width
+        rows.append(_label_row([_scale(bg)]))
+    p4 = OUT_DIR / "_visibility_preview.png"
+    if rows:
+        _stack_rows(rows).save(p4)
+
+    return [p1, p2, p3, p4]
 
 
 # ---------------------------------------------------------------------------

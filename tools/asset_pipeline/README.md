@@ -57,6 +57,7 @@ python tools/asset_pipeline/process.py --swap-only
 | `processed/_preview.png` | 전 에셋 처리 전후 비교 (투명부는 체커보드) |
 | `processed/_tiling_preview.png` | 각 타일 3×3 이어붙임 — 이음새 확인용 |
 | `processed/_faction_preview.png` | 유닛별 원본 + 고구려/백제/신라 나란히 |
+| `processed/_visibility_preview.png` | 어두운 지형(`VISIBILITY_TILES`) 3×3 위에 3진영 보병 — 가독성 확인용 |
 
 ## 설정 항목 (`process.py` 상단 설정부)
 
@@ -74,8 +75,9 @@ python tools/asset_pipeline/process.py --swap-only
 | `SWAP_THRESHOLD` | 34 | 치환을 허용하는 최대 색 거리 |
 | `SWAP_LUMA_MIN` | 26 | 이보다 어두운 픽셀은 치환 금지 (윤곽선 보호) |
 | `SWAP_MIN_CHROMA` | 5 | 무채색(회색) 픽셀 치환 금지 (AA 혼합 픽셀 보호) |
-| `FACTIONS` | 고구려 남색 / 백제 금갈색 / 신라 적색 | 진영별 명암 램프 (어두운→밝은 5단계) |
+| `FACTIONS` | 고구려 검정(조의선인) / 백제 자주색(자색 도포) / 신라 금색(금관) | 진영별 명암 램프 (어두운→밝은 4단계). 고구려는 어두운 지형 가독성을 위해 원안보다 한 단계 밝게 시프트됨 |
 | `SWAP_LUMA_RANGE` | (8, 125) | 원본 밝기 → 램프 단계 매핑 범위 |
+| `VISIBILITY_TILES` / `VISIBILITY_UNIT` | forest·mountain / infantry | 가독성 미리보기에 쓸 지형·유닛 |
 
 ### 튜닝 요령
 

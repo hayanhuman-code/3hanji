@@ -232,6 +232,9 @@ export const TERRAIN: Record<TerrainCode, TerrainSpec> = {
   // 해자는 건널 수 있다. 다만 그 안에 있는 동안 방어가 무너진다 (§7.7 MOAT_DEF_PENALTY)
   D: { name: '해자', move: 0.35, defense: 0.7, melee: 0.9, arc: 0.95, cav: 0.5, toll: 1.1 },
   r: { name: '길', move: 1.3, defense: 0.95, melee: 1.0, arc: 1.0, cav: 1.2, toll: 0.9 },
+  // 예약 코드 — 아직 어떤 맵도 쓰지 않는다 (types.ts 참조). 값은 상식선의 초안.
+  S: { name: '모래', move: 0.75, defense: 0.95, melee: 0.95, arc: 1.0, cav: 0.8, toll: 1.1 },
+  B: { name: '다리', move: 1.2, defense: 0.9, melee: 1.0, arc: 1.0, cav: 1.1, toll: 1.0 },
 };
 
 /**

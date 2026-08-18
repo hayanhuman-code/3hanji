@@ -5,8 +5,9 @@
   "type": "module",
   "description": "삼한지(三韓志): 천하삼분 — 한국 삼국시대 그랜드 스트래티지 프로토타입",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npm run sync:assets && vite",
+    "sync:assets": "node scripts/sync-assets.mjs",
+    "build": "npm run sync:assets && tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit false --emitDeclarationOnly false --pretty",
     "validate": "tsx scripts/validate-data.ts",

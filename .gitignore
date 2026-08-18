@@ -12,3 +12,6 @@ pipeline/land.geojson
 pipeline/rivers.geojson
 pipeline/lakes.geojson
 pipeline/mapdata.json
+
+# 게임이 참조하는 스프라이트 사본 (npm run sync:assets 가 tools/asset_pipeline/processed 에서 복사)
+public/assets/sprites/

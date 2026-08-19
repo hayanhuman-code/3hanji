@@ -72,7 +72,7 @@ python tools/asset_pipeline/process.py --autotile-only
    준다. 흔들림은 변의 양 끝에서 0 으로 수렴시켜 같은 전환이 이어지는 옆
    타일과 만나도 계단이 생기지 않게 했다. 시드(`AT_SEED`)가 쌍·패턴에서만
    나오므로 몇 번을 돌려도 같은 그림이다. 실제 전장에서 맞닿는 지형 쌍만
-   만든다(현재 18쌍 × 19패턴 = 342장).
+   만든다(현재 26쌍 × 19패턴 = 494장).
 4½. **[타일] 배경화 톤 다운** — 지형은 무대, 유닛이 주인공. 전체 타일의
    채도·대비를 낮추고 살짝 밝히며(`TONE_*`), 완전 검정 픽셀을
    `TONE_BLACK_FLOOR` 밝기까지 끌어올린다(숲·산의 검은 구멍 완화).
@@ -103,7 +103,7 @@ python tools/asset_pipeline/process.py --autotile-only
 | `BG_REFERENCE` | (145,145,145) | 배경 기준색 (자동 추정 실패 시 폴백) |
 | `BG_THRESHOLD` | 40 | 배경으로 간주할 색 거리 |
 | `BG_RESIDUE_LIMIT` | 0.02 | rembg 폴백을 발동하는 테두리 잔존 비율 |
-| `TERRAIN_PRIORITY` | grass<road<sand<forest<hill<ridge<mountain<ford<river | 오토타일: 낮은 쪽 위에 높은 쪽이 얹힌다 |
+| `TERRAIN_PRIORITY` | grass<road<sand<forest<hill<ridge<mountain<ford<swamp<river | 오토타일: 낮은 쪽 위에 높은 쪽이 얹힌다 |
 | `AT_DEPTH` | 9.0 | 오토타일: 높은 지형이 파고드는 기본 깊이(px) |
 | `AT_JITTER` | 3.2 | 오토타일: 경계 들쭉날쭉함의 진폭(px). 0 이면 직선 |
 | `AT_DITHER` | 2.2 | 오토타일: 경계 주변 흩뿌림 띠의 폭(px) |
@@ -116,6 +116,7 @@ python tools/asset_pipeline/process.py --autotile-only
 | `TONE_CONTRAST` | 0.65 | 톤 다운: 대비 배율 (-35%, 중심 128) |
 | `TONE_BRIGHTNESS` | 6 | 톤 다운: 밝기 가산 |
 | `TONE_BLACK_FLOOR` | 30 | 톤 다운: 검정 픽셀 밝기 하한 |
+| `TONE_OVERRIDES` | `tile_ford` | 톤 다운 **파일별 오버라이드**. 키는 파일 stem, 값은 `saturation`·`contrast`·`brightness`·`black_floor` 중 바꿀 것만. 없는 키는 기본값을 그대로 쓴다 |
 | `SWAP_SOURCE` | 갈색/보라 계열 | 치환 기준색 (갑옷·의복) |
 | `SWAP_EXCLUDE` | 피부·무기·근흑색 | 전 유닛 공통 보호색 |
 | `SWAP_EXCLUDE_EXTRA` | 말 색 등 | 특정 유닛 전용 보호색 (stem 키) |
@@ -134,4 +135,31 @@ python tools/asset_pipeline/process.py --autotile-only
   `SWAP_EXCLUDE_EXTRA`(해당 유닛만)에 추가하거나 `SWAP_THRESHOLD`를 내린다.
 - **스왑 누락(갑옷이 안 물듦)**: 누락 부위의 원본색을 `SWAP_SOURCE`에 추가하거나
   `SWAP_THRESHOLD`를 올린다.
+- **타일 하나가 혼자 튈 때**(다른 타일보다 밝거나 채도가 낮은 등):
+  `TONE_OVERRIDES`에 그 파일만 값을 적고 `--tone-only`로 재실행한다.
+  전환 타일은 톤 다운본을 재료로 쓰므로 `--autotile-only`도 이어서 돌린다.
+  (예: `tile_ford`가 혼자 하얗게 떠서 명도 −44·채도 ×1.05 로 물빛을 냈다)
 - 스왑 설정만 바꿨다면 `--swap-only`로 빠르게 재실행하며 확인한다.
+
+### 지형 코드 ↔ 타일 매핑
+
+전장 지형 코드가 어느 타일을 쓰는지는 렌더러(`src/ui/field/sprites.ts`의
+`TERRAIN_TILE`)가 정하고, 파이프라인은 같은 대응을 `BATTLEMAP_TILE_CODE`에
+두어 「실제로 맞닿는 지형 쌍」을 셀 때 쓴다. **둘은 항상 같이 고쳐야 한다** —
+한쪽만 고치면 전환 타일이 없는 조합이 생기고, 그 칸은 조용히 기본 타일로
+폴백한다.
+
+| 코드 | 지형 | 타일 |
+|---|---|---|
+| `.` | 평지 | `tile_grass` |
+| `r` | 길 | `tile_road` |
+| `f` | 숲 | `tile_forest` |
+| `h` | 구릉 | `tile_hill` |
+| `X` | 험지 | `tile_ridge` |
+| `m` | 산악 | `tile_mountain` |
+| `=` | 여울 | `tile_ford` |
+| `M` | 늪 | `tile_swamp` |
+| `~` | 강 | `tile_river` |
+| `S`·`B` | 모래·다리 | `tile_sand`·`tile_bridge` (예약 코드, 맵 미사용) |
+
+성벽·바다 등 나머지 코드는 타일 없이 색 블록으로 남고 전환도 두지 않는다.

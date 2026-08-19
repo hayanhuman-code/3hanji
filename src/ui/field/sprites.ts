@@ -20,13 +20,16 @@ export const TERRAIN_TILE: Partial<Record<TerrainCode, string>> = {
   '.': 'tile_grass',
   f: 'tile_forest',
   m: 'tile_mountain',
-  // 구릉 — tile_hill 채택(밝은 초지 융기가 구릉에 맞다). tile_ridge 는 예비.
+  // 구릉 — tile_hill 채택(밝은 초지 융기가 구릉에 맞다)
   h: 'tile_hill',
   '~': 'tile_river',
   '=': 'tile_ford',
   r: 'tile_road',
   S: 'tile_sand',
   B: 'tile_bridge',
+  // 험지 — 통행 불가 바위 능선. 예비로 두었던 tile_ridge 를 여기 쓴다
+  X: 'tile_ridge',
+  M: 'tile_swamp',
 };
 
 /** 병종 → 스프라이트 이름 조각 */

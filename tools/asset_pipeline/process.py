@@ -159,7 +159,8 @@ WALL_T_DEFAULT = 9             # 코너 실측 실패 시 벽 두께(px, 32 기�
 #
 # 우선순위: 낮은 쪽 위에 높은 쪽이 얹힌다 (물이 가장 위 = 물가가 가장 또렷)
 TERRAIN_PRIORITY = [
-    "grass", "road", "sand", "forest", "hill", "ridge", "mountain", "ford", "river",
+    "grass", "road", "sand", "forest", "hill", "ridge", "mountain",
+    "ford", "swamp", "river",
 ]
 # 전환 패턴 — 4방위 비트마스크 16가지(0=전환 없음)에 대각 전용 4가지를 더한다.
 #   0~15 : N=1, E=2, S=4, W=8 조합
@@ -175,6 +176,8 @@ BATTLEMAPS_JSON = ROOT.parent.parent / "src" / "data" / "battlemaps.json"
 BATTLEMAP_TILE_CODE = {
     ".": "grass", "r": "road", "f": "forest", "h": "hill",
     "m": "mountain", "~": "river", "=": "ford", "S": "sand", "B": "bridge",
+    # 험지(X)는 바위 능선 타일을, 늪(M)은 늪 타일을 쓴다 (src/ui/field/sprites.ts)
+    "X": "ridge", "M": "swamp",
 }
 
 # [타일] 배경화 톤 다운 — 지형은 무대, 유닛이 주인공 --------------------
@@ -183,6 +186,13 @@ TONE_SATURATION = 0.70   # 채도 배율 (-30%)
 TONE_CONTRAST = 0.65     # 명암 대비 배율 (-35%, 중심 128 기준)
 TONE_BRIGHTNESS = 6      # 밝기 가산 (0~255) — 아주 미세하게 밝은 쪽으로
 TONE_BLACK_FLOOR = 30    # 완전 검정 완화: 밝기가 이보다 어두운 픽셀을 끌어올림
+# 파일별 톤 오버라이드 — 기본값에서 벗어나야 하는 타일만 적어 둔다.
+# 없는 키는 위 기본값을 그대로 쓴다.
+TONE_OVERRIDES: dict[str, dict[str, float]] = {
+    # 여울이 다른 타일보다 혼자 밝고 하얗게 튄다. 명도를 한 단계 낮추고
+    # 채도를 올려 늪·강과 같은 물빛 계열로 읽히게 한다.
+    "tile_ford": {"saturation": 1.05, "brightness": -44},
+}
 
 # 미리보기 확대 배율
 PREVIEW_SCALE = 4
@@ -315,23 +325,30 @@ def process_wall_piece(im: Image.Image, stem: str, size: tuple[int, int]) -> Ima
     return canvas
 
 
-def tone_down_tile(im: Image.Image) -> Image.Image:
+def tone_down_tile(im: Image.Image, stem: str = "") -> Image.Image:
     """[타일 전용] 배경화 필터 — 채도·대비를 낮추고 살짝 밝힌다.
 
     유닛 스프라이트와의 시각적 위계를 만들기 위한 후처리다. 검은 픽셀은
     TONE_BLACK_FLOOR 까지 끌어올려 어두운 지형에서도 윤곽이 뜨지 않게 한다.
+    타일 하나가 혼자 튀면 TONE_OVERRIDES 에 그 파일만 값을 적어 둔다.
     """
+    o = TONE_OVERRIDES.get(stem, {})
+    saturation = o.get("saturation", TONE_SATURATION)
+    contrast = o.get("contrast", TONE_CONTRAST)
+    brightness = o.get("brightness", TONE_BRIGHTNESS)
+    black_floor = o.get("black_floor", TONE_BLACK_FLOOR)
+
     a = np.array(im.convert("RGB")).astype(float)
     luma = a @ np.array([0.299, 0.587, 0.114])
     # 채도: 픽셀을 자기 밝기(회색)와 섞는다
-    a = luma[..., None] + (a - luma[..., None]) * TONE_SATURATION
+    a = luma[..., None] + (a - luma[..., None]) * saturation
     # 대비: 중심 128 기준으로 눌러 준다
-    a = 128 + (a - 128) * TONE_CONTRAST
+    a = 128 + (a - 128) * contrast
     # 밝기: 미세 가산
-    a = a + TONE_BRIGHTNESS
+    a = a + brightness
     # 검정 완화: 밝기 하한 아래 픽셀을 균등 가산으로 끌어올림
     luma2 = a @ np.array([0.299, 0.587, 0.114])
-    lift = np.clip(TONE_BLACK_FLOOR - luma2, 0, None)
+    lift = np.clip(black_floor - luma2, 0, None)
     a = a + lift[..., None]
     return Image.fromarray(np.clip(a, 0, 255).astype("uint8"), "RGB")
 
@@ -342,7 +359,7 @@ def run_tone_down() -> list[dict]:
     toned_dir.mkdir(parents=True, exist_ok=True)
     results = []
     for path in sorted(OUT_DIR.glob("tile_*.png")):
-        out = tone_down_tile(Image.open(path))
+        out = tone_down_tile(Image.open(path), path.stem)
         out_path = toned_dir / path.name
         out.save(out_path)
         results.append({"name": path.name, "colors": count_colors(out)})

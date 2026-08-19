@@ -20,7 +20,8 @@ import { TERRAIN_TILE } from './sprites';
 
 /** 낮은 쪽 위에 높은 쪽이 얹힌다. 파이프라인의 TERRAIN_PRIORITY 와 같은 순서 */
 const PRIORITY = [
-  'grass', 'road', 'sand', 'forest', 'hill', 'ridge', 'mountain', 'ford', 'river',
+  'grass', 'road', 'sand', 'forest', 'hill', 'ridge', 'mountain',
+  'ford', 'swamp', 'river',
 ];
 const RANK = new Map(PRIORITY.map((t, i) => [t, i]));
 

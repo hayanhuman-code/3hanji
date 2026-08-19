@@ -15,8 +15,9 @@ import { unitRange, unitTitle } from '../../core/field/sim';
 import type { FieldState, FieldUnit, TerrainCode } from '../../core/field/types';
 import { TROOP_MARK } from '../../core/types';
 import { T } from '../tokens';
+import { autotileMap } from './autotile';
 import { castleLayout } from './castleLayout';
-import { TERRAIN_TILE, onSpriteLoad, outlinedSprite, sprite, unitSpriteName } from './sprites';
+import { TERRAIN_TILE, outlinedSprite, sprite, unitSpriteName } from './sprites';
 
 /** 유닛 스프라이트 크기 — 타일 대비 배율. 타일 위로 삐져나와 존재감을 만든다 */
 const UNIT_TILE_SCALE = 1.4;
@@ -95,9 +96,11 @@ interface Props {
 export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
   const [box, setBox] = useState({ w: 900, h: 620 });
-  // 스프라이트가 도착하면 다시 그린다 — 일시정지 중에도 색 블록이 그림으로 바뀌게
-  const [spriteGen, setSpriteGen] = useState(0);
-  useEffect(() => onSpriteLoad(() => setSpriteGen((g) => g + 1)), []);
+  /*
+   * 스프라이트 도착을 따로 구독하지 않는다. 아래 그리기 루프가 매 프레임
+   * `sprite()` 를 다시 묻기 때문에 이미지는 도착하는 즉시 화면에 나타난다.
+   * 전환 타일이 수백 장이라 로드마다 상태를 올리면 루프만 계속 다시 선다.
+   */
   // 이동 보간용 표시 좌표(m) — 코어의 실좌표를 0.15초에 걸쳐 따라간다
   const dispRef = useRef(new Map<string, { x: number; y: number }>());
   const lastFrameRef = useRef(0);
@@ -153,6 +156,8 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
     const [tw, th] = tileSize(f);
     // 성곽 연출 배치 (렌더링 전용, 거점별 캐시) — 내부 길/바닥·장식·망루
     const castle = castleLayout(f);
+    // 지형 경계 전환 타일 (렌더링 전용, 전장별 캐시)
+    const auto = autotileMap(f);
     for (let ty = 0; ty < f.tiles.length; ty++) {
       const row = f.tiles[ty];
       for (let tx = 0; tx < row.length; tx++) {
@@ -162,7 +167,9 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
         const ry = Y(ty * th);
         const rw = tw * k + 0.6;
         const rh = th * k + 0.6;
-        const tileName = castle?.overlay.get(ty * row.length + tx) ?? TERRAIN_TILE[c];
+        // 성 안뜰 연출 > 지형 경계 전환 > 기본 지형 타일
+        const cell = ty * row.length + tx;
+        const tileName = castle?.overlay.get(cell) ?? auto[cell] ?? TERRAIN_TILE[c];
         const img = tileName ? sprite(tileName) : null;
         if (img) {
           ctx.drawImage(img, rx, ry, rw, rh);
@@ -379,7 +386,7 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       raf = requestAnimationFrame(step);
     });
     return () => cancelAnimationFrame(raf);
-  }, [state, tick, selected, box, spriteGen]);
+  }, [state, tick, selected, box]);
 
   /** 화면 좌표 → 전장 미터 */
   const toField = (e: React.PointerEvent<HTMLCanvasElement>) => {

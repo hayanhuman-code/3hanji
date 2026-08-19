@@ -153,6 +153,30 @@ WALL_H_SPAN = (0.065, 0.935)   # bbox 가로 사용 구간 (비율)
 WALL_V_BAND = (0.175, 0.775)   # bbox 세로 사용 구간 (비율)
 WALL_T_DEFAULT = 9             # 코너 실측 실패 시 벽 두께(px, 32 기준)
 
+# [오토타일] 지형 경계 전환 타일 ----------------------------------------
+# AI 로 경계 타일을 따로 만들지 않는다. 기존 타일 두 장을 마스크로 합성해
+# 코드가 만든다 — 그래야 색과 화풍이 어긋날 여지가 없다.
+#
+# 우선순위: 낮은 쪽 위에 높은 쪽이 얹힌다 (물이 가장 위 = 물가가 가장 또렷)
+TERRAIN_PRIORITY = [
+    "grass", "road", "sand", "forest", "hill", "ridge", "mountain", "ford", "river",
+]
+# 전환 패턴 — 4방위 비트마스크 16가지(0=전환 없음)에 대각 전용 4가지를 더한다.
+#   0~15 : N=1, E=2, S=4, W=8 조합
+#   16~19: NE, SE, SW, NW (대각만 높은 지형일 때의 모서리 물림)
+AUTOTILE_PATTERNS = 20
+AT_DEPTH = 9.0      # 높은 지형이 파고드는 기본 깊이(px, 32 기준)
+AT_JITTER = 3.2     # 경계 들쭉날쭉함의 진폭(px). 0 이면 직선
+AT_DITHER = 2.2     # 경계 주변 흩뿌림 띠의 폭(px) — 픽셀 단위 침식감
+AT_CORNER_R = 13.0  # 대각 패턴의 모서리 반지름(px)
+AT_SEED = 20260819  # 시드 고정 — 같은 조합은 언제 돌려도 같은 결과
+# 실제 맵에서 맞닿는 지형 쌍만 만든다 (없으면 전체 조합으로 되돌아간다)
+BATTLEMAPS_JSON = ROOT.parent.parent / "src" / "data" / "battlemaps.json"
+BATTLEMAP_TILE_CODE = {
+    ".": "grass", "r": "road", "f": "forest", "h": "hill",
+    "m": "mountain", "~": "river", "=": "ford", "S": "sand", "B": "bridge",
+}
+
 # [타일] 배경화 톤 다운 — 지형은 무대, 유닛이 주인공 --------------------
 # 원본 processed/tile_*.png 는 보존하고 processed/toned/ 에 별도 출력한다.
 TONE_SATURATION = 0.70   # 채도 배율 (-30%)
@@ -323,6 +347,135 @@ def run_tone_down() -> list[dict]:
         out.save(out_path)
         results.append({"name": path.name, "colors": count_colors(out)})
     return results
+
+
+def _edge_jitter(rng: np.random.Generator, n: int, amp: float) -> np.ndarray:
+    """가장자리를 따라가는 들쭉날쭉한 깊이 변화.
+
+    양 끝을 0 으로 맞춘다 — 같은 방향으로 전환이 이어지는 옆 타일과 만나는
+    자리에서 깊이가 어긋나면 타일 경계에 계단이 생기기 때문이다.
+    """
+    walk = np.cumsum(rng.normal(0, 1, n))
+    walk -= np.linspace(walk[0], walk[-1], n)  # 양 끝을 0 으로
+    peak = np.abs(walk).max()
+    return walk / peak * amp if peak > 1e-6 else walk
+
+
+def autotile_mask(pattern: int, size: int, rng: np.random.Generator) -> np.ndarray:
+    """전환 패턴의 알파 마스크(0~255). 높은 지형이 어디까지 파고드는가.
+
+    각 활성 변에서 안쪽으로 파고드는 깊이를 부호 있는 값으로 재고, 여러 변이
+    겹치면 가장 깊은 값을 쓴다. 경계선 부근 AT_DITHER 폭에서는 픽셀을
+    확률적으로 흩뿌려 픽셀아트 특유의 침식감을 만든다.
+    """
+    ys, xs = np.mgrid[0:size, 0:size]
+    signed = np.full((size, size), -1e6)
+
+    def blend(v: np.ndarray) -> None:
+        np.maximum(signed, v, out=signed)
+
+    if pattern < 16:
+        if pattern & 1:  # N
+            blend(AT_DEPTH + _edge_jitter(rng, size, AT_JITTER)[xs] - ys)
+        if pattern & 2:  # E
+            blend(AT_DEPTH + _edge_jitter(rng, size, AT_JITTER)[ys] - (size - 1 - xs))
+        if pattern & 4:  # S
+            blend(AT_DEPTH + _edge_jitter(rng, size, AT_JITTER)[xs] - (size - 1 - ys))
+        if pattern & 8:  # W
+            blend(AT_DEPTH + _edge_jitter(rng, size, AT_JITTER)[ys] - xs)
+    else:  # 16~19 — 대각 모서리에서 둥글게 물린다
+        cx, cy = [(size - 1, 0), (size - 1, size - 1), (0, size - 1), (0, 0)][pattern - 16]
+        r = np.hypot(xs - cx, ys - cy)
+        # 각도에 따라 반지름을 흔들어 원이 아니라 침식된 모서리로 보이게
+        ang = np.arctan2(ys - cy, xs - cx)
+        wob = _edge_jitter(rng, 64, AT_JITTER)
+        idx = ((ang + np.pi) / (2 * np.pi) * 63).astype(int).clip(0, 63)
+        blend(AT_CORNER_R + wob[idx] - r)
+
+    alpha = np.zeros((size, size), dtype=np.uint8)
+    alpha[signed >= AT_DITHER] = 255
+    band = (signed > -AT_DITHER) & (signed < AT_DITHER)
+    if band.any():
+        # 경계에 가까울수록 채워질 확률이 높다 (0 부근에서 반반)
+        p = 0.5 + signed[band] / (2 * AT_DITHER)
+        alpha[band] = np.where(rng.random(band.sum()) < p, 255, 0)
+    return alpha
+
+
+def run_autotiles(verbose: bool = True) -> int:
+    """지형 쌍마다 전환 타일을 만들어 processed/autotile/ 에 낸다.
+
+    파일 하나는 「낮은 지형 위에 높은 지형이 마스크만큼 얹힌」 32×32 불투명
+    타일이다. 렌더러는 이 타일을 기본 타일 대신 그린다.
+    """
+    out_dir = OUT_DIR / "autotile"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    toned = OUT_DIR / "toned"
+
+    def tile_of(name: str) -> Image.Image | None:
+        for p in (toned / f"tile_{name}.png", OUT_DIR / f"tile_{name}.png"):
+            if p.exists():
+                return Image.open(p).convert("RGBA")
+        return None
+
+    pairs = sorted(adjacent_terrain_pairs())
+    rank = {t: i for i, t in enumerate(TERRAIN_PRIORITY)}
+    made = 0
+    for n, (a, b) in enumerate(pairs, 1):
+        lo, hi = (a, b) if rank.get(a, -1) < rank.get(b, -1) else (b, a)
+        im_lo, im_hi = tile_of(lo), tile_of(hi)
+        if not im_lo or not im_hi:
+            if verbose:
+                print(f"  건너뜀: {lo}↔{hi} (타일 없음)")
+            continue
+        size = im_lo.width
+        base = np.array(im_lo)[..., :3]
+        over = np.array(im_hi.resize((size, size), Image.Resampling.NEAREST))[..., :3]
+        for pattern in range(1, AUTOTILE_PATTERNS):
+            # 시드는 쌍과 패턴에서만 나온다 — 언제 몇 번을 돌려도 같은 그림
+            seed = (AT_SEED + hash((lo, hi, pattern)) % 1_000_003) % (2**32)
+            rng = np.random.default_rng(seed)
+            m = autotile_mask(pattern, size, rng)[..., None] > 0
+            px = np.where(m, over, base).astype("uint8")
+            img = quantize(Image.fromarray(px, "RGB"))
+            img.save(out_dir / f"{lo}_{hi}_{pattern:02d}.png")
+            made += 1
+        if verbose:
+            print(f"  [{n}/{len(pairs)}] {lo}→{hi} "
+                  f"{AUTOTILE_PATTERNS - 1}패턴  (누적 {made})")
+    return made
+
+
+def adjacent_terrain_pairs() -> set[tuple[str, str]]:
+    """전장 데이터에서 실제로 맞닿는 지형 쌍을 모은다.
+
+    쓰이지 않는 조합까지 만들면 파일만 수백 장 늘어난다. 데이터를 못 읽으면
+    우선순위 목록의 모든 조합으로 되돌아간다.
+    """
+    import itertools
+    import json
+
+    try:
+        maps = json.loads(BATTLEMAPS_JSON.read_text())["maps"]
+    except (OSError, KeyError, ValueError):
+        return set(itertools.combinations(TERRAIN_PRIORITY, 2))
+
+    pairs: set[tuple[str, str]] = set()
+    for m in maps.values():
+        rows = m["tiles"]
+        for y, row in enumerate(rows):
+            for x, ch in enumerate(row):
+                a = BATTLEMAP_TILE_CODE.get(ch)
+                if not a:
+                    continue
+                for dx, dy in ((1, 0), (0, 1)):
+                    nx, ny = x + dx, y + dy
+                    if ny >= len(rows) or nx >= len(rows[ny]):
+                        continue
+                    b = BATTLEMAP_TILE_CODE.get(rows[ny][nx])
+                    if b and b != a and a in TERRAIN_PRIORITY and b in TERRAIN_PRIORITY:
+                        pairs.add(tuple(sorted((a, b))))  # type: ignore[arg-type]
+    return pairs
 
 
 def estimate_bg_color(a: np.ndarray) -> tuple[int, int, int]:
@@ -659,7 +812,107 @@ def make_previews() -> list[Path]:
         _stack_rows(rows).save(p4)
 
     p5 = make_wall_assembly_preview()
-    return [p for p in (p1, p2, p3, p4, p5) if p]
+    p6 = make_autotile_preview()
+    return [p for p in (p1, p2, p3, p4, p5, p6) if p]
+
+
+def autotile_pick(grid: list[list[str]], x: int, y: int,
+                  rank: dict[str, int]) -> tuple[str, int] | None:
+    """이 칸에 얹을 전환 타일 (상대 지형, 패턴 번호). 없으면 None.
+
+    렌더러(src/ui/field/autotile.ts)와 같은 규칙이다. 여기 둔 이유는
+    미리보기로 규칙 자체를 눈으로 확인하기 위해서다.
+    """
+    h, w = len(grid), len(grid[0])
+    mine = grid[y][x]
+    at = lambda cx, cy: grid[cy][cx] if 0 <= cx < w and 0 <= cy < h else mine
+    my_rank = rank.get(mine, -1)
+
+    # 이웃 중 나보다 우선순위가 높은 지형들 — 가장 높은 하나만 얹는다
+    best, best_rank = None, my_rank
+    for dx, dy in ((0, -1), (1, 0), (0, 1), (-1, 0), (1, -1), (1, 1), (-1, 1), (-1, -1)):
+        t = at(x + dx, y + dy)
+        r = rank.get(t, -1)
+        if r > best_rank:
+            best, best_rank = t, r
+    if best is None:
+        return None
+
+    mask = 0
+    for bit, (dx, dy) in enumerate(((0, -1), (1, 0), (0, 1), (-1, 0))):
+        if at(x + dx, y + dy) == best:
+            mask |= 1 << bit
+    if mask:
+        return best, mask
+    for i, (dx, dy) in enumerate(((1, -1), (1, 1), (-1, 1), (-1, -1))):
+        if at(x + dx, y + dy) == best:
+            return best, 16 + i
+    return None
+
+
+def make_autotile_preview() -> Path | None:
+    """오토타일 검증 — 손으로 그린 작은 지형도를 전환 타일로 그려 본다.
+
+    풀↔숲·풀↔산·풀↔강이 한 화면에 나오게 짜 두었다. 규칙이 어긋나면
+    경계에 직선이 남거나 모서리가 비므로 바로 보인다.
+    """
+    art = [
+        "gggggggggfffffffgggg",
+        "ggggggggffffffffgggg",
+        "gggggggfffffffgggggg",
+        "ggmmggggffffgggggggg",
+        "gmmmmgggggggggggwwgg",
+        "gmmmmmggggggggwwwwgg",
+        "ggmmmgggggggggwwwggg",
+        "gggggggggggggwwwgggg",
+        "ggggffffggggwwwwgggg",
+        "gggffffffgggwwwggggg",
+        "ggggffffgggggwwggggg",
+        "gggggggggggggwwggggg",
+    ]
+    code = {"g": "grass", "f": "forest", "m": "mountain", "w": "river"}
+    grid = [[code[c] for c in row] for row in art]
+    rank = {t: i for i, t in enumerate(TERRAIN_PRIORITY)}
+    toned = OUT_DIR / "toned"
+    auto = OUT_DIR / "autotile"
+
+    def base_tile(name: str) -> Image.Image | None:
+        for p in (toned / f"tile_{name}.png", OUT_DIR / f"tile_{name}.png"):
+            if p.exists():
+                return Image.open(p).convert("RGB")
+        return None
+
+    h, w = len(grid), len(grid[0])
+    t = 32
+    plain = Image.new("RGB", (w * t, h * t))
+    autotiled = Image.new("RGB", (w * t, h * t))
+    for y in range(h):
+        for x in range(w):
+            b = base_tile(grid[y][x])
+            if not b:
+                return None
+            plain.paste(b, (x * t, y * t))
+            drawn = b
+            pick = autotile_pick(grid, x, y, rank)
+            if pick:
+                other, pattern = pick
+                lo, hi = sorted((grid[y][x], other), key=lambda n: rank.get(n, -1))
+                p = auto / f"{lo}_{hi}_{pattern:02d}.png"
+                if p.exists():
+                    drawn = Image.open(p).convert("RGB")
+            autotiled.paste(drawn, (x * t, y * t))
+
+    gap = 10
+    scale = 2
+    canvas = Image.new("RGB", (plain.width * scale, plain.height * 2 * scale + gap), (30, 30, 30))
+    canvas.paste(plain.resize((plain.width * scale, plain.height * scale), Image.Resampling.NEAREST), (0, 0))
+    canvas.paste(
+        autotiled.resize((autotiled.width * scale, autotiled.height * scale), Image.Resampling.NEAREST),
+        (0, plain.height * scale + gap),
+    )
+    p = OUT_DIR / "_autotile_preview.png"
+    canvas.save(p)
+    return p
 
 
 def make_wall_assembly_preview() -> Path | None:
@@ -730,6 +983,8 @@ def main() -> int:
                     help="진영색 팔레트 스왑과 미리보기만 재실행")
     ap.add_argument("--tone-only", action="store_true",
                     help="타일 배경화 톤 다운(processed/toned/)만 재실행")
+    ap.add_argument("--autotile-only", action="store_true",
+                    help="지형 경계 전환 타일(processed/autotile/)만 재생성")
     args = ap.parse_args()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -738,6 +993,15 @@ def main() -> int:
         print("=== 타일 톤 다운 (toned/) ===")
         for r in run_tone_down():
             print(f"  toned/{r['name']:<24} 색수 {r['colors']}")
+        return 0
+
+    if args.autotile_only:
+        print("=== 오토타일 전환 타일 생성 ===")
+        n = run_autotiles()
+        print(f"  총 {n}장 → {OUT_DIR / 'autotile'}")
+        p = make_autotile_preview()
+        if p:
+            print(f"  {p}")
         return 0
 
     if not args.swap_only:
@@ -763,6 +1027,9 @@ def main() -> int:
         print("\n=== 타일 톤 다운 (toned/) ===")
         for r in run_tone_down():
             print(f"  toned/{r['name']:<24} 색수 {r['colors']}")
+
+        print("\n=== 오토타일 전환 타일 생성 ===")
+        print(f"  총 {run_autotiles()}장 → {OUT_DIR / 'autotile'}")
 
     print("\n=== 진영색 팔레트 스왑 ===")
     for r in run_faction_swaps():

@@ -35,4 +35,18 @@ for (const f of readdirSync(join(SRC, 'factions'))) {
   cpSync(join(SRC, 'factions', f), join(DST, 'factions', f));
   n++;
 }
-console.log(`sync-assets: ${n}개 파일 → ${DST} (타일 톤 다운본 ${toned}개 적용)`);
+// 지형 경계 전환 타일 — 장수가 많으므로 디렉터리째 복사한다
+let auto = 0;
+if (existsSync(join(SRC, 'autotile'))) {
+  mkdirSync(join(DST, 'autotile'), { recursive: true });
+  for (const f of readdirSync(join(SRC, 'autotile'))) {
+    if (!f.endsWith('.png')) continue;
+    cpSync(join(SRC, 'autotile', f), join(DST, 'autotile', f));
+    auto++;
+    n++;
+  }
+}
+console.log(
+  `sync-assets: ${n}개 파일 → ${DST} ` +
+    `(타일 톤 다운본 ${toned}개 적용, 전환 타일 ${auto}개)`
+);

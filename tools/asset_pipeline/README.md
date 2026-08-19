@@ -17,6 +17,9 @@ python tools/asset_pipeline/process.py --swap-only
 
 # 타일 배경화 톤 다운만 재실행 (톤 설정 튜닝 시)
 python tools/asset_pipeline/process.py --tone-only
+
+# 지형 경계 전환 타일(오토타일)만 재생성 (마스크 파라미터 튜닝 시)
+python tools/asset_pipeline/process.py --autotile-only
 ```
 
 - 입력: `tools/asset_pipeline/raw/` — AI 생성 원본 PNG
@@ -24,6 +27,7 @@ python tools/asset_pipeline/process.py --tone-only
   - `processed/factions/` — 유닛별 3진영 색상 변형
   - `processed/toned/` — 타일 배경화(톤 다운)본. 게임은 이쪽을 쓴다
     (`scripts/sync-assets.mjs` 가 타일에 한해 toned 를 우선 복사)
+  - `processed/autotile/` — 지형 경계 전환 타일 (`<낮은지형>_<높은지형>_<패턴>.png`)
   - `processed/_work/` — 배경 제거된 원본 해상도 중간물 (`--swap-only`용 캐시, 커밋 안 함)
 
 ## 파일명 규칙과 목표 크기
@@ -58,6 +62,17 @@ python tools/asset_pipeline/process.py --tone-only
    이 부품들만 NEAREST 대신 면적평균(BOX)으로 눌러 벽돌 결을 남긴다.
    렌더러에서 이어 쓸 때: 띠는 바깥 변에 붙어 있으므로 북쪽 변은 가로벽을
    상하 반전, 서쪽 변은 세로벽을 좌우 반전해 쓴다(코너는 반전 조합).
+4¾. **[타일] 오토타일 — 지형 경계 전환 타일** — 경계 타일을 AI 로 따로
+   만들지 않고, 톤 다운된 타일 **두 장을 마스크로 합성해 코드가 만든다**
+   (그래야 색·화풍이 어긋날 여지가 없다). `TERRAIN_PRIORITY` 가 정한
+   낮은 지형 위에 높은 지형이 얹히며, 패턴은 4방위 비트마스크 16가지
+   (N=1·E=2·S=4·W=8)에 대각 전용 4가지를 더한 20가지다(0=전환 없음이라
+   쌍마다 19장). 경계는 직선이 아니라 가장자리를 따라 흔들리는 깊이
+   (`AT_JITTER`)와 그 주변에 픽셀을 흩뿌리는 띠(`AT_DITHER`)로 침식감을
+   준다. 흔들림은 변의 양 끝에서 0 으로 수렴시켜 같은 전환이 이어지는 옆
+   타일과 만나도 계단이 생기지 않게 했다. 시드(`AT_SEED`)가 쌍·패턴에서만
+   나오므로 몇 번을 돌려도 같은 그림이다. 실제 전장에서 맞닿는 지형 쌍만
+   만든다(현재 18쌍 × 19패턴 = 342장).
 4½. **[타일] 배경화 톤 다운** — 지형은 무대, 유닛이 주인공. 전체 타일의
    채도·대비를 낮추고 살짝 밝히며(`TONE_*`), 완전 검정 픽셀을
    `TONE_BLACK_FLOOR` 밝기까지 끌어올린다(숲·산의 검은 구멍 완화).
@@ -76,6 +91,7 @@ python tools/asset_pipeline/process.py --tone-only
 | `processed/_faction_preview.png` | 유닛별 원본 + 고구려/백제/신라 나란히 |
 | `processed/_visibility_preview.png` | 어두운 지형(`VISIBILITY_TILES`) 3×3 위에 3진영 보병 — 가독성 확인용 |
 | `processed/_wall_assembly_preview.png` | 성벽 부품으로 ㅁ자 성곽 조립 (모서리 4 + 벽 + 성문 + 망루) — 이음 검증용 |
+| `processed/_autotile_preview.png` | 같은 지형도를 전환 타일 적용 전/후로 그린 비교 (풀↔숲·풀↔산·풀↔강) |
 
 ## 설정 항목 (`process.py` 상단 설정부)
 
@@ -87,6 +103,12 @@ python tools/asset_pipeline/process.py --tone-only
 | `BG_REFERENCE` | (145,145,145) | 배경 기준색 (자동 추정 실패 시 폴백) |
 | `BG_THRESHOLD` | 40 | 배경으로 간주할 색 거리 |
 | `BG_RESIDUE_LIMIT` | 0.02 | rembg 폴백을 발동하는 테두리 잔존 비율 |
+| `TERRAIN_PRIORITY` | grass<road<sand<forest<hill<ridge<mountain<ford<river | 오토타일: 낮은 쪽 위에 높은 쪽이 얹힌다 |
+| `AT_DEPTH` | 9.0 | 오토타일: 높은 지형이 파고드는 기본 깊이(px) |
+| `AT_JITTER` | 3.2 | 오토타일: 경계 들쭉날쭉함의 진폭(px). 0 이면 직선 |
+| `AT_DITHER` | 2.2 | 오토타일: 경계 주변 흩뿌림 띠의 폭(px) |
+| `AT_CORNER_R` | 13.0 | 오토타일: 대각 패턴의 모서리 반지름(px) |
+| `AT_SEED` | 20260819 | 오토타일: 시드. 같은 조합은 언제나 같은 결과 |
 | `WALL_H_SPAN` | (0.065, 0.935) | 가로벽: bbox 중 사용할 가로 구간 (끝 기둥 제거) |
 | `WALL_V_BAND` | (0.175, 0.775) | 세로벽: bbox 중 사용할 세로 구간 (지붕 끝단 제거) |
 | `WALL_T_DEFAULT` | 9 | 코너 실측 실패 시 벽 두께(px) |

@@ -1,0 +1,16 @@
+{
+  "_comment": "공성전 성곽 연출 배치 규칙 (렌더링 전용 — 판정·통행과 무관). default 를 기본으로 쓰고, overrides 에 거점 id 별 부분 오버라이드를 두면 성마다 다르게 만들 수 있다.",
+  "default": {
+    "towerCorners": true,
+    "towerScaleTiles": 1.7,
+    "roadTile": "tile_road",
+    "groundTile": "tile_grass",
+    "plazaRadius": 1,
+    "centralCross": true,
+    "decor": [
+      { "name": "obj_pine", "every": 7 },
+      { "name": "obj_rock", "every": 11 }
+    ]
+  },
+  "overrides": {}
+}

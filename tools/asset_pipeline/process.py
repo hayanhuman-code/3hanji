@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -41,7 +42,13 @@ TARGET_SIZES = {
 # 접두사 규칙의 예외 (가로로 넓은 구조물 등)
 SIZE_OVERRIDES = {
     "obj_gate": (64, 32),
+    # 전투 이펙트용 소형 발사체 — 코드가 회전시켜 그린다
+    "obj_arrow": (12, 12),   # 오른쪽을 향한 화살 1장
+    "obj_boulder": (8, 8),   # 투석기 돌덩이 1장
 }
+# 극단적 축소(1024→12px 급)라 NEAREST 로는 가는 획이 소실되는 소형 스프라이트.
+# 성벽 부품처럼 면적평균(BOX)으로 눌러서 형태를 남긴다.
+PROJECTILE_SPRITES = {"obj_arrow", "obj_boulder"}
 
 # [타일] 중앙 크롭: 바깥 8%씩 잘라내고 중앙 84%만 사용 (AI 가장자리 테두리 제거)
 TILE_EDGE_TRIM = 0.08
@@ -449,8 +456,9 @@ def run_autotiles(verbose: bool = True) -> int:
         base = np.array(im_lo)[..., :3]
         over = np.array(im_hi.resize((size, size), Image.Resampling.NEAREST))[..., :3]
         for pattern in range(1, AUTOTILE_PATTERNS):
-            # 시드는 쌍과 패턴에서만 나온다 — 언제 몇 번을 돌려도 같은 그림
-            seed = (AT_SEED + hash((lo, hi, pattern)) % 1_000_003) % (2**32)
+            # 시드는 쌍과 패턴에서만 나온다 — 언제 몇 번을 돌려도 같은 그림.
+            # (파이썬 hash() 는 프로세스마다 솔트가 달라 재현이 안 된다)
+            seed = (AT_SEED + zlib.crc32(f"{lo}|{hi}|{pattern}".encode())) % (2**32)
             rng = np.random.default_rng(seed)
             m = autotile_mask(pattern, size, rng)[..., None] > 0
             px = np.where(m, over, base).astype("uint8")
@@ -649,6 +657,15 @@ def process_one(path: Path) -> dict | None:
         steps.append(f"scale:{size[0]}x{size[1]}")
         im = quantize(im)
         steps.append(f"quant:{QUANT_COLORS}")
+    elif stem in PROJECTILE_SPRITES:  # 소형 발사체 — BOX 축소로 획 보존
+        im, bg_note = remove_background(im.convert("RGBA"), path.name)
+        steps.append(bg_note)
+        im = crop_to_content(im, size)
+        a = np.array(im.resize(size, Image.Resampling.BOX))
+        a[..., 3] = np.where(a[..., 3] >= 96, 255, 0)
+        a[a[..., 3] == 0] = 0
+        im = quantize(Image.fromarray(a, "RGBA"))
+        steps.append(f"scale:BOX {size[0]}x{size[1]} → quant:{QUANT_COLORS}")
     elif stem.startswith("obj_wall_"):  # 성벽 부품 — 이어붙임 정합 전용 처리
         im, bg_note = remove_background(im.convert("RGBA"), path.name)
         steps.append(bg_note)

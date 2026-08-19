@@ -39,6 +39,7 @@ import type { FieldState, Side, Stance, Tier } from '../../core/field/types';
 import { TICKS_PER_SEC } from '../../core/field/types';
 import { TROOP_MARK, type Troop } from '../../core/types';
 import { FieldCanvas } from './FieldCanvas';
+import { fxEnabled, setFxEnabled } from './effects';
 
 const SPEEDS = [1, 2, 4, 8] as const;
 
@@ -84,6 +85,7 @@ export function FieldPlay({
 }: FieldPlayProps) {
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(4);
   const [running, setRunning] = useState(true);
+  const [fx, setFx] = useState(fxEnabled());
   const [selected, setSelected] = useState<string | null>(null);
   const [tick, setTick] = useState(state.tick);
   const raf = useRef<number | null>(null);
@@ -183,6 +185,16 @@ export function FieldPlay({
                 </button>
               ))}
               <button
+                className={`btn small${fx ? ' on' : ''}`}
+                title="타격·화살·투석 등 전투 연출을 켜고 끈다"
+                onClick={() => {
+                  setFxEnabled(!fx);
+                  setFx(!fx);
+                }}
+              >
+                이펙트
+              </button>
+              <button
                 className="btn small"
                 title="같은 시뮬레이션을 렌더링 없이 끝까지 돌린다"
                 onClick={() => {
@@ -206,6 +218,7 @@ export function FieldPlay({
         <FieldCanvas
           state={state}
           tick={tick}
+          speed={speed}
           selected={selected}
           onSelectUnit={setSelected}
           onPickPoint={(x, y) => {

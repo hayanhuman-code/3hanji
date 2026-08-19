@@ -40,7 +40,9 @@ python tools/asset_pipeline/process.py --autotile-only
 | `portrait_*.png` | 초상화 | 96×96 | 규칙만 준비 (현재 에셋 없음) |
 
 예외 크기는 `SIZE_OVERRIDES`에 파일명 단위로 지정한다
-(현재 `obj_gate` → 64×32, 가로로 넓은 구조물).
+(현재 `obj_gate` → 64×32, 전투 이펙트 발사체 `obj_arrow` → 12×12,
+`obj_boulder` → 8×8). `PROJECTILE_SPRITES` 에 속한 소형 발사체는
+극단적 축소에서 가는 획이 살아남도록 NEAREST 대신 BOX 축소를 쓴다.
 
 ## 처리 단계
 

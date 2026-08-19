@@ -17,7 +17,10 @@ import { TROOP_MARK } from '../../core/types';
 import { T } from '../tokens';
 import { autotileMap } from './autotile';
 import { castleLayout } from './castleLayout';
-import { TERRAIN_TILE, outlinedSprite, sprite, unitSpriteName } from './sprites';
+import {
+  fxDrawNumbers, fxDrawWorld, fxFrame, fxShake, fxUnitFlash, fxUnitOffset,
+} from './effects';
+import { TERRAIN_TILE, flashSilhouette, outlinedSprite, sprite, unitSpriteName } from './sprites';
 
 /** 유닛 스프라이트 크기 — 타일 대비 배율. 타일 위로 삐져나와 존재감을 만든다 */
 const UNIT_TILE_SCALE = 1.4;
@@ -91,9 +94,11 @@ interface Props {
   onSelectUnit: (id: string | null) => void;
   /** 빈 땅을 눌렀다 — 지점 이동 명령에 쓴다 */
   onPickPoint: (x: number, y: number) => void;
+  /** 현재 배속 — 이펙트 재생 속도와 간소화 판단에 쓴다 */
+  speed?: number;
 }
 
-export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }: Props) {
+export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint, speed = 1 }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
   const [box, setBox] = useState({ w: 900, h: 620 });
   /*
@@ -149,8 +154,16 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
     // 실좌표를 따라잡는 보간 계수 — MOVE_SMOOTH_SEC 안에 98% 도달
     const chase = 1 - Math.pow(0.02, dt / MOVE_SMOOTH_SEC);
 
+    // 전투 이펙트 — 병력·성벽 변화를 읽어 스폰하고 물리를 한 틱 진행
+    fxFrame(state, dt, speed);
+
     ctx.fillStyle = T.hae;
     ctx.fillRect(0, 0, box.w, box.h);
+
+    // 투석 착탄의 화면 흔들림 — 전장 전체가 함께 흔들린다
+    const shake = fxShake();
+    ctx.save();
+    ctx.translate(shake.x, shake.y);
 
     /* --- 지형 --- */
     const [tw, th] = tileSize(f);
@@ -288,8 +301,9 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       const w = (15 + ratio * 26) * blockK;
       const h = (12 + ratio * 20) * blockK;
       const d = dispOf(u.id, u.x, u.y);
-      const cx = X(d.x);
-      const cy = Y(d.y);
+      const fo = fxUnitOffset(u.id); // 돌진·피격 밀림 (렌더 전용, m)
+      const cx = X(d.x + fo.dx);
+      const cy = Y(d.y + fo.dy);
 
       // 수군은 아직 스프라이트가 없다 — 船 블록을 그대로 쓴다
       const name = u.navy ? null : unitSpriteName(u.troop, u.faction);
@@ -321,6 +335,17 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
         // 외곽선 판은 원본보다 사방 1px 크다 — 발 위치를 유지하며 얹는다
         const px = s / (img.height - 2);
         ctx.drawImage(img, cx - (img.width * px) / 2, bottom - s - px + bob, img.width * px, img.height * px);
+
+        // 피격 점멸 — 흰 실루엣을 잠깐 얹었다 뗀다
+        const flash = fxUnitFlash(u.id);
+        if (flash > 0 && name) {
+          const fimg = flashSilhouette(name, selected === u.id ? T.onDark : T.meok, '#F5EFE2');
+          if (fimg) {
+            ctx.globalAlpha = (u.reserve ? 0.45 : u.routed ? 0.55 : 1) * 0.85 * flash;
+            ctx.drawImage(fimg, cx - (img.width * px) / 2, bottom - s - px + bob, img.width * px, img.height * px);
+            ctx.globalAlpha = u.reserve ? 0.45 : u.routed ? 0.55 : 1;
+          }
+        }
       } else {
         // 폴백 — 기존 색 블록 + 병종 한자 (문서 §7 — 이모지 금지)
         ctx.fillStyle = FACTION_COLOR[u.faction] ?? T.meokMid;
@@ -353,6 +378,9 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       ctx.globalAlpha = 1;
     }
 
+    /* --- 전투 이펙트: 발사체(화살·투석)와 파편·먼지 — 부대 위 레이어 --- */
+    fxDrawWorld(ctx, X, Y, th * k);
+
     /* --- 고른 부대의 이름표 --- */
     const sel = state.units.find((u) => u.id === selected && !u.dead);
     if (sel) {
@@ -375,6 +403,11 @@ export function FieldCanvas({ state, tick, selected, onSelectUnit, onPickPoint }
       ctx.textAlign = 'left';
       ctx.fillText(label, lx + 6, ly + 9);
     }
+
+    /* --- 피해 숫자 — 최상단 --- */
+    fxDrawNumbers(ctx, X, Y);
+
+    ctx.restore(); // 화면 흔들림 해제
 
     /* --- 사극 톤 — 맵 전체에 아주 옅은 따뜻한 오버레이 --- */
     ctx.fillStyle = WARM_OVERLAY;

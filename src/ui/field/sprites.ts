@@ -51,6 +51,9 @@ export function unitSpriteName(troop: Troop, faction: FactionId): string {
 
 const cache = new Map<string, HTMLImageElement>();
 const failed = new Set<string>();
+const retries = new Map<string, number>();
+/** 일시적 네트워크 오류는 몇 번 다시 받아 본다 — 이만큼 실패해야 포기 */
+const MAX_RETRY = 4;
 const listeners = new Set<() => void>();
 
 /** 이미지가 도착해 다시 그려야 할 때 불린다. 해제 함수를 돌려준다 */
@@ -71,7 +74,16 @@ export function sprite(name: string): HTMLImageElement | null {
     img.src = `${BASE}${name}.png`;
     img.onload = () => listeners.forEach((fn) => fn());
     img.onerror = () => {
-      failed.add(name);
+      // 순간적인 연결 끊김이 영구 실패로 굳지 않게 잠시 뒤 다시 받는다
+      const n = (retries.get(name) ?? 0) + 1;
+      retries.set(name, n);
+      if (n >= MAX_RETRY) {
+        failed.add(name);
+        return;
+      }
+      setTimeout(() => {
+        img!.src = `${BASE}${name}.png?r=${n}`;
+      }, 250 * n);
     };
     cache.set(name, img);
   }
@@ -113,5 +125,30 @@ export function outlinedSprite(name: string, color: string): HTMLCanvasElement |
   }
   octx.drawImage(img, 1, 1);
   outlineCache.set(key, out);
+  return out;
+}
+
+const flashCache = new Map<string, HTMLCanvasElement>();
+
+/** 피격 점멸용 — 외곽선 판 전체를 한 색으로 칠한 실루엣 */
+export function flashSilhouette(
+  name: string,
+  outlineColor: string,
+  color: string
+): HTMLCanvasElement | null {
+  const base = outlinedSprite(name, outlineColor);
+  if (!base) return null;
+  const key = `${name}|${outlineColor}|F${color}`;
+  const hit = flashCache.get(key);
+  if (hit) return hit;
+  const out = document.createElement('canvas');
+  out.width = base.width;
+  out.height = base.height;
+  const ctx = out.getContext('2d')!;
+  ctx.drawImage(base, 0, 0);
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, out.width, out.height);
+  flashCache.set(key, out);
   return out;
 }

@@ -30,7 +30,7 @@ import {
 import { onWater, passable, specAt, terrainAt } from './battlefield';
 import { findFieldPath, lineOfMarch } from './pathfind';
 import { SIEGE, gatePoint, insideWall, investRing, stepSiege } from './siege';
-import type { FieldState, FieldUnit, Side } from './types';
+import type { FieldResult, FieldState, FieldUnit, Side } from './types';
 
 /** 경로를 다시 내는 주기(틱). 목표가 움직이므로 가끔 고쳐야 한다 */
 const PATH_REFRESH = 240;
@@ -465,19 +465,53 @@ function updatePhase(st: FieldState) {
   }
 }
 
+/**
+ * 전장의 결과를 조립한다.
+ *
+ * 순수 함수로 떼어 둔 것은 무승부·전멸 같은 극단을 시험하기 위해서다 —
+ * 그런 판은 실제 시뮬레이션으로 만들어 내기 어렵다.
+ */
+export function summarizeUnits(units: readonly FieldUnit[], winner: Side | null): FieldResult {
+  const start = (side: Side) =>
+    units.filter((u) => u.side === side).reduce((s, u) => s + u.maxTroops, 0);
+  const left = (side: Side) =>
+    units.filter((u) => u.side === side && !u.dead).reduce((s, u) => s + u.troops, 0);
+
+  return {
+    winner,
+    attackerLoss: Math.round(start('attacker') - left('attacker')),
+    defenderLoss: Math.round(start('defender') - left('defender')),
+    survivors: units
+      .filter((u) => !u.dead)
+      .map((u) => ({
+        unit: u.id,
+        officer: u.officer,
+        side: u.side,
+        troops: Math.round(u.troops),
+        origin: u.origin,
+      })),
+    // 전장에 실제로 선 병력. 편성에 못 들어간 몫은 성에 남아 있다.
+    fielded: units.map((u) => ({ origin: u.origin, side: u.side, troops: u.maxTroops })),
+    /*
+     * 무너진 채 남은 쪽의 장수는 사로잡힌다.
+     *
+     * 승패가 갈리지 않았으면 아무도 잡지 않는다 — 예전에는 무승부일 때
+     * `side !== winner` 가 양쪽 모두 참이 되어, 수비 측이 **자기편 장수를**
+     * 포로로 잡았다. 지휘관 없는 수비대(빈 식별자)도 포로가 될 수 없다.
+     */
+    captured:
+      winner === null
+        ? []
+        : units.filter((u) => u.dead && u.side !== winner && u.officer).map((u) => u.officer),
+    ticks: units.length ? Math.max(...units.map((u) => u.arriveTick)) : 0,
+    siegeMethod: null,
+  };
+}
+
 function finish(st: FieldState, winner: Side | null) {
-  const a0 = st.units.filter((u) => u.side === 'attacker').reduce((s, u) => s + u.maxTroops, 0);
-  const d0 = st.units.filter((u) => u.side === 'defender').reduce((s, u) => s + u.maxTroops, 0);
   st.phase = 'done';
   st.result = {
-    winner,
-    attackerLoss: Math.round(a0 - troopsOf(st, 'attacker')),
-    defenderLoss: Math.round(d0 - troopsOf(st, 'defender')),
-    survivors: st.units
-      .filter((u) => !u.dead)
-      .map((u) => ({ officer: u.officer, side: u.side, troops: Math.round(u.troops) })),
-    // 무너진 채 남은 쪽의 장수는 사로잡힌다
-    captured: st.units.filter((u) => u.dead && u.side !== winner).map((u) => u.officer),
+    ...summarizeUnits(st.units, winner),
     ticks: st.tick,
     siegeMethod: st.siegeState?.method ?? null,
   };

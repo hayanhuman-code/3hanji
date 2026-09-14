@@ -105,9 +105,10 @@ function buildSide(
       const at = nudgeToPassable(f, bx, by, navy);
 
       units.push({
-        id: `${side}-${e.officer || `garrison${i}-${row}`}`,
+        id: e.id ?? `${side}-${e.officer || `garrison${i}-${row}-${kind}`}`,
         side,
         officer: e.officer,
+        origin: e.origin ?? null,
         name: e.name ?? def?.name ?? '城兵',
         troop,
         navy,

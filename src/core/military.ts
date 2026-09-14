@@ -555,18 +555,81 @@ function toBattleOfficer(state: GameState, id: string): CommanderLike & { id: st
  */
 const CAPTURE_DEATH = 0.25;
 
-/** 전장에서 돌아온 병력을 그 군대의 편성에 비례해 되돌린다 */
-function scaleArmies(state: GameState, armyIds: string[], survived: Map<string, number>): void {
+/**
+ * 출처별 병력 장부.
+ *
+ * **장수 식별자로는 병력의 주인을 알 수 없다.** 지휘관 없는 수비대는 식별자가
+ * 빈 문자열이라 여럿이 서로 덮어썼고, 같은 성에서 나온 두 군대도 구분되지
+ * 않았다. 그래서 부대가 달고 나간 출처로 센다.
+ */
+function ledgerOf(result: FieldResult): {
+  survived: Map<string, number>;
+  fielded: Map<string, number>;
+} {
+  const key = (o: { kind: string; id: string } | null) => (o ? `${o.kind}:${o.id}` : '');
+  const survived = new Map<string, number>();
+  const fielded = new Map<string, number>();
+  for (const s of result.survivors) {
+    const k = key(s.origin);
+    survived.set(k, (survived.get(k) ?? 0) + s.troops);
+  }
+  for (const f of result.fielded) {
+    const k = key(f.origin);
+    fielded.set(k, (fielded.get(k) ?? 0) + f.troops);
+  }
+  return { survived, fielded };
+}
+
+/**
+ * 전장에서 돌아올 병력.
+ *
+ * `생존 + (원래 − 출전)` 이다. 편성은 병력 전부를 세우지 않는다 —
+ * 구성표의 작은 몫과 나머지는 성에 남아 있으므로, 그 병력까지 「전사」로
+ * 처리하면 싸우지도 않은 사람이 사라진다.
+ */
+function returning(before: number, survived: number, fielded: number): number {
+  const rear = Math.max(0, before - fielded);
+  return Math.max(0, Math.min(before, Math.round(survived + rear)));
+}
+
+/**
+ * 병종 편성을 주어진 총합에 맞춘다.
+ *
+ * 비율로 줄인 뒤 반올림 오차를 가장 큰 스택에 흡수시킨다 — 그러지 않으면
+ * `troops` 와 `composition` 의 합이 어긋나 검사에 걸린다.
+ */
+function fitComposition(units: UnitStack[], target: number): UnitStack[] {
+  const before = sum(units.map((u) => u.count));
+  if (target <= 0 || before <= 0) return [];
+  const k = target / before;
+  const out = units
+    .map((u) => ({ unitType: u.unitType, count: Math.round(u.count * k) }))
+    .filter((u) => u.count > 0);
+  if (out.length === 0) return [];
+  const diff = target - sum(out.map((u) => u.count));
+  if (diff !== 0) {
+    const biggest = out.reduce((a, b) => (b.count > a.count ? b : a));
+    biggest.count = Math.max(0, biggest.count + diff);
+  }
+  return out.filter((u) => u.count > 0);
+}
+
+/** 전장에서 돌아온 병력을 군대별로 되돌린다 */
+function scaleArmies(
+  state: GameState,
+  armyIds: string[],
+  survived: Map<string, number>,
+  fielded: Map<string, number>
+): void {
   for (const id of armyIds) {
     const army = state.armies[id];
     if (!army) continue;
     const before = armyTroops(army);
-    const after = army.officers.reduce((s, oid) => s + (survived.get(oid) ?? 0), 0);
-    const k = before > 0 ? Math.max(0, Math.min(1, after / before)) : 0;
-    army.units = army.units
-      .map((u) => ({ unitType: u.unitType, count: Math.round(u.count * k) }))
-      .filter((u) => u.count > 0);
+    const key = `army:${id}`;
+    const after = returning(before, survived.get(key) ?? 0, fielded.get(key) ?? 0);
+    army.units = fitComposition(army.units, after);
     // 살아 돌아온 군대의 사기는 얼마나 잃었는지를 따라간다
+    const k = before > 0 ? after / before : 0;
     army.morale = Math.round(Math.max(20, Math.min(90, 25 + k * 60)));
   }
   for (const id of [...armyIds]) {
@@ -579,8 +642,8 @@ function scaleArmies(state: GameState, armyIds: string[], survived: Map<string, 
  * 전장(戰場) 결과를 전략 상태에 반영한다 (전투 v2).
  *
  * 헥스 판의 applyBattleResult 를 대신한다. 다른 점 하나: 생존 병력이
- * 「병종 스택」이 아니라 **장수별 병력**으로 돌아온다. 그래서 어느 군대가
- * 얼마나 남았는지는 그 군대에 속한 장수들의 잔존 병력으로 정해진다.
+ * 「병종 스택」이 아니라 **부대별 병력**으로 돌아온다. 어느 군대·어느 성의
+ * 것이었는지는 부대가 달고 나간 출처가 말해 준다 — 장수 이름이 아니라.
  */
 export function applyFieldResult(
   state: GameState,
@@ -591,20 +654,18 @@ export function applyFieldResult(
   const castle = state.castles[pending.castle];
   const attackerWon = result.winner === 'attacker';
 
-  const survived = new Map<string, number>();
-  for (const s of result.survivors) survived.set(s.officer, s.troops);
+  const { survived, fielded } = ledgerOf(result);
 
-  scaleArmies(state, pending.attackerArmies, survived);
-  scaleArmies(state, pending.defenderArmies, survived);
+  scaleArmies(state, pending.attackerArmies, survived, fielded);
+  scaleArmies(state, pending.defenderArmies, survived, fielded);
 
-  // 공성이면 성에 남아 있던 병력도 줄어든 채로 남는다
+  // 공성이면 성에 남아 있던 병력도 줄어든 채로 남는다.
+  // 지휘관이 있든 없든 주둔군은 국가의 병력이므로 똑같이 셈에 든다 (§3.5).
   if (pending.siege && castle.owner === pending.defender) {
-    const left = castle.officers.reduce((s, oid) => s + (survived.get(oid) ?? 0), 0);
-    const k = castle.troops > 0 ? Math.max(0, Math.min(1, left / castle.troops)) : 0;
-    castle.troops = Math.round(castle.troops * k);
-    castle.composition = castle.composition
-      .map((u) => ({ unitType: u.unitType, count: Math.round(u.count * k) }))
-      .filter((u) => u.count > 0);
+    const key = `garrison:${pending.castle}`;
+    const after = returning(castle.troops, survived.get(key) ?? 0, fielded.get(key) ?? 0);
+    castle.composition = fitComposition(castle.composition, after);
+    castle.troops = after;
   }
 
   // --- 사로잡힌 인물 ---
@@ -630,22 +691,24 @@ export function applyFieldResult(
   if (pending.siege && attackerWon) {
     captureCastle(state, pending.castle, pending.attacker, rng, result.siegeMethod ?? 'assault');
     capturedCastle = true;
-  } else if (!attackerWon) {
-    for (const id of pending.attackerArmies) {
-      const army = state.armies[id];
-      if (!army) continue;
-      if (armyTroops(army) <= 0) disbandArmy(state, army, null);
-      else retreatArmy(state, army);
+  }
+  /*
+   * 진 쪽은 물러난다. 공성에서 진 공격군과 야전에서 진 쪽을 **한 번만** 처리한다 —
+   * 예전에는 두 갈래가 겹쳐 같은 군대에 후퇴를 두 번 걸었고, 바다에 막혀
+   * 물러나지 못한 군대는 사기를 두 번 깎였다.
+   */
+  const retreating = new Set<string>();
+  if (!attackerWon) for (const id of pending.attackerArmies) retreating.add(id);
+  if (!pending.siege) {
+    for (const id of attackerWon ? pending.defenderArmies : pending.attackerArmies) {
+      retreating.add(id);
     }
   }
-  if (!pending.siege) {
-    const losers = attackerWon ? pending.defenderArmies : pending.attackerArmies;
-    for (const id of losers) {
-      const army = state.armies[id];
-      if (!army) continue;
-      if (armyTroops(army) <= 0) disbandArmy(state, army, null);
-      else retreatArmy(state, army);
-    }
+  for (const id of retreating) {
+    const army = state.armies[id];
+    if (!army) continue;
+    if (armyTroops(army) <= 0) disbandArmy(state, army, null);
+    else retreatArmy(state, army);
   }
 
   const summary: BattleSummary = {

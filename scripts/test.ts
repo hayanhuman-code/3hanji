@@ -34,7 +34,7 @@ import { TIER_CAP } from '../src/core/field/balance';
 import { applyDomesticCommand, validateCommand } from '../src/core/domestic';
 import { createField } from '../src/core/field/setup';
 import { createSiegeState, insideWall, insideWallGrid, isEncircled } from '../src/core/field/siege';
-import { runToEnd, step, unitDefense, unitPower } from '../src/core/field/sim';
+import { runToEnd, step, summarizeUnits, unitDefense, unitPower } from '../src/core/field/sim';
 import { findFieldPath } from '../src/core/field/pathfind';
 import type { FieldEntry, FieldSetup, Row } from '../src/core/field/types';
 import type { PendingBattle } from '../src/core/types';
@@ -1289,6 +1289,288 @@ test('세력색이 factions.json 과 일치한다', () => {
   }
 });
 
+
+
+/* ================================================================== *
+ * 생존 병력의 소속 (R01)
+ *
+ * 전투가 끝나면 살아남은 병력은 **원래 있던 자리로** 돌아가야 한다.
+ * 예전에는 생존 병력을 장수 식별자로만 돌려주어, 지휘관 없는 수비대의
+ * 병력이 합산에서 통째로 빠졌다 — 장수가 없는 성은 수비에 **이기고도**
+ * 병력이 0이 되어 다음 턴에 무혈 함락됐다.
+ * ================================================================== */
+
+section('생존 병력의 소속 (R01)');
+
+/** 그 성을 치는 공격군 하나를 손으로 세운다 (시드 고정이라 결과가 같다) */
+function attackingArmy(
+  s: ReturnType<typeof createGame>,
+  id: string,
+  from: string,
+  target: string,
+  officers: string[],
+  troops: number
+): void {
+  for (const oid of officers) {
+    const o = s.officers[oid];
+    o.location = null;
+    o.armyId = id;
+    const home = Object.values(s.castles).find((c) => c.officers.includes(oid));
+    if (home) home.officers = home.officers.filter((x) => x !== oid);
+  }
+  s.armies[id] = {
+    id,
+    faction: s.officers[officers[0]].faction!,
+    commander: officers[0],
+    officers,
+    units: [{ unitType: 'infantry', count: troops }],
+    location: from,
+    path: [target],
+    target,
+    grain: 2000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+}
+
+function siegePending(
+  id: string,
+  castle: string,
+  attacker: string,
+  defender: string,
+  armies: string[]
+): PendingBattle {
+  return {
+    id,
+    castle,
+    attacker,
+    defender,
+    attackerArmies: armies,
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  };
+}
+
+test('장수가 없는 성도 수비에 이기면 병력이 남는다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 51 });
+  const castle = s.castles['nampyeong'];
+  assertEqual(castle.officers.length, 0, '이 시험은 장수 없는 성을 전제로 합니다');
+  const before = castle.troops;
+  attackingArmy(s, 'a1', 'gugwon', 'nampyeong', ['bipam'], 1500);
+  const pending = siegePending('b1', 'nampyeong', 'silla', 'goguryeo', ['a1']);
+  const result = resolveFieldAuto(s, pending)!;
+  assert(result !== null, '전투가 성립하지 않았습니다');
+  assertEqual(result.winner, 'defender', '이 픽스처는 수비 승리를 전제로 합니다');
+  applyFieldResult(s, pending, result, new RngCursor(7));
+
+  assert(castle.troops > 0, '수비에 이겼는데 성이 비었습니다');
+  const survived = result.survivors
+    .filter((x) => x.side === 'defender')
+    .reduce((a, x) => a + x.troops, 0);
+  const fielded = result.fielded
+    .filter((x) => x.side === 'defender')
+    .reduce((a, x) => a + x.troops, 0);
+  assertEqual(castle.troops, survived + (before - fielded), '남은 병력이 규칙과 다릅니다');
+  assert(castle.troops <= before, '싸우고 나서 병력이 늘었습니다');
+  assertEqual(
+    castle.composition.reduce((a, u) => a + u.count, 0),
+    castle.troops,
+    '편성 합계와 병력이 어긋납니다'
+  );
+});
+
+test('장수 하나뿐인 성에서도 무지휘 수비대의 병력이 보존된다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 51 });
+  const castle = s.castles['ansi'];
+  assertEqual(castle.officers.length, 1, '이 시험은 장수 한 명인 성을 전제로 합니다');
+  const before = castle.troops;
+  attackingArmy(s, 'a1', 'gugwon', 'ansi', ['bipam'], 1500);
+  const pending = siegePending('b2', 'ansi', 'silla', 'goguryeo', ['a1']);
+  const result = resolveFieldAuto(s, pending)!;
+  assertEqual(result.winner, 'defender', '이 픽스처는 수비 승리를 전제로 합니다');
+
+  // 판에 선 부대는 장수 하나 것만이 아니다 — 무지휘 수비대가 여럿 있다
+  const unled = result.survivors.filter((x) => x.side === 'defender' && !x.officer);
+  assert(unled.length > 0, '무지휘 수비대가 서지 않았습니다');
+
+  applyFieldResult(s, pending, result, new RngCursor(7));
+  const survived = result.survivors
+    .filter((x) => x.side === 'defender')
+    .reduce((a, x) => a + x.troops, 0);
+  const fielded = result.fielded
+    .filter((x) => x.side === 'defender')
+    .reduce((a, x) => a + x.troops, 0);
+  assertEqual(castle.troops, survived + (before - fielded), '남은 병력이 규칙과 다릅니다');
+  // 장수가 이끈 몫만 남는 옛 버그였다면 무지휘분만큼 모자란다
+  const ledOnly = result.survivors
+    .filter((x) => x.side === 'defender' && x.officer)
+    .reduce((a, x) => a + x.troops, 0);
+  assert(castle.troops > ledOnly, '무지휘 수비대의 병력이 빠졌습니다');
+});
+
+test('여러 군대가 섞여도 군대마다 제 병력을 가지고 돌아간다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 53 });
+  attackingArmy(s, 'a1', 'geumseong', 'daeya', ['alcheon', 'pilbu'], 6000);
+  attackingArmy(s, 'a2', 'geumseong', 'daeya', ['bipam'], 2500);
+  const pending = siegePending('b3', 'daeya', 'silla', 'baekje', ['a1', 'a2']);
+  const result = resolveFieldAuto(s, pending)!;
+  assert(result !== null, '전투가 성립하지 않았습니다');
+
+  // 편성 단계에서 이미 군대별로 갈려 있어야 한다
+  const setup = buildFieldSetup(s, pending);
+  const originIds = new Set(setup.attacker.map((e) => e.origin?.id));
+  assertEqual(originIds.has('a1'), true, 'a1 의 부대가 없습니다');
+  assertEqual(originIds.has('a2'), true, 'a2 의 부대가 없습니다');
+
+  const before = new Map(
+    ['a1', 'a2'].map((id) => [id, s.armies[id].units.reduce((a, u) => a + u.count, 0)])
+  );
+  const castleBefore = s.castles['daeya'].troops;
+  const homeBefore = s.castles['geumseong'].troops;
+  applyFieldResult(s, pending, result, new RngCursor(7));
+
+  // 출처별로 돌아올 병력을 따로 셈한다
+  const expectOf = (kind: 'army' | 'garrison', id: string, originalTroops: number) => {
+    const survived = result.survivors
+      .filter((x) => x.origin?.kind === kind && x.origin.id === id)
+      .reduce((a, x) => a + x.troops, 0);
+    const fielded = result.fielded
+      .filter((x) => x.origin?.kind === kind && x.origin.id === id)
+      .reduce((a, x) => a + x.troops, 0);
+    return survived + (originalTroops - fielded);
+  };
+
+  let expectedTotal = 0;
+  for (const id of ['a1', 'a2']) {
+    const expected = expectOf('army', id, before.get(id)!);
+    expectedTotal += expected;
+    const army = s.armies[id];
+    if (army) {
+      assertEqual(
+        army.units.reduce((a, u) => a + u.count, 0),
+        expected,
+        `${id} 의 병력이 제 몫과 다릅니다`
+      );
+      expectedTotal -= expected; // 아직 군대에 있으므로 성으로 돌아오지 않았다
+    }
+  }
+  /*
+   * 진 군대는 가장 가까운 아군 성으로 물러나 풀린다. 병력이 사라지는 것이
+   * 아니라 그 성의 주둔군이 된다 — 합이 맞아야 한다.
+   */
+  const homeGain = s.castles['geumseong'].troops - homeBefore;
+  assertEqual(homeGain, expectedTotal, '물러난 군대의 병력이 성에 그대로 들어오지 않았습니다');
+
+  // 수비한 성도 같은 규칙을 따른다
+  if (s.castles['daeya'].owner === 'baekje') {
+    assertEqual(
+      s.castles['daeya'].troops,
+      expectOf('garrison', 'daeya', castleBefore),
+      '수비한 성의 병력이 규칙과 다릅니다'
+    );
+  }
+});
+
+test('포로와 전사자가 성·군대 어디에도 남지 않는다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 54 });
+  attackingArmy(s, 'a1', 'geumseong', 'daeya', ['alcheon', 'pilbu', 'bipam'], 20000);
+  const pending = siegePending('b4', 'daeya', 'silla', 'baekje', ['a1']);
+  const result = resolveFieldAuto(s, pending)!;
+  applyFieldResult(s, pending, result, new RngCursor(7));
+
+  for (const o of Object.values(s.officers)) {
+    if (o.status === 'active') continue;
+    for (const c of Object.values(s.castles)) {
+      assertEqual(c.officers.includes(o.id), false, `${o.id} 가 ${c.id} 에 남아 있습니다`);
+    }
+    for (const a of Object.values(s.armies)) {
+      assertEqual(a.officers.includes(o.id), false, `${o.id} 가 군대에 남아 있습니다`);
+    }
+  }
+  // 같은 인물이 두 곳에 동시에 있지 않다
+  const seen = new Set<string>();
+  for (const c of Object.values(s.castles)) {
+    for (const oid of c.officers) {
+      assertEqual(seen.has(oid), false, `${oid} 가 두 곳에 등록되었습니다`);
+      seen.add(oid);
+    }
+  }
+  for (const a of Object.values(s.armies)) {
+    for (const oid of a.officers) {
+      assertEqual(seen.has(oid), false, `${oid} 가 두 곳에 등록되었습니다`);
+      seen.add(oid);
+    }
+  }
+});
+
+test('무승부에는 포로가 없다 — 제 편을 잡지 않는다', () => {
+  // 무승부는 실제 판으로 만들기 어렵다. 결과 조립 함수를 직접 시험한다.
+  const mk = (id: string, side: 'attacker' | 'defender', dead: boolean) =>
+    ({
+      id,
+      side,
+      officer: id,
+      name: id,
+      troop: 'inf',
+      navy: false,
+      offClass: false,
+      tier: 1,
+      faction: side === 'attacker' ? 'silla' : 'baekje',
+      troops: dead ? 0 : 1000,
+      maxTroops: 1000,
+      morale: 50,
+      fatigue: 0,
+      x: 0,
+      y: 0,
+      row: 'front',
+      reserve: false,
+      stance: 'hold',
+      orderTarget: null,
+      orderPoint: null,
+      target: null,
+      path: [],
+      pathAt: 0,
+      pathGoal: null,
+      pursuing: false,
+      schemeAt: null,
+      exposedUntil: null,
+      origin: null,
+      routed: false,
+      dead,
+      arriveTick: 0,
+    }) as unknown as Parameters<typeof summarizeUnits>[0][number];
+
+  const units = [mk('atk1', 'attacker', true), mk('def1', 'defender', true), mk('def2', 'defender', false)];
+  assertEqual(summarizeUnits(units, null).captured.length, 0, '무승부인데 포로가 생겼습니다');
+  assertEqual(summarizeUnits(units, 'attacker').captured.join(','), 'def1', '진 쪽의 장수만 잡힌다');
+  // 지휘관 없는 부대는 포로가 될 수 없다
+  const unled = [{ ...mk('x', 'defender', true), officer: '' }, mk('atk1', 'attacker', false)];
+  assertEqual(summarizeUnits(unled, 'attacker').captured.length, 0, '빈 식별자가 포로로 잡혔습니다');
+});
+
+test('이끌 사람이 없는 공격군은 성을 얻지 못하고 흩어진다', () => {
+  const s = createGame({
+    scenarioId: 's642',
+    playerFaction: 'silla',
+    spectator: true,
+    options: { autoBattle: true },
+    seed: 55,
+  });
+  attackingArmy(s, 'a1', 'geumseong', 'daeya', ['alcheon'], 6000);
+  // 지휘관을 잃은 군대 — 연초에 인물이 죽으면 이런 상태가 된다
+  s.officers['alcheon'].status = 'dead';
+  s.officers['alcheon'].armyId = null;
+  s.armies['a1'].officers = [];
+  const owner = s.castles['daeya'].owner;
+  s.pendingBattles.push(siegePending('b5', 'daeya', 'silla', 'baekje', ['a1']));
+  s.phase = 'battles';
+  resolveTurn(s);
+
+  assertEqual(s.castles['daeya'].owner, owner, '이끌 사람 없는 군대가 성을 얻었습니다');
+  assertEqual(s.armies['a1'], undefined, '군대가 흩어지지 않았습니다');
+});
 
 /* ================================================================== *
  * 통계와 승리 판정 (R03)

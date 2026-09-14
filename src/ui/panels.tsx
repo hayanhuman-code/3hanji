@@ -708,7 +708,7 @@ export function DiplomacyPanel({ state }: { state: GameState }) {
       <hr className="sep" />
       <div className="faint" style={{ fontSize: 12 }}>
         승리 진행 — 거점 {status.castles}/{status.totalCastles} · 조공국 {status.vassals}/
-        {others.length}
+        {status.rivals}
         <br />
         현재 승리 조건: {state.options.victory === 'hegemony' ? '패권 (타국을 모두 복속)' : '통일 (전 거점 점령)'}
       </div>

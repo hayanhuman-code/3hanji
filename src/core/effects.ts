@@ -13,6 +13,7 @@ import { castleName, factionName, officerName } from './data';
 import { defaultComposition } from './state';
 import {
   addChronicle,
+  addEvent,
   addLog,
   adjustLoyalty,
   adjustResource,
@@ -21,7 +22,7 @@ import {
   getRelation,
 } from './state';
 import type { RngCursor } from './rng';
-import type { FactionId, GameState } from './types';
+import type { CaptureMethod, FactionId, GameState } from './types';
 import { clamp } from './util';
 
 interface ParsedEffect {
@@ -247,14 +248,14 @@ export function applyEffect(
       const castle = state.castles[args[0]];
       if (!castle) return null;
       const to = args[1] === 'none' ? null : args[1];
-      transferCastle(state, castle.id, to);
+      transferCastle(state, castle.id, to, 'event');
       return `${castleName(castle.id)} → ${factionName(to)}`;
     }
 
     case 'take_castle': {
       const castle = state.castles[args[0]];
       if (!castle) return null;
-      transferCastle(state, castle.id, actor);
+      transferCastle(state, castle.id, actor, 'event');
       return `${castleName(castle.id)} 점령`;
     }
 
@@ -316,11 +317,19 @@ export function removeOfficerFromWorld(state: GameState, id: string): void {
   o.armyId = null;
 }
 
-/** 거점의 주인을 바꾸고 주둔 인물을 처리한다. */
+/**
+ * 거점의 주인을 바꾸고 주둔 인물을 처리한다.
+ *
+ * **성이 넘어가는 모든 길이 여기를 지난다** — 전투 함락, 굶주림 항복, 무주공산
+ * 입성, 이벤트, 외세 초토화. 그래서 집계용 사건도 여기서 한 번만 남긴다.
+ * `method` 를 필수 인자로 둔 것은 새 경로가 생겼을 때 라벨을 빠뜨리면
+ * 타입 검사가 잡게 하기 위해서다.
+ */
 export function transferCastle(
   state: GameState,
   castleId: string,
-  to: FactionId | null
+  to: FactionId | null,
+  method: CaptureMethod
 ): { captured: string[] } {
   const castle = state.castles[castleId];
   const captured: string[] = [];
@@ -353,6 +362,8 @@ export function transferCastle(
   castle.composition = [];
   castle.stock = Math.round(castle.stock * 0.3);
 
+  addEvent(state, { kind: 'castle_captured', castle: castleId, from, to, by: to, method });
+
   // 마지막 거점을 잃으면 멸망.
   if (from) {
     const remaining = factionCastles(state, from).length;
@@ -360,6 +371,7 @@ export function transferCastle(
       state.factions[from].alive = false;
       addChronicle(state, `${factionName(from)} 멸망하다.`);
       addLog(state, null, 'system', `${factionName(from)}이(가) 멸망했다.`);
+      addEvent(state, { kind: 'faction_eliminated', faction: from, by: to });
     }
   }
   return { captured };
@@ -399,7 +411,7 @@ function resolveInvasion(
 
     if (attack > defense) {
       fallen.push(c.id);
-      transferCastle(state, c.id, null); // 초토화 후 무주공산
+      transferCastle(state, c.id, null, 'invasion'); // 초토화 후 무주공산
     }
   }
 

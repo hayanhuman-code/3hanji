@@ -10,6 +10,7 @@ import { B, fieldUpkeep, hasSkill, stackPower, winterSeas, type CommanderLike } 
 import { RngCursor } from './rng';
 import {
   addChronicle,
+  addEvent,
   addLog,
   armyTroops,
   atWar,
@@ -27,6 +28,7 @@ import type { FieldResult } from './field/types';
 import type {
   Army,
   BattleSummary,
+  CaptureMethod,
   CastleId,
   FactionId,
   GameState,
@@ -290,7 +292,7 @@ export function resolveMovement(state: GameState, rng: RngCursor): void {
       if (hostileCastle || hostileArmy) break; // 적을 만나면 멈춘다
       if (!castle.owner) {
         // 무주공산은 그냥 접수한다.
-        transferCastle(state, next, army.faction);
+        transferCastle(state, next, army.faction, 'neutral');
         addLog(state, army.faction, 'military', `무주공산이던 ${castleName(next)}에 입성했다.`);
         break;
       }
@@ -447,6 +449,8 @@ function detectBattles(state: GameState, _rng: RngCursor): void {
 
 function shouldBeManual(state: GameState, a: FactionId, b: FactionId): boolean {
   if (state.options.autoBattle) return false;
+  // 관전자 실행에는 맡은 세력이 없다 — 어느 전투도 화면을 기다리지 않는다.
+  if (state.spectator) return false;
   return a === state.playerFaction || b === state.playerFaction;
 }
 
@@ -506,7 +510,7 @@ export function resolveSieges(state: GameState, rng: RngCursor): void {
         state,
         `${castleName(castle.id)}, 병량이 다해 ${factionName(besieger)}에게 항복하다.`
       );
-      captureCastle(state, castle.id, besieger, rng);
+      captureCastle(state, castle.id, besieger, rng, 'starvation');
     }
   }
 }
@@ -624,7 +628,7 @@ export function applyFieldResult(
   // --- 성의 향방 ---
   let capturedCastle = false;
   if (pending.siege && attackerWon) {
-    captureCastle(state, pending.castle, pending.attacker, rng);
+    captureCastle(state, pending.castle, pending.attacker, rng, result.siegeMethod ?? 'assault');
     capturedCastle = true;
   } else if (!attackerWon) {
     for (const id of pending.attackerArmies) {
@@ -657,6 +661,19 @@ export function applyFieldResult(
     capturedOfficers: captured,
     siegeMethod: result.siegeMethod,
   };
+
+  addEvent(state, {
+    kind: 'battle',
+    castle: pending.castle,
+    attacker: pending.attacker,
+    defender: pending.defender,
+    winner: result.winner === null ? null : summary.winner,
+    siege: pending.siege,
+    attackerLoss: result.attackerLoss,
+    defenderLoss: result.defenderLoss,
+    captured: capturedCastle,
+    method: capturedCastle ? result.siegeMethod ?? 'assault' : null,
+  });
 
   const HOW: Record<string, string> = {
     assault: '강공',
@@ -802,9 +819,10 @@ export function captureCastle(
   state: GameState,
   castleId: CastleId,
   to: FactionId,
-  rng: RngCursor
+  rng: RngCursor,
+  method: CaptureMethod
 ): void {
-  const { captured } = transferCastle(state, castleId, to);
+  const { captured } = transferCastle(state, castleId, to, method);
   const castle = state.castles[castleId];
   castle.loyalty = B.conqueredLoyalty;
 

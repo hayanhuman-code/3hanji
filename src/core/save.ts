@@ -28,18 +28,71 @@ export function serialize(state: GameState): string {
   return JSON.stringify(env);
 }
 
+/**
+ * 지원하는 가장 오래된 세이브 형식. 이보다 낮으면 변환 규칙이 없다.
+ */
+export const MIN_SAVE_VERSION = 1;
+
+/**
+ * 구버전 상태를 현재 형식으로 올린다.
+ *
+ * **덧붙이기만 한다.** 값을 고쳐 쓰기 시작하면 「옛 세이브를 열었더니 다른
+ * 게임이 되어 있다」가 되므로, 없는 필드를 채우는 일만 한다.
+ * v2 인 상태는 한 글자도 건드리지 않는다(직렬화 왕복이 동일해야 한다).
+ */
+function migrate(state: GameState, from: number): GameState {
+  if (from < 2) {
+    // v1 에는 구조화 사건과 관전자 플래그가 없었다.
+    state.events = [];
+    state.nextEventId = 1;
+    state.spectator = false;
+    state.version = 2;
+  }
+  return state;
+}
+
+/**
+ * 상태의 꼴이 맞는지 본다.
+ *
+ * 세이브가 깨졌거나 남의 JSON 이어도 예전에는 그대로 GameState 로 간주해
+ * 첫 턴에 알 수 없는 자리에서 터졌다. **틀린 세이브를 정상으로 여기지 않는다.**
+ */
+function isGameStateLike(v: unknown): v is GameState {
+  if (!v || typeof v !== 'object') return false;
+  const s = v as Partial<GameState>;
+  const rec = (x: unknown) => !!x && typeof x === 'object' && !Array.isArray(x);
+  return (
+    typeof s.scenarioId === 'string' &&
+    typeof s.playerFaction === 'string' &&
+    typeof s.turn === 'number' &&
+    typeof s.year === 'number' &&
+    typeof s.rng === 'number' &&
+    rec(s.factions) &&
+    rec(s.castles) &&
+    rec(s.officers) &&
+    rec(s.armies) &&
+    rec(s.relations) &&
+    Array.isArray(s.log) &&
+    Array.isArray(s.chronicle)
+  );
+}
+
 export function deserialize(text: string): GameState {
   const parsed = JSON.parse(text) as SaveEnvelope | GameState;
-  if ('format' in parsed && parsed.format === 'samhanji-save') {
-    if (parsed.version !== STATE_VERSION) {
+  if (parsed && typeof parsed === 'object' && 'format' in parsed && parsed.format === 'samhanji-save') {
+    const version = (parsed as SaveEnvelope).version;
+    if (typeof version !== 'number' || version < MIN_SAVE_VERSION || version > STATE_VERSION) {
       throw new Error(
-        `세이브 버전이 다릅니다. (세이브 v${parsed.version} / 게임 v${STATE_VERSION})`
+        `세이브 버전이 다릅니다. (세이브 v${version} / 게임 v${STATE_VERSION})`
       );
     }
-    return parsed.state;
+    const state = (parsed as SaveEnvelope).state;
+    if (!isGameStateLike(state)) throw new Error('세이브 내용이 손상되었습니다.');
+    return migrate(state, version);
   }
-  // 봉투 없이 상태만 있는 형식도 받아준다.
-  return parsed as GameState;
+  // 봉투 없이 상태만 있는 형식도 받아준다 — 다만 꼴은 확인한다.
+  if (!isGameStateLike(parsed)) throw new Error('세이브 파일이 아닙니다.');
+  return migrate(parsed, typeof parsed.version === 'number' ? parsed.version : 1);
 }
 
 /* ------------------------------- 브라우저 ------------------------------- */

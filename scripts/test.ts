@@ -8,7 +8,12 @@
 import { evaluate, validateCondition } from '../src/core/dsl';
 import { pickAIChoice } from '../src/core/events';
 import { RngCursor, seedFromString } from '../src/core/rng';
-import { createGame, factionCastles, factionTroops } from '../src/core/state';
+import { addLog, createGame, factionCastles, factionTroops, getRelation } from '../src/core/state';
+import { STATE_VERSION } from '../src/core/state';
+import { eventsSince, lastEventId, leadingFaction, summarizeRun } from '../src/core/stats';
+import { checkVictory, victoryStatus } from '../src/core/victory';
+import { transferCastle } from '../src/core/effects';
+import type { CaptureMethod, GameEvent } from '../src/core/types';
 import { deserialize, serialize } from '../src/core/save';
 import { beginNextTurn, completeEvent, resolveTurn } from '../src/core/turn';
 import { findPath } from '../src/core/util';
@@ -36,6 +41,7 @@ import type { PendingBattle } from '../src/core/types';
 import {
   applyFieldResult,
   canPass,
+  captureCastle,
   findMarchPath,
   resolveFieldAuto,
   nearestFriendlyCastle,
@@ -1281,6 +1287,218 @@ test('세력색이 factions.json 과 일치한다', () => {
   for (const f of factions) {
     assertEqual(f.color.toLowerCase(), expect[f.id]?.toLowerCase(), `${f.id} 색이 토큰과 다릅니다`);
   }
+});
+
+
+/* ================================================================== *
+ * 통계와 승리 판정 (R03)
+ *
+ * 여기서 지키려는 것은 **집계를 믿을 수 있는가**다. 화면 로그는 600개에서
+ * 잘리므로 거기서 세면 판이 길어질수록 조용히 틀어진다. 그리고 시간 초과
+ * 우세는 승리가 아니다 — 두 값이 섞이면 승률 조정이 노이즈를 튜닝한다.
+ * ================================================================== */
+
+section('통계와 승리 판정');
+
+test('로그가 600개에서 잘려도 사건 집계는 정확하다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 61 });
+  const before = s.events.length;
+  // 로그를 넘치게 채운다 — 예전 집계는 여기서부터 눈이 멀었다.
+  for (let i = 0; i < 700; i++) addLog(s, null, 'system', `채움 ${i}`);
+  assertEqual(s.log.length, 600, '로그 상한이 600이 아닙니다');
+  const target = factionCastles(s, 'baekje')[0];
+  transferCastle(s, target.id, 'silla', 'event');
+  const events = eventsSince(s, before);
+  assertEqual(events.length, 1, '로그가 잘린 뒤 사건이 기록되지 않았습니다');
+  assertEqual(events[0].kind, 'castle_captured');
+  const sum = summarizeRun(s, ['goguryeo', 'baekje', 'silla']);
+  assertEqual(sum.captures, 1, '함락 집계가 틀렸습니다');
+});
+
+test('함락 경로마다 사건이 남는다 — 전장 밖 경로까지', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 62 });
+  const rng = new RngCursor(3);
+  const owned = factionCastles(s, 'baekje');
+  const methods: CaptureMethod[] = ['starvation', 'no_defender', 'undefended', 'event'];
+  const seen: string[] = [];
+  owned.slice(0, methods.length).forEach((c, i) => {
+    const at = lastEventId(s);
+    captureCastle(s, c.id, 'silla', rng, methods[i]);
+    const made = eventsSince(s, at).filter((e) => e.kind === 'castle_captured');
+    assertEqual(made.length, 1, `${methods[i]} 경로에 사건이 없습니다`);
+    const e = made[0] as Extract<GameEvent, { kind: 'castle_captured' }>;
+    assertEqual(e.method, methods[i], '함락 방식이 다릅니다');
+    assertEqual(e.from, 'baekje', '이전 주인이 다릅니다');
+    assertEqual(e.to, 'silla', '새 주인이 다릅니다');
+    seen.push(e.method);
+  });
+  assertEqual(seen.length, methods.length);
+  // 무주공산 접수는 함락으로 세지 않는다 (from === null)
+  const empty = Object.values(s.castles).find((c) => !c.owner);
+  if (empty) {
+    const at = lastEventId(s);
+    transferCastle(s, empty.id, 'silla', 'neutral');
+    const sum = summarizeRun(s, ['goguryeo', 'baekje', 'silla']);
+    const made = eventsSince(s, at);
+    assertEqual(made.length >= 1, true, '무주공산 입성 사건이 없습니다');
+    assertEqual(sum.captures, methods.length, '무주공산이 함락으로 세어졌습니다');
+  }
+});
+
+test('세력이 멸망하면 사건으로 남는다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 63 });
+  const rng = new RngCursor(4);
+  for (const c of factionCastles(s, 'baekje')) captureCastle(s, c.id, 'silla', rng, 'assault');
+  assertEqual(s.factions.baekje.alive, false, '거점을 다 잃었는데 살아 있습니다');
+  const sum = summarizeRun(s, ['goguryeo', 'baekje', 'silla']);
+  assertEqual(sum.eliminated.includes('baekje'), true, '멸망 사건이 없습니다');
+});
+
+test('관전자 실행에서는 지정 세력이 멸망해도 판이 끝나지 않는다', () => {
+  const s = createGame({
+    scenarioId: 's642',
+    playerFaction: 'baekje',
+    spectator: true,
+    options: { autoBattle: true },
+    seed: 64,
+  });
+  for (const f of Object.values(s.factions)) assertEqual(f.isAI, true, '관전자인데 사람 세력이 있습니다');
+  const rng = new RngCursor(5);
+  for (const c of factionCastles(s, 'baekje')) captureCastle(s, c.id, 'silla', rng, 'assault');
+  checkVictory(s);
+  assertEqual(s.result, null, '관전자인데 지정 세력 멸망으로 판이 끝났습니다');
+
+  // 같은 상황에서 관전자가 아니면 패배 판정이 난다 — 규칙이 사라진 것이 아니다.
+  const p = createGame({ scenarioId: 's642', playerFaction: 'baekje', seed: 64 });
+  const rng2 = new RngCursor(5);
+  for (const c of factionCastles(p, 'baekje')) captureCastle(p, c.id, 'silla', rng2, 'assault');
+  checkVictory(p);
+  assertEqual(p.result?.kind, 'player_defeated', '플레이어 패배 판정이 사라졌습니다');
+});
+
+test('조공은 방향을 본다 — 바치는 쪽을 조공국으로 세지 않는다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 65 });
+  const rel = getRelation(s, 'silla', 'baekje');
+  rel.status = 'tribute';
+  rel.overlord = 'baekje'; // 신라가 백제에 바친다
+  assertEqual(victoryStatus(s, 'silla').vassals, 0, '바치는 관계를 조공국으로 셌습니다');
+  assertEqual(victoryStatus(s, 'baekje').vassals, 1, '받는 쪽의 조공국이 세어지지 않았습니다');
+});
+
+test('승리 진행 표시와 판정이 같은 조건을 쓴다', () => {
+  const s = createGame({
+    scenarioId: 's642',
+    playerFaction: 'silla',
+    options: { victory: 'hegemony' },
+    seed: 66,
+  });
+  for (const other of ['goguryeo', 'baekje']) {
+    const rel = getRelation(s, 'silla', other);
+    rel.status = 'tribute';
+    rel.overlord = 'silla';
+  }
+  const status = victoryStatus(s, 'silla');
+  assertEqual(status.vassals, status.rivals, '모두 복속인데 진행률이 안 찹니다');
+  assertEqual(status.hegemony, 1, '진행률이 1이 아닙니다');
+  checkVictory(s);
+  assertEqual(s.result?.kind, 'hegemony', '진행률은 찼는데 판정이 나지 않았습니다');
+});
+
+test('혼자 남으면 패권이다 — 진행률 1.0 과 판정이 어긋나지 않는다', () => {
+  const s = createGame({
+    scenarioId: 's642',
+    playerFaction: 'silla',
+    spectator: true,
+    options: { victory: 'hegemony' },
+    seed: 67,
+  });
+  const rng = new RngCursor(6);
+  for (const f of ['goguryeo', 'baekje', 'gaya']) {
+    for (const c of factionCastles(s, f)) captureCastle(s, c.id, 'silla', rng, 'assault');
+  }
+  // 통일(전 거점)과 갈라 보기 위해 한 곳은 임자 없이 둔다 —
+  // 예전에는 이 상황이 어느 판정에도 걸리지 않아 제한 턴까지 갔다.
+  transferCastle(s, factionCastles(s, 'silla')[0].id, null, 'invasion');
+  assertEqual(victoryStatus(s, 'silla').hegemony, 1, '혼자 남았는데 진행률이 1이 아닙니다');
+  assert(victoryStatus(s, 'silla').unification < 1, '전 거점을 쥐면 통일 판정이 먼저입니다');
+  checkVictory(s);
+  assertEqual(s.result?.kind, 'last_standing', '혼자 남았는데 판정이 나지 않았습니다');
+  assertEqual(s.result?.winner, 'silla');
+});
+
+test('시간 초과 우세는 승리가 아니고, 동률이면 우세도 없다', () => {
+  assertEqual(leadingFaction({ a: 5, b: 3 }).leader, 'a');
+  assertEqual(leadingFaction({ a: 5, b: 3 }).tie, false);
+  assertEqual(leadingFaction({ a: 4, b: 4 }).leader, null, '동률인데 우세가 잡혔습니다');
+  assertEqual(leadingFaction({ a: 4, b: 4 }).tie, true);
+
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', spectator: true, seed: 68 });
+  const sum = summarizeRun(s, ['goguryeo', 'baekje', 'silla']);
+  assertEqual(sum.outcome, 'timeout', '승리 조건이 없는데 결착으로 잡혔습니다');
+  assertEqual(sum.winner, null, '시간 초과인데 승리자가 있습니다');
+  assert(sum.leader !== null || sum.tie, '우세도 동률도 아닙니다');
+});
+
+/* ================================================================== *
+ * 세이브 형식 (R03)
+ * ================================================================== */
+
+section('세이브 형식과 변환');
+
+test('구버전(v1) 세이브를 읽어 현재 형식으로 올린다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 69 });
+  // v1 세이브를 흉내 낸다 — 사건·관전자 필드가 없던 시절
+  const legacy = JSON.parse(serialize(s)) as { version: number; state: Record<string, unknown> };
+  legacy.version = 1;
+  delete legacy.state.events;
+  delete legacy.state.nextEventId;
+  delete legacy.state.spectator;
+  legacy.state.version = 1;
+
+  const loaded = deserialize(JSON.stringify(legacy));
+  assertEqual(Array.isArray(loaded.events), true, '변환 후 사건 배열이 없습니다');
+  assertEqual(loaded.events.length, 0);
+  assertEqual(loaded.nextEventId, 1);
+  assertEqual(loaded.spectator, false);
+  assertEqual(loaded.version, 2, '버전이 올라가지 않았습니다');
+  // 변환한 상태로 턴을 계속 돌 수 있어야 한다
+  for (const f of Object.values(loaded.factions)) f.isAI = true;
+  loaded.options.autoBattle = true;
+  for (;;) {
+    const step = resolveTurn(loaded);
+    if (step.kind === 'event') completeEvent(loaded, 0);
+    else break;
+  }
+  assert(loaded.turn >= 1, '변환한 세이브로 턴이 돌지 않습니다');
+});
+
+test('알 수 없는 버전과 깨진 세이브는 거절한다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 70 });
+  const env = JSON.parse(serialize(s)) as { version: number };
+  env.version = STATE_VERSION + 1;
+  let threw = false;
+  try {
+    deserialize(JSON.stringify(env));
+  } catch {
+    threw = true;
+  }
+  assertEqual(threw, true, '미래 버전 세이브를 그대로 받았습니다');
+
+  threw = false;
+  try {
+    deserialize(JSON.stringify({ hello: 'world' }));
+  } catch {
+    threw = true;
+  }
+  assertEqual(threw, true, '세이브가 아닌 JSON 을 상태로 받았습니다');
+
+  threw = false;
+  try {
+    deserialize(JSON.stringify({ format: 'samhanji-save', version: 2, state: { turn: 1 } }));
+  } catch {
+    threw = true;
+  }
+  assertEqual(threw, true, '내용이 빠진 세이브를 받았습니다');
 });
 
 /* ================================================================== *

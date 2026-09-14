@@ -19,11 +19,8 @@ import type { FactionId, GameState, OfficerId, PendingBattle, Tier, Troop } from
 import { TROOP_LABEL } from '../types';
 import { battlefield } from './battlefield';
 import { homeRow } from './balance';
-import type { FieldEntry, FieldSetup, Row, Side, UnitOrigin } from './types';
+import type { FieldEntry, FieldSetup, Side, UnitOrigin } from './types';
 import { MAX_UNITS, NO_OFFICER } from './types';
-
-/** 계열이 제자리로 삼는 열 (§4.5). 표는 balance.ts 한 곳에만 둔다 */
-const HOME_ROW = (t: Troop): Row => homeRow(t);
 
 /**
  * 거점 유형별 주둔 수비대 구성 (§3.5).
@@ -90,7 +87,7 @@ function garrisonEntries(castleId: string, troops: number, officers: OfficerId[]
       id: `defender-${castleId}-${out.length}`,
       origin,
       troops: n,
-      row: part.navy ? 'front' : HOME_ROW(part.troop),
+      row: part.navy ? 'front' : homeRow(part.troop),
       reserve: false,
       navy: part.navy,
       troop: part.troop,
@@ -112,7 +109,7 @@ function garrisonEntries(castleId: string, troops: number, officers: OfficerId[]
         id: `defender-${castleId}-${out.length}`,
         origin,
         troops: each,
-        row: HOME_ROW(officerDef(id).troop),
+        row: homeRow(officerDef(id).troop),
         reserve: false,
       });
     }
@@ -247,7 +244,7 @@ function entriesFor(
         id: `${side}-${origin.id}-${id}`,
         origin,
         troops: Math.max(1, shares[i]),
-        row: HOME_ROW(officerDef(id).troop),
+        row: homeRow(officerDef(id).troop),
         reserve: false,
         navy: false,
       });

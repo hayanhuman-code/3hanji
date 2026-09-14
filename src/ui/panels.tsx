@@ -21,6 +21,7 @@ import { B, SKILLS, conscriptCost, loyaltyFactor, maxTroops } from '../core/form
 
 import { armamentCost, stockCap, validateCommand } from '../core/domestic';
 import { OPEN_SEA_PORTS, seaClosed } from '../core/military';
+import { navalPlan } from '../core/naval';
 import { foresightHints } from '../core/events';
 import {
   armyTroops,
@@ -286,6 +287,20 @@ export function CastlePanel({ state, onMarch }: { state: GameState; onMarch: () 
       {castle.composition.length > 0 && (
         <div className="faint" style={{ fontSize: 12 }}>
           {castle.composition.map((u) => `${unitDef(u.unitType).name} ${fmtTroops(u.count)}`).join(' · ')}
+          {/* 배가 있어도 이끌 사람이 없으면 수전을 못 한다 (§3.4) */}
+          {(() => {
+            const navy = navalPlan(castle.composition, castle.officers);
+            if (navy.navyTroops <= 0) return null;
+            return (
+              <>
+                <br />
+                수군{' '}
+                {navy.leaders.length > 0
+                  ? `지휘 ${navy.leaders.map((id) => officerDef(id).name).join('·')}`
+                  : '이끌 사람 없음 — 출진해도 탑승만 가능'}
+              </>
+            );
+          })()}
         </div>
       )}
 

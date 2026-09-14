@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { castleDef, castleName, factionName, officerDef, unitDef } from '../core/data';
 import { B } from '../core/formulas';
 import { findMarchPath, isSeaRoute, needsDeclaration, validateMarch } from '../core/military';
+import { navalPlan } from '../core/naval';
 import { availableOfficersAt } from '../core/state';
 import { victoryLabel } from '../core/victory';
 import type { EventDef, GameState, MarchCommand, TurnReport, UnitStack } from '../core/types';
@@ -92,6 +93,7 @@ export function MarchDialog({
     grain,
     siegeMode: mode,
   };
+  const navy = navalPlan(units, [commander, ...escorts].filter(Boolean));
   const error = target ? validateMarch(state, cmd) : '목적지를 고르십시오.';
   const path = target ? findMarchPath(state, faction, from, target, units) : null;
 
@@ -226,6 +228,19 @@ export function MarchDialog({
               {units.map((u) => `${unitDef(u.unitType).name} ${fmt(u.count)}`).join(' · ') || '없음'}
               <br />
               휴대 병량 {fmt(grain)}섬 (약 5계절분)
+              {/*
+                실어 가는 배와 그 배를 이끌 사람은 다른 조건이다 (§3.4).
+                규칙은 core/naval.ts 한 곳에서 나온다 — 화면이 따로 계산하지 않는다.
+              */}
+              {navy.navyTroops > 0 && (
+                <>
+                  <br />
+                  수군 {fmt(navy.navyTroops)}
+                  {navy.leaders.length > 0
+                    ? ` · 지휘 ${navy.leaders.map((id) => officerDef(id).name).join('·')}`
+                    : ' · 이끌 사람이 없어 탑승만 — 전장에서는 육상으로 싸운다'}
+                </>
+              )}
             </div>
           </div>
 

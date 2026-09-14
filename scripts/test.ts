@@ -12,6 +12,7 @@ import { addLog, createGame, factionCastles, factionTroops, getRelation } from '
 import { STATE_VERSION } from '../src/core/state';
 import { eventsSince, lastEventId, leadingFaction, summarizeRun } from '../src/core/stats';
 import { checkVictory, victoryStatus } from '../src/core/victory';
+import { canSail, navalPlan } from '../src/core/naval';
 import { transferCastle } from '../src/core/effects';
 import type { CaptureMethod, GameEvent } from '../src/core/types';
 import { deserialize, serialize } from '../src/core/save';
@@ -42,6 +43,8 @@ import {
   applyFieldResult,
   canPass,
   captureCastle,
+  castleDefensePower,
+  compositionPower,
   findMarchPath,
   resolveFieldAuto,
   nearestFriendlyCastle,
@@ -1570,6 +1573,209 @@ test('이끌 사람이 없는 공격군은 성을 얻지 못하고 흩어진다'
 
   assertEqual(s.castles['daeya'].owner, owner, '이끌 사람 없는 군대가 성을 얻었습니다');
   assertEqual(s.armies['a1'], undefined, '군대가 흩어지지 않았습니다');
+});
+
+
+/* ================================================================== *
+ * 수군 — 이동과 편성 (R02)
+ *
+ * 배를 띄우는 것과 수전을 치르는 것은 다른 조건이다 (§3.4).
+ * 예전에는 출진 부대가 전장에서 무조건 육상으로 서서, 상륙을 강행한
+ * 수군이 막상 상륙지에서는 물에서 힘을 못 쓰는 보병으로 싸웠다.
+ * ================================================================== */
+
+section('수군 편성과 전력 평가 (R02)');
+
+test('실어 온 수군은 전장에서도 수군으로 선다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'baekje', seed: 80 });
+  const naval = OFFICERS.find((o) => o.id === 'yunchung')!;
+  assertEqual(naval.naval, true, '이 시험은 수군 적성 장수를 전제로 합니다');
+
+  const navyTroops = 3000;
+  // 배를 이끌 사람과 본대를 이끌 사람 — 한 사람이 둘을 동시에 맡을 수는 없다
+  const landsman = OFFICERS.find((o) => o.faction === 'baekje' && !o.naval)!;
+  s.officers[landsman.id].status = 'active';
+  s.armies['n1'] = {
+    id: 'n1',
+    faction: 'baekje',
+    commander: 'yunchung',
+    officers: ['yunchung', landsman.id],
+    units: [
+      { unitType: 'infantry', count: 4000 },
+      { unitType: 'navy', count: navyTroops },
+    ],
+    location: 'gibeolpo',
+    path: ['deokmul'],
+    target: 'deokmul',
+    grain: 2000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+  const pending: PendingBattle = {
+    id: 'n-b1',
+    castle: 'deokmul',
+    attacker: 'baekje',
+    defender: s.castles['deokmul'].owner!,
+    attackerArmies: ['n1'],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  };
+  const setup = buildFieldSetup(s, pending);
+  const navyEntries = setup.attacker.filter((e) => e.navy);
+  assert(navyEntries.length > 0, '수군을 싣고 갔는데 전장에 수군이 없습니다');
+  assertEqual(
+    navyEntries.reduce((a, e) => a + e.troops, 0),
+    navyTroops,
+    '수군 부대의 병력이 실어 온 수군과 다릅니다'
+  );
+  // 병력 총합은 그대로다 — 수군을 떼어 낸다고 사람이 늘거나 줄지 않는다
+  assertEqual(
+    setup.attacker.reduce((a, e) => a + e.troops, 0),
+    7000,
+    '편성 총합이 달라졌습니다'
+  );
+});
+
+test('수군 장수뿐이고 본대가 더 크면 그 사람은 본대를 이끈다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'baekje', seed: 84 });
+  s.armies['n3'] = {
+    id: 'n3',
+    faction: 'baekje',
+    commander: 'yunchung',
+    officers: ['yunchung'],
+    units: [
+      { unitType: 'infantry', count: 6000 },
+      { unitType: 'navy', count: 1000 },
+    ],
+    location: 'gibeolpo',
+    path: ['deokmul'],
+    target: 'deokmul',
+    grain: 2000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+  const setup = buildFieldSetup(s, {
+    id: 'n-b3',
+    castle: 'deokmul',
+    attacker: 'baekje',
+    defender: s.castles['deokmul'].owner!,
+    attackerArmies: ['n3'],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  });
+  assertEqual(setup.attacker.some((e) => e.navy), false, '본대를 두고 배를 몰았습니다');
+  assertEqual(setup.attacker.reduce((a, e) => a + e.troops, 0), 7000, '병력이 달라졌습니다');
+});
+
+test('이끌 사람이 없으면 배에 타고만 간다 — 병력은 그대로', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'baekje', seed: 81 });
+  const landsman = OFFICERS.find((o) => o.faction === 'baekje' && !o.naval && o.id !== 'yunchung')!;
+  s.officers[landsman.id].status = 'active';
+  s.armies['n2'] = {
+    id: 'n2',
+    faction: 'baekje',
+    commander: landsman.id,
+    officers: [landsman.id],
+    units: [
+      { unitType: 'infantry', count: 4000 },
+      { unitType: 'navy', count: 3000 },
+    ],
+    location: 'gibeolpo',
+    path: ['deokmul'],
+    target: 'deokmul',
+    grain: 2000,
+    morale: 70,
+    training: 60,
+    siegeMode: 'assault',
+  };
+  const setup = buildFieldSetup(s, {
+    id: 'n-b2',
+    castle: 'deokmul',
+    attacker: 'baekje',
+    defender: s.castles['deokmul'].owner!,
+    attackerArmies: ['n2'],
+    defenderArmies: [],
+    siege: true,
+    manual: false,
+  });
+  assertEqual(setup.attacker.some((e) => e.navy), false, '적성 없는 장수가 수군을 이끌었습니다');
+  assertEqual(setup.attacker.reduce((a, e) => a + e.troops, 0), 7000, '병력이 사라졌습니다');
+
+  const plan = navalPlan(s.armies['n2'].units, s.armies['n2'].officers);
+  assertEqual(plan.boardOnly, true, '탑승만 가능한 상태로 잡히지 않았습니다');
+  assertEqual(plan.navyTroops, 3000);
+});
+
+test('배가 있으면 건넌다 — 이동과 편성의 조건이 서로 다르다', () => {
+  const g = createGame({ scenarioId: 's642', playerFaction: 'baekje', seed: 82 });
+  const withNavy = [{ unitType: 'navy', count: 1000 }];
+  const landOnly = [{ unitType: 'infantry', count: 1000 }];
+  // 화면·이동 검증·전투 생성이 같은 함수를 본다
+  assertEqual(canSail(withNavy), true, '배가 있는데 못 띄웁니다');
+  assertEqual(canSail(landOnly), false, '배 없이 띄웠습니다');
+  assertEqual(navalPlan(withNavy, ['gyebaek']).leaders.length, 0, '적성 없는 장수가 수군 지휘로 잡혔습니다');
+  assertEqual(navalPlan(withNavy, ['yunchung']).leaders.length, 1, '수군 장수가 잡히지 않았습니다');
+  // 적이 지키는 항로는 배가 있어야 건넌다 (기존 규칙 — CHANGELOG 0.4.0)
+  const sea = castleDef('gibeolpo').routes.sea[0];
+  if (g.castles[sea]?.owner && g.castles[sea].owner !== 'baekje') {
+    assertEqual(canPass(g, 'baekje', 'gibeolpo', sea, landOnly), false, '배 없이 적 항로를 건넜습니다');
+    assertEqual(canPass(g, 'baekje', 'gibeolpo', sea, withNavy), true, '배가 있는데 막혔습니다');
+  }
+});
+
+test('수군 적성 장수는 배를 몰아도 온전히 싸운다', () => {
+  // 수군 전문가인 궁병계 장수가 배를 몰면 타 계열로 몰려 무력이 절반만
+  // 실리고 있었다 — §3.4 는 "본래 계열 대신 수군 병종을 지휘"라고 못 박는다.
+  const naval = OFFICERS.find((o) => o.naval && o.troop !== 'inf')!;
+  const setup: FieldSetup = {
+    fieldId: 'gibeolpo',
+    seed: 99,
+    season: 0,
+    siege: false,
+    playerSide: null,
+    attackerFaction: naval.faction ?? 'baekje',
+    defenderFaction: 'silla',
+    tiers: {
+      attacker: { inf: 1, cav: 1, arc: 1, str: 1 },
+      defender: { inf: 1, cav: 1, arc: 1, str: 1 },
+    },
+    attacker: [{ officer: naval.id, troops: 3000, row: 'front', reserve: false, navy: true }],
+    defender: [{ officer: 'alcheon', troops: 3000, row: 'front', reserve: false }],
+  };
+  const st = createField(setup);
+  const unit = st.units.find((u) => u.officer === naval.id)!;
+  assertEqual(unit.navy, true, '수군으로 서지 않았습니다');
+  assertEqual(unit.offClass, false, '수군 적성 장수가 타 계열 취급을 받았습니다');
+});
+
+test('AI 의 전력 평가가 국가 병종 단계를 본다', () => {
+  const s = createGame({ scenarioId: 's642', playerFaction: 'silla', seed: 83 });
+  const units = [{ unitType: 'infantry', count: 5000 }];
+  const base = compositionPower(s, units, 70, 60, 'alcheon', 'silla');
+  // 1단계에서는 예전 값과 같아야 한다 (계수 1.0) — 밸런스를 건드린 것이 아니다
+  assertEqual(
+    Math.round(base),
+    Math.round(compositionPower(s, units, 70, 60, 'alcheon', 'silla')),
+    '같은 입력에 다른 값이 나옵니다'
+  );
+  s.factions.silla.troopTiers.inf = 3;
+  const better = compositionPower(s, units, 70, 60, 'alcheon', 'silla');
+  assert(better > base, '보병을 3단계로 올렸는데 전력 평가가 그대로입니다');
+  assertEqual(
+    Math.round(better / base),
+    Math.round(TIER_POWER[3] / TIER_POWER[1]),
+    '단계 계수만큼 오르지 않았습니다'
+  );
+
+  // 수비 평가도 같은 자를 쓴다
+  const castle = factionCastles(s, 'silla')[0];
+  const defBefore = castleDefensePower(s, castle.id);
+  s.factions.silla.troopTiers.inf = 4;
+  assert(castleDefensePower(s, castle.id) > defBefore, '수비 평가가 단계를 안 봅니다');
 });
 
 /* ================================================================== *

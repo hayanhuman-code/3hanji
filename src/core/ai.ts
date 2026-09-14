@@ -14,6 +14,7 @@ import { applyDomesticCommand, validateCommand } from './domestic';
 import { applyDiplomacy, validateDiplomacy } from './diplomacy';
 import { B, conscriptCost, maxTroops } from './formulas';
 import { applyMarch, castleDefensePower, compositionPower, validateMarch } from './military';
+import { navalPlan } from './naval';
 import type { RngCursor } from './rng';
 import {
   addLog,
@@ -319,7 +320,7 @@ function aiOffensive(
     if (sending < 1500) continue;
 
     // 방어력과 같은 척도로 공격력을 잰다 — 병력 "수"끼리 비교하면 성벽 보정을 이길 수 없다.
-    const attack = compositionPower(state, units, 70, castle.training, commander.id);
+    const attack = compositionPower(state, units, 70, castle.training, commander.id, faction);
 
     for (const nb of castleDef(castle.id).neighbors) {
       const target = state.castles[nb];
@@ -366,8 +367,17 @@ function aiOffensive(
     if (factionArmies(state, faction).length >= maxArmies) break;
     if (used.has(chosen.from)) continue;
 
+    /*
+     * 수군을 싣고 간다면 그 배를 이끌 사람을 데려간다 (§3.4).
+     * 적성 장수가 없으면 병력은 탑승만 할 뿐 수전을 못 한다.
+     */
+    const needsNavy = navalPlan(chosen.units).navyTroops > 0;
     const escorts = availableOfficersAt(state, chosen.from)
       .filter((o) => o.id !== chosen.commander)
+      .sort((a, b) => {
+        if (!needsNavy) return 0;
+        return Number(officerDef(b.id).naval) - Number(officerDef(a.id).naval);
+      })
       .slice(0, 2)
       .map((o) => o.id);
 

@@ -12,16 +12,18 @@
  */
 
 import { castleDef, officerDef } from '../data';
+import { navalPlan } from '../naval';
 import { seedFromString } from '../rng';
 import { armyTroops } from '../state';
 import type { FactionId, GameState, OfficerId, PendingBattle, Tier, Troop } from '../types';
 import { TROOP_LABEL } from '../types';
 import { battlefield } from './battlefield';
+import { homeRow } from './balance';
 import type { FieldEntry, FieldSetup, Row, Side, UnitOrigin } from './types';
 import { MAX_UNITS, NO_OFFICER } from './types';
 
-/** 계열이 제자리로 삼는 열 (§4.5) */
-const HOME_ROW: Record<Troop, Row> = { inf: 'front', cav: 'mid', arc: 'rear', str: 'rear' };
+/** 계열이 제자리로 삼는 열 (§4.5). 표는 balance.ts 한 곳에만 둔다 */
+const HOME_ROW = (t: Troop): Row => homeRow(t);
 
 /**
  * 거점 유형별 주둔 수비대 구성 (§3.5).
@@ -88,7 +90,7 @@ function garrisonEntries(castleId: string, troops: number, officers: OfficerId[]
       id: `defender-${castleId}-${out.length}`,
       origin,
       troops: n,
-      row: part.navy ? 'front' : HOME_ROW[part.troop],
+      row: part.navy ? 'front' : HOME_ROW(part.troop),
       reserve: false,
       navy: part.navy,
       troop: part.troop,
@@ -110,7 +112,7 @@ function garrisonEntries(castleId: string, troops: number, officers: OfficerId[]
         id: `defender-${castleId}-${out.length}`,
         origin,
         troops: each,
-        row: HOME_ROW[officerDef(id).troop],
+        row: HOME_ROW(officerDef(id).troop),
         reserve: false,
       });
     }
@@ -188,23 +190,73 @@ function entriesFor(
   origin: UnitOrigin,
   officers: OfficerId[],
   total: number,
-  commander?: OfficerId
+  commander?: OfficerId,
+  navy?: { troops: number; leaders: OfficerId[] }
 ): FieldEntry[] {
-  const chosen = pickOfficers(state, officers, commander);
-  if (!chosen.length) return [];
-  const shares = splitTroops(total, chosen, commander);
-  return chosen.map((id, i) => {
-    const def = officerDef(id);
-    return {
-      officer: id,
-      id: `${side}-${origin.id}-${id}`,
-      origin,
-      troops: Math.max(1, shares[i]),
-      row: HOME_ROW[def.troop],
-      reserve: false,
-      navy: false,
-    };
-  });
+  const out: FieldEntry[] = [];
+  let landTotal = total;
+
+  /*
+   * 실어 온 수군은 수군으로 선다 (§3.4).
+   *
+   * 예전에는 출진 부대가 무조건 육상이어서, 배로 상륙을 강행한 군대가
+   * 상륙지에서는 물에서 힘을 못 쓰는 보병으로 싸웠다. 이끌 `naval` 장수가
+   * 없으면 탑승만 한 것이므로 그대로 육상 부대가 된다.
+   */
+  if (navy && navy.troops > 0 && navy.leaders.length > 0) {
+    /*
+     * 장수가 모자라면 큰 쪽을 먼저 세운다. 부대는 장수를 통해서만 존재하므로,
+     * 한 사람이 배와 뭍을 동시에 이끌 수는 없다. 수군 장수 하나뿐인 군대가
+     * 보병을 더 많이 싣고 왔다면 그 사람은 본대를 이끌고, 배는 탑승으로 남는다.
+     */
+    const landTroops = total - navy.troops;
+    const spare = officers.length - navy.leaders.length;
+    const maxLeaders =
+      landTroops > 0 && spare <= 0
+        ? navy.troops >= landTroops
+          ? navy.leaders.length
+          : 0
+        : navy.leaders.length;
+    const leaders = navy.leaders.slice(0, Math.min(maxLeaders, MAX_UNITS));
+    const shares = splitTroops(Math.min(navy.troops, total), leaders, commander);
+    leaders.forEach((id, i) => {
+      const n = Math.max(1, shares[i]);
+      landTotal -= n;
+      out.push({
+        officer: id,
+        id: `${side}-${origin.id}-${id}-navy`,
+        origin,
+        troops: n,
+        // 수군은 물에서 앞장선다. 항구 수비대와 같은 자리다.
+        row: 'front',
+        reserve: false,
+        navy: true,
+        troop: officerDef(id).troop,
+      });
+    });
+  }
+
+  const used = new Set(out.map((e) => e.officer));
+  const rest = officers.filter((id) => !used.has(id));
+  if (landTotal > 0 && rest.length > 0) {
+    const chosen = pickOfficers(state, rest, used.has(commander ?? '') ? undefined : commander);
+    const shares = splitTroops(landTotal, chosen, commander);
+    chosen.forEach((id, i) => {
+      out.push({
+        officer: id,
+        id: `${side}-${origin.id}-${id}`,
+        origin,
+        troops: Math.max(1, shares[i]),
+        row: HOME_ROW(officerDef(id).troop),
+        reserve: false,
+        navy: false,
+      });
+    });
+  } else if (landTotal > 0 && out.length > 0) {
+    // 육상을 이끌 사람이 남지 않았다 — 남은 병력은 수군 부대가 함께 싣는다
+    out[0].troops += landTotal;
+  }
+  return out;
 }
 
 /** 이 전투에 참여하는 군대들의 편성 (군대별로 나눠서 짠다) */
@@ -213,6 +265,8 @@ function armyEntries(state: GameState, side: Side, armyIds: readonly string[]): 
   for (const aid of armyIds) {
     const army = state.armies[aid];
     if (!army) continue;
+    const active = army.officers.filter((id) => state.officers[id]?.status === 'active');
+    const plan = navalPlan(army.units, active);
     out.push(
       ...entriesFor(
         state,
@@ -220,7 +274,8 @@ function armyEntries(state: GameState, side: Side, armyIds: readonly string[]): 
         { kind: 'army', id: aid },
         army.officers,
         armyTroops(army),
-        army.commander
+        army.commander,
+        { troops: plan.navyTroops, leaders: plan.leaders }
       )
     );
   }

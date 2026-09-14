@@ -68,6 +68,16 @@ export const TIER_CAP: Record<FactionId, Record<Troop, Tier>> = {
  * ② 계열의 성질
  * ------------------------------------------------------------------ */
 
+/**
+ * 계열이 제자리로 삼는 열 (§4.5).
+ *
+ * CLASS 표의 `home` 과 같은 값이다. 세 곳에 베껴 두었던 것을 여기로 모은다 —
+ * 한 곳만 고치면 편성과 화면이 서로 다른 자리를 말하게 된다.
+ */
+export function homeRow(troop: Troop): Row {
+  return CLASS[troop].home;
+}
+
 export interface ClassSpec {
   /** 행군 속도 (m/초). 실제 값을 쓴다 — 보병 4km/h */
   speed: number;

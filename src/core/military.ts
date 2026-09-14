@@ -7,6 +7,8 @@
 
 import { castleDef, castleName, factionName, officerDef, officerName, unitDef } from './data';
 import { B, fieldUpkeep, hasSkill, stackPower, winterSeas, type CommanderLike } from './formulas';
+import { canSail } from './naval';
+import { TIER_POWER } from './field/balance';
 import { RngCursor } from './rng';
 import {
   addChronicle,
@@ -35,6 +37,7 @@ import type {
   MarchCommand,
   PendingBattle,
   Season,
+  Troop,
   UnitStack,
 } from './types';
 import { clamp, findPath, sum } from './util';
@@ -132,9 +135,13 @@ export function seaClosed(a: CastleId, b: CastleId, season: Season): boolean {
   return OPEN_SEA_PORTS.has(a) || OPEN_SEA_PORTS.has(b);
 }
 
-/** 부대에 수군이 섞여 있는가 — 적이 지키는 항구로 배를 댈 수 있는 조건 */
+/**
+ * 부대에 수군이 섞여 있는가 — 적이 지키는 항구로 배를 댈 수 있는 조건.
+ *
+ * 규칙 자체는 naval.ts 가 갖는다. 이동·편성·화면이 같은 답을 보게 하려는 것이다.
+ */
 export function hasNavy(units: readonly UnitStack[] | undefined): boolean {
-  return !!units?.some((u) => u.count > 0 && unitDef(u.unitType).class === 'navy');
+  return canSail(units);
 }
 
 /** 그 거점을 지날 수 있는가 (적이 쥐고 있지 않은가) */
@@ -933,12 +940,57 @@ function reduceArmy(army: Army, lost: number): void {
  * AI·UI 공용 전력 평가
  * ------------------------------------------------------------------ */
 
+/**
+ * 병종 계열 → 국가 병종 단계의 계열.
+ *
+ * 전략의 병종(unitTypes.json)과 전장의 계열(步騎弓策)은 다른 표다. 전장이
+ * 수군에 보병 단계를 쓰므로(setup.ts) 여기서도 같게 둔다. 공성병기는
+ * 국가 단계와 무관하다.
+ */
+function tierTroopOf(unitClass: string): Troop | null {
+  switch (unitClass) {
+    case 'cavalry':
+      return 'cav';
+    case 'archer':
+      return 'arc';
+    case 'infantry':
+    case 'spear':
+    case 'navy':
+      return 'inf';
+    default:
+      return null; // siege
+  }
+}
+
+/**
+ * 국가 병종 단계를 전력 평가에 반영하는 계수.
+ *
+ * **이 게임에서 강해지는 것은 나라다.** 그런데 AI 의 판단은 병종 스택의
+ * 고정 수치만 보고 있어서, 기병을 4단계까지 올려도 「저 성을 칠 수 있는가」의
+ * 답이 한 톨도 달라지지 않았다 — 자기가 한 투자를 자기가 못 보는 셈이다.
+ *
+ * 세력 계수(FACTION_AFFINITY)는 곱하지 않는다. 1단계에서도 ±12% 라
+ * 공격 문턱(aiMinAttackRatio)을 흔들어 밸런스를 건드리게 된다. 단계 계수는
+ * 1단계가 1.0 이므로, 아무도 투자하지 않은 판에서는 예전과 같은 값이 나온다.
+ */
+function tierFactor(state: GameState, faction: FactionId | null, unitClass: string): number {
+  if (!faction) return 1;
+  const troop = tierTroopOf(unitClass);
+  if (!troop) return 1;
+  const tier = state.factions[faction]?.troopTiers?.[troop];
+  return tier ? TIER_POWER[tier] : 1;
+}
+
 export function armyPower(state: GameState, army: Army): number {
   const cmd = toBattleOfficer(state, army.commander);
-  return army.units.reduce(
-    (s, u) => s + stackPower(u.count, unitDef(u.unitType), army.morale, army.training, cmd),
-    0
-  );
+  return army.units.reduce((s, u) => {
+    const def = unitDef(u.unitType);
+    return (
+      s +
+      stackPower(u.count, def, army.morale, army.training, cmd) *
+        tierFactor(state, army.faction, def.class)
+    );
+  }, 0);
 }
 
 /**
@@ -950,13 +1002,17 @@ export function compositionPower(
   units: UnitStack[],
   morale: number,
   training: number,
-  commander?: string
+  commander?: string,
+  faction?: FactionId
 ): number {
   const cmd = commander ? toBattleOfficer(state, commander) : undefined;
-  return units.reduce(
-    (s, u) => s + stackPower(u.count, unitDef(u.unitType), morale, training, cmd),
-    0
-  );
+  const owner = faction ?? (commander ? state.officers[commander]?.faction ?? null : null);
+  return units.reduce((s, u) => {
+    const def = unitDef(u.unitType);
+    return (
+      s + stackPower(u.count, def, morale, training, cmd) * tierFactor(state, owner, def.class)
+    );
+  }, 0);
 }
 
 export function castleDefensePower(state: GameState, castleId: CastleId): number {
@@ -964,10 +1020,14 @@ export function castleDefensePower(state: GameState, castleId: CastleId): number
   const def = castleDef(castleId);
   if (!castle.owner) return 0;
   const best = castle.officers[0] ? toBattleOfficer(state, castle.officers[0]) : undefined;
-  const base = castle.composition.reduce(
-    (s, u) => s + stackPower(u.count, unitDef(u.unitType), 50 + castle.loyalty * 0.4, castle.training, best),
-    0
-  );
+  const base = castle.composition.reduce((s, u) => {
+    const unit = unitDef(u.unitType);
+    return (
+      s +
+      stackPower(u.count, unit, 50 + castle.loyalty * 0.4, castle.training, best) *
+        tierFactor(state, castle.owner, unit.class)
+    );
+  }, 0);
   let wallBonus = 1 + castle.dev.wall / 120;
   const terrainBonus = def.special === 'siege_defense_bonus' ? B.mountainFortressBonus : 1;
   const traits = factionTraits(state, castle.owner);

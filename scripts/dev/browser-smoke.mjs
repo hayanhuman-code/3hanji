@@ -307,7 +307,12 @@ if (PHONE) {
   if (small.length) throw new Error('손가락에 비해 작은 버튼: ' + JSON.stringify(small));
 } else {
   const win = page.locator('.win').first();
-  const head = win.locator('.win-hd');
+  /*
+   * 제목패를 잡는다. 머리 한가운데는 이제 탭이라 끌리지 않는다 — 버튼을 잡고
+   * 창이 끌려오면 그게 버그다(Window.tsx 의 onHeadPointerDown 참조). 사람이
+   * 실제로 잡는 자리인 제목을 집어야 「창을 옮길 수 있는가」를 재는 것이 된다.
+   */
+  const head = win.locator('.win-hd > b');
   const before = await win.boundingBox();
   const hb = await head.boundingBox();
   await page.mouse.move(hb.x + hb.width / 2, hb.y + hb.height / 2);

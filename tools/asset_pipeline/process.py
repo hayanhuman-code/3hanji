@@ -199,7 +199,44 @@ TONE_OVERRIDES: dict[str, dict[str, float]] = {
     # 여울이 다른 타일보다 혼자 밝고 하얗게 튄다. 명도를 한 단계 낮추고
     # 채도를 올려 늪·강과 같은 물빛 계열로 읽히게 한다.
     "tile_ford": {"saturation": 1.05, "brightness": -44},
+    # 초지는 전장의 8할을 덮는다. 바탕이 튀면 나머지를 아무리 맞춰도
+    # 화면 전체가 초록으로 읽히므로 한지 쪽으로 한 단계 더 당긴다.
+    "tile_grass": {"hanji": 0.74},
+    "tile_hill": {"hanji": 0.68},
 }
+
+# [타일·무대오브젝트] 한지 톤 매핑 — 전장을 전략맵과 같은 팔레트로 묶는다.
+#
+# 채도·대비만 낮추면 「채도 낮은 픽셀아트」가 될 뿐이고, 한지와 먹으로 그린
+# 전략맵과 나란히 놓으면 여전히 다른 게임의 화면으로 읽힌다.
+# docs/design-tokens.md §6.3-1 이 초상화·CG 에 요구하는 「팔레트로 톤 매핑」을
+# 지형에도 똑같이 건다. 원칙 ① — 완성도는 개별 품질이 아니라 일관성에서 나온다.
+#
+# 방식: 픽셀 밝기로 먹(어두운 끝) ↔ 지(밝은 끝) 듀오톤 램프를 만들고 원본과 섞는다.
+#       1.0 이면 완전 흑백이라 숲과 강이 구분되지 않는다. 절반쯤 섞어
+#       「고유색은 남기되 바탕은 같은 종이」로 만든다.
+HANJI_MIX = 0.62
+HANJI_INK = (0x24, 0x1F, 0x1A)    # --meok
+HANJI_PAPER = (0xDD, 0xD0, 0xB2)  # --ji
+HANJI_WATER = (0xB9, 0xC3, 0xBC)  # --hae
+# 밝은 끝을 지(紙)가 아닌 색으로 바꿀 타일. 전략맵에서 물이 --hae 이므로
+# 전장의 물도 같은 색으로 간다 — 두 화면에서 강이 같은 색이어야 같은 강이다.
+HANJI_PAPER_OVERRIDES: dict[str, tuple[int, int, int]] = {
+    "tile_river": HANJI_WATER,
+    "tile_ford": HANJI_WATER,
+    "tile_swamp": HANJI_WATER,
+    "tile_bridge": HANJI_PAPER,
+}
+
+# 무대(舞臺)에 속하는 오브젝트 — 성벽·성문·망루·나무·바위.
+# 지형과 같은 후처리를 받아야 성이 전장 위에 「붙어」 보인다.
+# 유닛(unit_*)과 발사체는 주인공이므로 손대지 않는다 — 위계는 그렇게 생긴다.
+STAGE_OBJECTS = (
+    "obj_wall_h", "obj_wall_v", "obj_wall_corner",
+    "obj_gate", "obj_tower", "obj_pine", "obj_rock",
+)
+# 오브젝트는 타일보다 약하게 건다. 성벽까지 종이색이 되면 윤곽이 사라진다.
+STAGE_OBJECT_TONE = {"saturation": 0.78, "contrast": 0.78, "brightness": 0, "hanji": 0.40}
 
 # 미리보기 확대 배율
 PREVIEW_SCALE = 4
@@ -332,6 +369,21 @@ def process_wall_piece(im: Image.Image, stem: str, size: tuple[int, int]) -> Ima
     return canvas
 
 
+def hanji_tone_map(a: np.ndarray, stem: str = "", mix: float = HANJI_MIX) -> np.ndarray:
+    """먹↔지 듀오톤 램프와 섞어 전략맵과 같은 팔레트로 끌어온다.
+
+    `a` 는 0~255 범위의 float RGB 배열이다. 밝은 끝은 기본이 지(紙)이고,
+    물 계열 타일만 HANJI_PAPER_OVERRIDES 로 바다색(--hae)을 쓴다.
+    """
+    if mix <= 0:
+        return a
+    paper = np.array(HANJI_PAPER_OVERRIDES.get(stem, HANJI_PAPER), dtype=float)
+    ink = np.array(HANJI_INK, dtype=float)
+    t = np.clip(a @ np.array([0.299, 0.587, 0.114]), 0, 255)[..., None] / 255.0
+    ramp = ink + (paper - ink) * t
+    return a + (ramp - a) * mix
+
+
 def tone_down_tile(im: Image.Image, stem: str = "") -> Image.Image:
     """[타일 전용] 배경화 필터 — 채도·대비를 낮추고 살짝 밝힌다.
 
@@ -339,12 +391,18 @@ def tone_down_tile(im: Image.Image, stem: str = "") -> Image.Image:
     TONE_BLACK_FLOOR 까지 끌어올려 어두운 지형에서도 윤곽이 뜨지 않게 한다.
     타일 하나가 혼자 튀면 TONE_OVERRIDES 에 그 파일만 값을 적어 둔다.
     """
-    o = TONE_OVERRIDES.get(stem, {})
+    o = dict(TONE_OVERRIDES.get(stem, {}))
+    if stem in STAGE_OBJECTS:
+        o = {**STAGE_OBJECT_TONE, **o}
     saturation = o.get("saturation", TONE_SATURATION)
     contrast = o.get("contrast", TONE_CONTRAST)
     brightness = o.get("brightness", TONE_BRIGHTNESS)
     black_floor = o.get("black_floor", TONE_BLACK_FLOOR)
+    hanji = o.get("hanji", HANJI_MIX)
 
+    # 오브젝트는 투명 배경을 가진다. 알파를 떼어 두었다가 그대로 되돌린다 —
+    # 톤 매핑이 투명 픽셀의 RGB 를 건드려도 알파가 살아 있으면 보이지 않는다.
+    alpha = im.getchannel("A") if im.mode in ("RGBA", "LA") else None
     a = np.array(im.convert("RGB")).astype(float)
     luma = a @ np.array([0.299, 0.587, 0.114])
     # 채도: 픽셀을 자기 밝기(회색)와 섞는다
@@ -357,15 +415,24 @@ def tone_down_tile(im: Image.Image, stem: str = "") -> Image.Image:
     luma2 = a @ np.array([0.299, 0.587, 0.114])
     lift = np.clip(black_floor - luma2, 0, None)
     a = a + lift[..., None]
-    return Image.fromarray(np.clip(a, 0, 255).astype("uint8"), "RGB")
+    # 한지 톤 매핑 — 마지막에 건다. 앞 단계가 무엇을 했든 결과가 같은 종이 위에 놓인다.
+    a = hanji_tone_map(a, stem, hanji)
+    out = Image.fromarray(np.clip(a, 0, 255).astype("uint8"), "RGB")
+    if alpha is not None:
+        out = out.convert("RGBA")
+        out.putalpha(alpha)
+    return out
 
 
 def run_tone_down() -> list[dict]:
-    """processed/tile_*.png 전체에 배경화 필터를 걸어 processed/toned/ 에 출력."""
+    """processed/ 의 타일과 무대 오브젝트에 배경화 필터를 걸어 toned/ 에 출력."""
     toned_dir = OUT_DIR / "toned"
     toned_dir.mkdir(parents=True, exist_ok=True)
     results = []
-    for path in sorted(OUT_DIR.glob("tile_*.png")):
+    targets = sorted(OUT_DIR.glob("tile_*.png"))
+    targets += [p for name in STAGE_OBJECTS
+                if (p := OUT_DIR / f"{name}.png").exists()]
+    for path in targets:
         out = tone_down_tile(Image.open(path), path.stem)
         out_path = toned_dir / path.name
         out.save(out_path)

@@ -135,6 +135,10 @@ export function FieldPlay({
   const mine = state.units.filter((u) => u.side === mySide && !u.dead);
   const theirs = state.units.filter((u) => u.side !== mySide && !u.dead);
   const troopsOf = (list: typeof mine) => Math.round(list.reduce((s, u) => s + u.troops, 0));
+  const attackerUnits = state.units.filter((u) => u.side === 'attacker' && !u.dead);
+  const defenderUnits = state.units.filter((u) => u.side === 'defender' && !u.dead);
+  const moraleOf = (list: typeof mine) =>
+    list.length ? Math.round(list.reduce((s, u) => s + u.morale, 0) / list.length) : 0;
   const hours = Math.floor(state.tick / 3600);
   const mins = Math.floor((state.tick % 3600) / 60);
   const atk = state.attackerFaction;
@@ -153,19 +157,21 @@ export function FieldPlay({
           <span className="tag num">
             {hours}시간 {String(mins).padStart(2, '0')}분
           </span>
-          <span className="row" style={{ gap: 6 }}>
-            <i className="swatch" style={{ background: `var(--f-${atk})` }} />
-            {factionName(atk)}{' '}
-            <b className="num">
-              {troopsOf(mySide === 'attacker' ? mine : theirs).toLocaleString()}
-            </b>
-            <span className="faint">vs</span>
-            <i className="swatch" style={{ background: `var(--f-${def})` }} />
-            {factionName(def)}{' '}
-            <b className="num">
-              {troopsOf(mySide === 'defender' ? mine : theirs).toLocaleString()}
-            </b>
-          </span>
+          <div className="field-matchup" aria-label="양측 전황">
+            <span className="field-force attacker">
+              <i className="swatch" style={{ background: `var(--f-${atk})` }} />
+              <strong>{factionName(atk)}</strong>
+              <b className="num">{troopsOf(attackerUnits).toLocaleString()}</b>
+              <small>사기 {moraleOf(attackerUnits)}</small>
+            </span>
+            <span className="field-versus">對</span>
+            <span className="field-force defender">
+              <i className="swatch" style={{ background: `var(--f-${def})` }} />
+              <strong>{factionName(def)}</strong>
+              <b className="num">{troopsOf(defenderUnits).toLocaleString()}</b>
+              <small>사기 {moraleOf(defenderUnits)}</small>
+            </span>
+          </div>
         </div>
         <div className="spacer" />
         {/* 폰에서는 이 띠만 옆으로 밀린다 — 머리가 세 줄로 자라 화면을 먹지 않게 */}
@@ -293,7 +299,7 @@ export function FieldPlay({
                 </span>
               </div>
 
-              <div className="row" style={{ gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
+              <div className="battle-order-grid siege-orders">
                 <button
                   className={`btn small${sg.mode === 'assault' ? ' on' : ''}`}
                   title="성문을 친다. 빠르지만 비싸다 — 보병 4단계의 공성병기가 정석이다"
@@ -329,7 +335,7 @@ export function FieldPlay({
                 </button>
               </div>
 
-              <div className="row" style={{ gap: 4, marginTop: 4, flexWrap: 'wrap' }}>
+              <div className="battle-order-grid scheme-orders">
                 {(Object.keys(SIEGE_SCHEMES) as SiegeSchemeId[]).map((id) => {
                   const err = siegeSchemeError(state, sg, id, tiers.str, riverside);
                   return (
@@ -355,7 +361,7 @@ export function FieldPlay({
           {side && (
             <>
               <div className="section-label">전군 태세</div>
-              <div className="row" style={{ flexWrap: 'wrap', gap: 4 }}>
+              <div className="battle-order-grid stance-orders">
                 {(Object.keys(STANCE) as Stance[]).map((s) => (
                   <button
                     key={s}
@@ -370,7 +376,7 @@ export function FieldPlay({
                   </button>
                 ))}
               </div>
-              <div className="row" style={{ gap: 4, marginTop: 6 }}>
+              <div className="battle-order-grid pursuit-orders">
                 <button
                   className="btn small"
                   title="무너진 적을 쫓는다. 섬멸하면 이득이 크지만 진형이 흐트러진다"
@@ -545,3 +551,4 @@ export function FieldPlay({
     </div>
   );
 }
+

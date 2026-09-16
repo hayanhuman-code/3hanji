@@ -366,7 +366,12 @@ export function GameScreen() {
           {openPanel && (
             <Window
               id="panel"
-              title={TABS.find((t) => t.id === panel)?.label ?? '거점'}
+              /*
+               * 창 이름은 탭 이름을 따라가지 않는다. 제목패와 켜진 탭에 같은 글자가
+               * 나란히 서면 둘 중 무엇이 무엇인지 읽히지 않는다. 창은 「정무」라는
+               * 한 자리이고, 그 안에서 탭이 갈린다.
+               */
+              title="정무 政務"
               x={-12}
               y={62}
               width={382}

@@ -155,8 +155,16 @@ export function Window({
   /* --- 데스크톱: 머리를 잡고 끌어 옮긴다 --- */
   const onHeadPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      // 닫기 버튼을 눌렀으면 끌지 않는다.
-      if ((e.target as HTMLElement).closest('.win-x')) return;
+      /*
+       * 조작 요소를 눌렀으면 끌지 않는다.
+       *
+       * 닫기 버튼만 빼 두었더니 머리에 얹힌 탭(거점·인물·외교…)이 통째로 먹통이었다 —
+       * 여기서 preventDefault 와 setPointerCapture 를 걸면 그 뒤로 click 이
+       * 오지 않기 때문이다. 버튼 종류를 하나씩 적는 대신 「조작할 수 있는 것」을
+       * 통으로 비켜 간다. 머리에 무엇을 더 얹어도 저절로 맞는다.
+       */
+      if ((e.target as HTMLElement).closest('.win-x, button, input, select, textarea, a, label'))
+        return;
       e.preventDefault();
       toFront();
       const startX = e.clientX;

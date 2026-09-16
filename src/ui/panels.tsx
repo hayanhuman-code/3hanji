@@ -37,6 +37,7 @@ import { TROOPS, TROOP_LABEL, TROOP_MARK } from '../core/types';
 import { TIER_CAP, TIER_NAME } from '../core/field/balance';
 import type { Command, DevKey, GameState, OfficerState } from '../core/types';
 import { fmt, fmtTroops } from '../core/util';
+import { Portrait } from './Portrait';
 import { useGame } from './store';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -114,7 +115,7 @@ function OfficerChip({
       }}
       onClick={onClick}
     >
-      <div className="portrait">{def.name.slice(0, 1)}</div>
+      <Portrait def={def} dim={officer.acted} />
       <div style={{ minWidth: 0, flex: 1 }}>
         <div className="row between">
           <b>

@@ -65,6 +65,19 @@ table.grid td.n,
   font-style: normal;
 }
 
+
+/* ------------------------------------------------------------------ *
+ * 한지 결(紙紋)
+ *
+ * 문서 §6.3-2 가 초상·CG 에 요구하는 「한지 텍스처 오버레이」를 화면에도 건다.
+ * 그라디언트가 아니라 결이다 — feTurbulence 로 뜬 섬유 무늬를 아주 옅게 깔아
+ * 지(紙)가 인쇄면이 아니라 종이로 읽히게 한다. 96px 로 타일링하므로
+ * 요소가 커져도 무늬가 늘어나지 않는다.
+ * ------------------------------------------------------------------ */
+:root {
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.12 0 0 0 0 0.10 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='96' height='96' filter='url(%23g)' opacity='0.16'/%3E%3C/svg%3E");
+}
+
 /* ------------------------------------------------------------------ *
  * 공통 요소
  * ------------------------------------------------------------------ */
@@ -320,7 +333,9 @@ select.btn {
   gap: 12px;
   padding: calc(6px + var(--safe-t)) calc(12px + var(--safe-r)) 6px calc(12px + var(--safe-l));
   background: var(--ji);
-  border-bottom: var(--edge);
+  background-image: var(--paper-grain);
+  /* 지도와 맞닿는 선이다. 창 테두리와 같은 굵기면 「바」가 아니라 또 하나의 창이 된다. */
+  border-bottom: 3px solid var(--meok);
   flex-wrap: wrap;
   z-index: 10;
 }
@@ -382,9 +397,17 @@ select.btn {
  * 머리를 잡고 옮긴다.
  * ------------------------------------------------------------------ */
 
+/*
+ * 창 — 지도 위에 얹힌 액자(額子).
+ *
+ * 1.5px 테두리 하나로만 두었더니 「떠 있다 만」 것으로 보였다. 고지도의 사주
+ * 테두리처럼 바깥선 안쪽에 가는 선을 한 겹 더 두른다. 그림자는 여전히 오프셋만이고
+ * 모서리도 직각이다 — 문서 §7 을 깨지 않으면서 무게만 얻는다.
+ */
 .win {
   position: fixed;
   background: var(--panel);
+  background-image: var(--paper-grain);
   border: var(--edge);
   box-shadow: var(--lift);
   display: flex;
@@ -392,23 +415,40 @@ select.btn {
   max-height: calc(100vh - 80px);
   max-height: calc(100dvh - 80px);
 }
+/* 안쪽 한 겹. 내용 위에 얹히되 클릭을 가로채지 않는다. */
+.win::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--meok-thin);
+  pointer-events: none;
+}
 .win-hd {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 6px 10px;
-  border-bottom: var(--edge-thin);
+  background: var(--ji-deep);
+  border-bottom: var(--edge);
   cursor: move;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
+/*
+ * 제목패 — 먹 바탕에 지 글자. 창 머리가 「집기의 이름표」로 읽혀야
+ * 그 아래가 내용으로 읽힌다. 캡션 회색으로 흘려 두었을 때는 머리와 본문의
+ * 구분이 서지 않았다.
+ */
 .win-hd b {
   font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 0.28em;
-  color: var(--meok-cap);
+  letter-spacing: 0.24em;
+  color: var(--on-dark);
+  background: var(--meok);
+  padding: 2px 9px 2px 10px;
   white-space: nowrap;
+  flex: none;
 }
 /* 닫기 — 18×18 테두리만 있는 사각 */
 .win-x {
@@ -1188,18 +1228,18 @@ select.btn {
 }
 
 /* 초상화 자리표시자 — 이름 첫 글자. 문서 §6.4 의 3급 방식이다. */
-.officer-chip .portrait {
-  width: 30px;
-  height: 34px;
-  background: var(--ji-deep);
-  border: 1px solid var(--meok);
-  display: grid;
-  place-items: center;
-  font-family: var(--font);
-  font-size: 16px;
-  font-weight: 900;
-  color: var(--meok);
+/*
+ * 초상 — 이름 첫 글자 대신 Portrait.tsx 가 그린 SVG 가 들어간다.
+ * 크기는 컴포넌트가 정하므로 여기서는 자리만 잡는다.
+ */
+.officer-chip .portrait-svg {
   flex: 0 0 auto;
+  display: block;
+  box-shadow: var(--lift);
+}
+/* 행동을 마친 인물은 초상도 함께 물러난다 */
+.portrait-svg.dim {
+  opacity: 0.55;
 }
 .stats {
   display: flex;

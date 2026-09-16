@@ -20,9 +20,11 @@ let n = 0;
 let toned = 0;
 for (const f of readdirSync(SRC)) {
   if (f.startsWith('_') || !f.endsWith('.png')) continue;
-  // 타일은 배경화 톤 다운본(toned/)이 있으면 그쪽을 쓴다 — 지형은 무대다
+  // 톤 다운본(toned/)이 있으면 그쪽을 쓴다 — 지형과 성벽은 무대다.
+  // 무엇이 무대인가는 파이프라인이 정한다(process.py 의 STAGE_OBJECTS). 여기서
+  // 접두사로 다시 판단하면 두 곳이 갈라지므로, 파일이 있는지만 본다.
   const tonedPath = join(SRC, 'toned', f);
-  if (f.startsWith('tile_') && existsSync(tonedPath)) {
+  if (existsSync(tonedPath)) {
     cpSync(tonedPath, join(DST, f));
     toned++;
   } else {

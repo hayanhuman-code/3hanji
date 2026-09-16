@@ -156,6 +156,8 @@ export interface FieldUnit {
   schemeAt: number | null;
   /** 매복에 걸려 있는 동안 — 이 틱까지는 받는 피해가 커진다 */
   exposedUntil: number | null;
+  /** 전략맵의 어느 군대·주둔군에서 왔는가. 단독 시뮬레이터에서는 null */
+  origin: UnitOrigin | null;
   /** 무너져 물러나는 중 */
   routed: boolean;
   dead: boolean;
@@ -177,12 +179,39 @@ export interface FieldLogEntry {
   big?: boolean;
 }
 
+/**
+ * 이 부대가 전략맵의 어디에서 왔는가.
+ *
+ * **장수 식별자만으로는 병력의 주인을 알 수 없다.** 지휘관 없는 수비대는
+ * 식별자가 빈 문자열이라 여럿이 서로 덮어쓰고, 같은 성에서 나온 두 군대도
+ * 구분되지 않는다. 그래서 부대마다 출처를 달아 돌려보낸다.
+ */
+export interface UnitOrigin {
+  kind: 'army' | 'garrison';
+  /** 군대 id 또는 거점 id */
+  id: string;
+}
+
 export interface FieldResult {
   winner: Side | null;
   attackerLoss: number;
   defenderLoss: number;
   /** 살아남아 전략맵으로 돌아갈 부대 */
-  survivors: Array<{ officer: OfficerId; side: Side; troops: number }>;
+  survivors: Array<{
+    unit: string;
+    officer: OfficerId;
+    side: Side;
+    troops: number;
+    origin: UnitOrigin | null;
+  }>;
+  /**
+   * 전장에 **실제로 선** 병력 (출처별 maxTroops 합).
+   *
+   * 편성은 병력 전부를 세우지 않는다 — 구성표의 작은 몫과 나머지는 성에 남는다.
+   * 돌아갈 병력을 「생존분」으로만 잡으면 그 남은 병력이 증발하므로,
+   * 전략맵은 `남은 병력 = 생존 + (원래 − 출전)` 으로 되돌린다.
+   */
+  fielded: Array<{ origin: UnitOrigin | null; side: Side; troops: number }>;
   /** 사로잡힌 장수 */
   captured: OfficerId[];
   ticks: number;
@@ -237,6 +266,10 @@ export interface FieldState {
 /** 한 부대의 편성 지시 */
 export interface FieldEntry {
   officer: OfficerId;
+  /** 부대 식별자. 비워 두면 setup 이 만든다 */
+  id?: string;
+  /** 전략맵에서의 출처. 전투 결과를 되돌릴 때 쓴다 */
+  origin?: UnitOrigin;
   troops: number;
   row: Row;
   reserve: boolean;

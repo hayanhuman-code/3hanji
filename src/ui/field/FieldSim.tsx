@@ -10,7 +10,7 @@
 
 import { useCallback, useState } from 'react';
 import { OFFICERS, factionName } from '../../core/data';
-import { ROW_LABEL, TIER_CAP, TIER_NAME } from '../../core/field/balance';
+import { ROW_LABEL, TIER_CAP, TIER_NAME, homeRow } from '../../core/field/balance';
 import { BATTLEFIELD_IDS, battlefield, fieldSummary } from '../../core/field/battlefield';
 import { createField, validateEntries } from '../../core/field/setup';
 import { runToEnd } from '../../core/field/sim';
@@ -28,9 +28,6 @@ const STATS = new Map(OFFICERS.map((o) => [o.id, o.stats]));
 const statsOf = (id: string) => STATS.get(id) ?? { lead: 40, war: 40, int: 40 };
 const intOf = (id: string) => statsOf(id).int;
 
-/** 그 계열이 제자리로 삼는 열 */
-const HOME_ROW: Record<Troop, Row> = { inf: 'front', cav: 'mid', arc: 'rear', str: 'rear' };
-
 function defaultTiers(): Record<Troop, Tier> {
   return { inf: 2, cav: 2, arc: 2, str: 2 };
 }
@@ -47,7 +44,7 @@ function autoArmy(faction: FactionId, count: number, troops: number): FieldEntry
     )[0];
     if (!o) continue;
     used.add(o.id);
-    out.push({ officer: o.id, troops, row: HOME_ROW[t], reserve: i >= count - 2 && count >= 6 });
+    out.push({ officer: o.id, troops, row: homeRow(t), reserve: i >= count - 2 && count >= 6 });
   }
   return out;
 }
@@ -248,7 +245,7 @@ export function FieldSim() {
                 <div className="entry-list">
                   {list.map((e, i) => {
                     const o = OFFICERS.find((x) => x.id === e.officer)!;
-                    const fit = HOME_ROW[o.troop] === e.row;
+                    const fit = homeRow(o.troop) === e.row;
                     return (
                       <div key={e.officer} className={`entry${e.reserve ? ' reserve' : ''}`}>
                         <b>

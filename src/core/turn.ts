@@ -126,13 +126,29 @@ export function resolveTurn(state: GameState): TurnStep {
       }
       const setup = buildFieldSetup(state, pending);
       if (!fieldPossible(setup)) {
-        // 한쪽에 이끌 사람이 없다 — 부대는 장수를 통해서만 존재하므로 전장이 안 선다
+        /*
+         * 한쪽에 이끌 사람이 없다 — 부대는 장수를 통해서만 존재하므로 전장이 안 선다.
+         * **어느 쪽에 없는지를 갈라야 한다.** 예전에는 둘을 묶어 처리해서,
+         * 연초에 장수를 다 잃은 공격군이 성 앞에 서기만 해도 성이 넘어갔다.
+         */
         const rng = rngOf(state);
-        if (pending.siege) {
-          captureCastle(state, pending.castle, pending.attacker, rng);
-          commit(state, rng);
+        if (setup.attacker.length === 0) {
+          // 이끌 사람이 없는 군대는 싸우지 못하고 흩어진다.
+          for (const id of pending.attackerArmies) {
+            const army = state.armies[id];
+            if (army) disbandArmy(state, army, null);
+          }
+          addLog(
+            state,
+            null,
+            'battle',
+            `${castleName(pending.castle)} 앞의 군대가 이끌 사람을 잃어 흩어졌다.`
+          );
+        } else if (pending.siege) {
+          captureCastle(state, pending.castle, pending.attacker, rng, 'no_defender');
           addLog(state, null, 'battle', `${castleName(pending.castle)}에 맞설 장수가 없었다.`);
         }
+        commit(state, rng);
         state.pendingBattles.shift();
         continue;
       }
@@ -158,7 +174,7 @@ export function resolveTurn(state: GameState): TurnStep {
         state.pendingEvents.shift();
         continue;
       }
-      if (pending.faction === state.playerFaction) {
+      if (!state.spectator && pending.faction === state.playerFaction) {
         return { kind: 'event', pending, def: eventDef(pending.eventId) };
       }
       const rng = rngOf(state);
@@ -185,7 +201,7 @@ function isBattleStillValid(state: GameState, p: PendingBattle): boolean {
     // 수비가 사라졌으면 싸움 없이 성이 넘어간다.
     if (p.siege) {
       const rng = rngOf(state);
-      captureCastle(state, p.castle, p.attacker, rng);
+      captureCastle(state, p.castle, p.attacker, rng, 'undefended');
       commit(state, rng);
       addLog(state, null, 'battle', `${castleName(p.castle)}이(가) 싸움 없이 넘어갔다.`);
     }

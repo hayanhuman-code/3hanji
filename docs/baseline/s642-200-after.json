@@ -1,0 +1,4970 @@
+{
+  "commit": "879e34127866037e7d51ed45db22a23f9992211e",
+  "scenario": "s642",
+  "startYear": 642,
+  "runs": 200,
+  "maxTurns": 160,
+  "historicalEvents": true,
+  "victory": "hegemony",
+  "autoBattle": true,
+  "spectator": true,
+  "seedRule": "0x1000 + i * 7919",
+  "elapsedSec": 1000.5,
+  "selfCheck": "pass",
+  "results": [
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 24,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 15,
+      "captures": 13,
+      "methods": {
+        "assault": 2,
+        "starvation": 7,
+        "scheme": 2,
+        "invasion": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 8,
+      "battles": 2,
+      "captures": 7,
+      "methods": {
+        "starvation": 6,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 28,
+        "baekje": 15
+      },
+      "eliminated": [],
+      "flips": 19,
+      "battles": 6,
+      "captures": 17,
+      "methods": {
+        "assault": 3,
+        "starvation": 9,
+        "invasion": 2,
+        "event": 1,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 25,
+        "baekje": 20
+      },
+      "eliminated": [],
+      "flips": 24,
+      "battles": 19,
+      "captures": 23,
+      "methods": {
+        "encircle": 1,
+        "starvation": 8,
+        "invasion": 2,
+        "scheme": 3,
+        "infiltrate": 4,
+        "assault": 5
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 25,
+        "silla": 33,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 46,
+      "battles": 30,
+      "captures": 44,
+      "methods": {
+        "assault": 14,
+        "starvation": 20,
+        "invasion": 3,
+        "infiltrate": 3,
+        "scheme": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 29,
+      "battles": 23,
+      "captures": 28,
+      "methods": {
+        "infiltrate": 2,
+        "assault": 7,
+        "invasion": 2,
+        "starvation": 14,
+        "scheme": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 3,
+      "captures": 10,
+      "methods": {
+        "starvation": 7,
+        "assault": 1,
+        "infiltrate": 1,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 3,
+      "captures": 10,
+      "methods": {
+        "starvation": 6,
+        "assault": 1,
+        "invasion": 1,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 14,
+      "captures": 12,
+      "methods": {
+        "starvation": 6,
+        "invasion": 1,
+        "event": 1,
+        "infiltrate": 2,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 31,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 5,
+      "captures": 14,
+      "methods": {
+        "starvation": 8,
+        "scheme": 2,
+        "assault": 3,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 36,
+      "battles": 30,
+      "captures": 35,
+      "methods": {
+        "event": 1,
+        "starvation": 15,
+        "infiltrate": 4,
+        "invasion": 2,
+        "assault": 11,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 30,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 26,
+      "battles": 27,
+      "captures": 25,
+      "methods": {
+        "event": 1,
+        "starvation": 13,
+        "assault": 2,
+        "scheme": 6,
+        "invasion": 1,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 15,
+      "captures": 15,
+      "methods": {
+        "infiltrate": 3,
+        "assault": 4,
+        "starvation": 6,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 20,
+        "silla": 39,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 74,
+      "battles": 53,
+      "captures": 72,
+      "methods": {
+        "starvation": 39,
+        "invasion": 3,
+        "infiltrate": 4,
+        "assault": 17,
+        "scheme": 9
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 27,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 19,
+      "battles": 14,
+      "captures": 17,
+      "methods": {
+        "starvation": 7,
+        "infiltrate": 5,
+        "invasion": 2,
+        "scheme": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 29,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 20,
+      "battles": 0,
+      "captures": 19,
+      "methods": {
+        "event": 1,
+        "starvation": 16,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 24,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 31,
+      "battles": 15,
+      "captures": 29,
+      "methods": {
+        "starvation": 14,
+        "scheme": 5,
+        "assault": 6,
+        "invasion": 3,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 3,
+      "captures": 11,
+      "methods": {
+        "starvation": 8,
+        "assault": 2,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 9,
+      "battles": 5,
+      "captures": 8,
+      "methods": {
+        "encircle": 1,
+        "starvation": 3,
+        "assault": 2,
+        "scheme": 1,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 44,
+      "battles": 26,
+      "captures": 44,
+      "methods": {
+        "event": 1,
+        "starvation": 22,
+        "assault": 14,
+        "invasion": 1,
+        "scheme": 5,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 57,
+      "battles": 32,
+      "captures": 55,
+      "methods": {
+        "event": 2,
+        "starvation": 28,
+        "assault": 11,
+        "infiltrate": 6,
+        "invasion": 1,
+        "scheme": 7
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 33,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 49,
+      "captures": 13,
+      "methods": {
+        "assault": 5,
+        "scheme": 5,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 36,
+        "baekje": 12
+      },
+      "eliminated": [],
+      "flips": 45,
+      "battles": 29,
+      "captures": 44,
+      "methods": {
+        "assault": 11,
+        "event": 1,
+        "starvation": 23,
+        "scheme": 6,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 6,
+      "captures": 10,
+      "methods": {
+        "assault": 2,
+        "starvation": 5,
+        "scheme": 1,
+        "invasion": 1,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 54,
+      "battles": 37,
+      "captures": 54,
+      "methods": {
+        "event": 1,
+        "starvation": 33,
+        "infiltrate": 4,
+        "assault": 8,
+        "scheme": 7,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 23,
+      "battles": 16,
+      "captures": 23,
+      "methods": {
+        "infiltrate": 2,
+        "assault": 7,
+        "starvation": 8,
+        "invasion": 1,
+        "scheme": 5
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 30,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 7,
+      "captures": 13,
+      "methods": {
+        "starvation": 4,
+        "assault": 5,
+        "scheme": 1,
+        "invasion": 2,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 7,
+      "captures": 15,
+      "methods": {
+        "starvation": 7,
+        "scheme": 3,
+        "invasion": 3,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 31,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 7,
+      "captures": 17,
+      "methods": {
+        "starvation": 12,
+        "assault": 4,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 25,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 23,
+      "battles": 23,
+      "captures": 22,
+      "methods": {
+        "assault": 6,
+        "starvation": 12,
+        "event": 1,
+        "infiltrate": 1,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 15,
+      "captures": 14,
+      "methods": {
+        "infiltrate": 2,
+        "assault": 4,
+        "invasion": 1,
+        "event": 1,
+        "starvation": 6
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 19,
+      "battles": 20,
+      "captures": 18,
+      "methods": {
+        "infiltrate": 3,
+        "starvation": 4,
+        "scheme": 4,
+        "assault": 6,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 55,
+      "battles": 30,
+      "captures": 53,
+      "methods": {
+        "event": 1,
+        "assault": 12,
+        "starvation": 27,
+        "invasion": 2,
+        "scheme": 8,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 22,
+      "battles": 37,
+      "captures": 20,
+      "methods": {
+        "invasion": 1,
+        "event": 1,
+        "scheme": 2,
+        "assault": 5,
+        "starvation": 8,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 34,
+        "baekje": 14
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 12,
+      "captures": 25,
+      "methods": {
+        "event": 1,
+        "infiltrate": 1,
+        "starvation": 15,
+        "scheme": 4,
+        "invasion": 1,
+        "assault": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 3,
+      "captures": 12,
+      "methods": {
+        "scheme": 3,
+        "invasion": 1,
+        "event": 1,
+        "starvation": 7
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 34,
+        "silla": 26,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 22,
+      "battles": 15,
+      "captures": 21,
+      "methods": {
+        "encircle": 1,
+        "starvation": 10,
+        "assault": 7,
+        "event": 1,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 30,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 2,
+      "captures": 9,
+      "methods": {
+        "starvation": 6,
+        "scheme": 1,
+        "invasion": 1,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 25,
+        "silla": 32,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 9,
+      "battles": 21,
+      "captures": 8,
+      "methods": {
+        "starvation": 4,
+        "invasion": 1,
+        "event": 1,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 9,
+      "battles": 16,
+      "captures": 8,
+      "methods": {
+        "scheme": 1,
+        "assault": 3,
+        "invasion": 1,
+        "starvation": 1,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 24,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 20,
+      "battles": 14,
+      "captures": 19,
+      "methods": {
+        "starvation": 8,
+        "scheme": 5,
+        "assault": 4,
+        "invasion": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 23,
+      "captures": 17,
+      "methods": {
+        "scheme": 5,
+        "assault": 4,
+        "invasion": 1,
+        "starvation": 5,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 9,
+      "captures": 18,
+      "methods": {
+        "starvation": 8,
+        "invasion": 1,
+        "assault": 6,
+        "scheme": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 31,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 3,
+      "battles": 3,
+      "captures": 2,
+      "methods": {
+        "invasion": 1,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 7,
+      "battles": 2,
+      "captures": 6,
+      "methods": {
+        "invasion": 1,
+        "starvation": 4,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 24,
+      "captures": 13,
+      "methods": {
+        "infiltrate": 2,
+        "starvation": 4,
+        "invasion": 3,
+        "assault": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 14
+      },
+      "eliminated": [],
+      "flips": 47,
+      "battles": 36,
+      "captures": 44,
+      "methods": {
+        "starvation": 18,
+        "scheme": 9,
+        "invasion": 2,
+        "event": 1,
+        "infiltrate": 4,
+        "assault": 10
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 11,
+      "captures": 12,
+      "methods": {
+        "starvation": 6,
+        "invasion": 2,
+        "infiltrate": 1,
+        "assault": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 28,
+        "baekje": 20
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 19,
+      "captures": 16,
+      "methods": {
+        "event": 1,
+        "assault": 4,
+        "starvation": 8,
+        "invasion": 2,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 46,
+      "battles": 48,
+      "captures": 45,
+      "methods": {
+        "starvation": 20,
+        "assault": 18,
+        "scheme": 4,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 28,
+        "baekje": 20
+      },
+      "eliminated": [],
+      "flips": 51,
+      "battles": 32,
+      "captures": 50,
+      "methods": {
+        "event": 1,
+        "starvation": 29,
+        "assault": 7,
+        "scheme": 9,
+        "invasion": 2,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 25,
+        "silla": 33,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 44,
+      "battles": 28,
+      "captures": 43,
+      "methods": {
+        "starvation": 21,
+        "invasion": 2,
+        "scheme": 5,
+        "assault": 14,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 24,
+      "captures": 16,
+      "methods": {
+        "assault": 7,
+        "starvation": 8,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 10,
+      "captures": 23,
+      "methods": {
+        "invasion": 2,
+        "starvation": 11,
+        "assault": 7,
+        "infiltrate": 2,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 32,
+      "battles": 29,
+      "captures": 32,
+      "methods": {
+        "starvation": 9,
+        "scheme": 7,
+        "invasion": 1,
+        "assault": 10,
+        "infiltrate": 5
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 42,
+      "battles": 31,
+      "captures": 42,
+      "methods": {
+        "event": 1,
+        "assault": 11,
+        "starvation": 18,
+        "invasion": 1,
+        "infiltrate": 4,
+        "scheme": 7
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 31,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 16,
+      "captures": 12,
+      "methods": {
+        "starvation": 4,
+        "scheme": 4,
+        "invasion": 1,
+        "assault": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 26,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 24,
+      "battles": 15,
+      "captures": 21,
+      "methods": {
+        "starvation": 7,
+        "assault": 7,
+        "invasion": 2,
+        "event": 1,
+        "infiltrate": 3,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 26,
+        "baekje": 22
+      },
+      "eliminated": [],
+      "flips": 45,
+      "battles": 16,
+      "captures": 44,
+      "methods": {
+        "event": 1,
+        "assault": 8,
+        "starvation": 26,
+        "scheme": 6,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 30,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 6,
+      "battles": 3,
+      "captures": 4,
+      "methods": {
+        "invasion": 2,
+        "starvation": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 13,
+      "captures": 17,
+      "methods": {
+        "starvation": 8,
+        "invasion": 1,
+        "assault": 6,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 13,
+      "captures": 14,
+      "methods": {
+        "assault": 4,
+        "starvation": 5,
+        "scheme": 1,
+        "invasion": 3,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 8,
+      "captures": 16,
+      "methods": {
+        "event": 2,
+        "assault": 3,
+        "starvation": 8,
+        "scheme": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 29,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 7,
+      "battles": 4,
+      "captures": 5,
+      "methods": {
+        "starvation": 2,
+        "invasion": 2,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 8,
+      "captures": 12,
+      "methods": {
+        "infiltrate": 3,
+        "starvation": 4,
+        "assault": 2,
+        "invasion": 2,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 30,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 5,
+      "captures": 12,
+      "methods": {
+        "starvation": 6,
+        "assault": 3,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 24,
+        "silla": 34,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 63,
+      "battles": 57,
+      "captures": 62,
+      "methods": {
+        "assault": 15,
+        "starvation": 26,
+        "invasion": 2,
+        "infiltrate": 4,
+        "scheme": 15
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 32,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 50,
+      "battles": 32,
+      "captures": 48,
+      "methods": {
+        "event": 1,
+        "starvation": 30,
+        "scheme": 5,
+        "assault": 6,
+        "invasion": 2,
+        "infiltrate": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 12,
+      "captures": 16,
+      "methods": {
+        "assault": 4,
+        "starvation": 8,
+        "invasion": 2,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 33,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 61,
+      "battles": 42,
+      "captures": 58,
+      "methods": {
+        "starvation": 27,
+        "invasion": 2,
+        "event": 1,
+        "assault": 10,
+        "scheme": 15,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 12,
+      "captures": 9,
+      "methods": {
+        "assault": 1,
+        "starvation": 5,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 5,
+      "captures": 9,
+      "methods": {
+        "starvation": 7,
+        "invasion": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 24,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 9,
+      "battles": 5,
+      "captures": 9,
+      "methods": {
+        "starvation": 4,
+        "invasion": 1,
+        "assault": 2,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 34,
+        "silla": 25,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 27,
+      "captures": 23,
+      "methods": {
+        "starvation": 10,
+        "assault": 7,
+        "invasion": 1,
+        "event": 1,
+        "infiltrate": 3,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 34,
+        "silla": 25,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 6,
+      "captures": 24,
+      "methods": {
+        "starvation": 17,
+        "scheme": 2,
+        "invasion": 1,
+        "assault": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 27,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 9,
+      "captures": 13,
+      "methods": {
+        "starvation": 4,
+        "infiltrate": 2,
+        "invasion": 2,
+        "assault": 2,
+        "scheme": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 27,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 16,
+      "captures": 11,
+      "methods": {
+        "scheme": 2,
+        "assault": 3,
+        "invasion": 1,
+        "event": 1,
+        "starvation": 3,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 31,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 6,
+      "captures": 15,
+      "methods": {
+        "starvation": 9,
+        "assault": 5,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 40,
+      "battles": 28,
+      "captures": 38,
+      "methods": {
+        "event": 1,
+        "assault": 11,
+        "starvation": 19,
+        "invasion": 3,
+        "infiltrate": 3,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 30,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 7,
+      "captures": 11,
+      "methods": {
+        "scheme": 1,
+        "invasion": 1,
+        "starvation": 6,
+        "infiltrate": 1,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 22,
+        "silla": 36,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 50,
+      "battles": 31,
+      "captures": 49,
+      "methods": {
+        "infiltrate": 5,
+        "starvation": 23,
+        "assault": 14,
+        "event": 1,
+        "scheme": 6
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 26,
+      "battles": 16,
+      "captures": 26,
+      "methods": {
+        "event": 1,
+        "assault": 6,
+        "starvation": 14,
+        "invasion": 1,
+        "scheme": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 28,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 20,
+      "battles": 22,
+      "captures": 19,
+      "methods": {
+        "assault": 8,
+        "starvation": 8,
+        "infiltrate": 2,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 42,
+      "battles": 27,
+      "captures": 40,
+      "methods": {
+        "event": 1,
+        "assault": 8,
+        "starvation": 18,
+        "invasion": 3,
+        "scheme": 8,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 42,
+      "battles": 16,
+      "captures": 41,
+      "methods": {
+        "event": 1,
+        "starvation": 23,
+        "scheme": 8,
+        "assault": 6,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 30,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 5,
+      "captures": 10,
+      "methods": {
+        "starvation": 4,
+        "encircle": 1,
+        "scheme": 2,
+        "invasion": 2,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 10,
+      "captures": 11,
+      "methods": {
+        "assault": 6,
+        "starvation": 3,
+        "invasion": 1,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 42,
+      "battles": 34,
+      "captures": 40,
+      "methods": {
+        "infiltrate": 6,
+        "starvation": 15,
+        "invasion": 2,
+        "assault": 13,
+        "scheme": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 34,
+        "silla": 25,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 22,
+      "battles": 29,
+      "captures": 20,
+      "methods": {
+        "starvation": 7,
+        "scheme": 4,
+        "assault": 4,
+        "invasion": 3,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 30,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 3,
+      "captures": 10,
+      "methods": {
+        "starvation": 6,
+        "invasion": 2,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 15,
+      "captures": 16,
+      "methods": {
+        "scheme": 1,
+        "assault": 4,
+        "invasion": 3,
+        "starvation": 7,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 30,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 15,
+      "captures": 13,
+      "methods": {
+        "infiltrate": 2,
+        "starvation": 3,
+        "invasion": 1,
+        "assault": 6,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 25,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 20,
+      "battles": 39,
+      "captures": 18,
+      "methods": {
+        "scheme": 2,
+        "assault": 3,
+        "invasion": 3,
+        "infiltrate": 2,
+        "starvation": 8
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 33,
+      "battles": 26,
+      "captures": 32,
+      "methods": {
+        "event": 1,
+        "starvation": 11,
+        "assault": 12,
+        "invasion": 1,
+        "scheme": 5,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 30,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 12,
+      "captures": 12,
+      "methods": {
+        "assault": 5,
+        "starvation": 3,
+        "scheme": 1,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 7,
+      "battles": 1,
+      "captures": 6,
+      "methods": {
+        "scheme": 1,
+        "invasion": 2,
+        "starvation": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 32,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 12,
+      "captures": 12,
+      "methods": {
+        "starvation": 4,
+        "assault": 6,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 31,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 8,
+      "battles": 2,
+      "captures": 6,
+      "methods": {
+        "starvation": 2,
+        "invasion": 3,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 23,
+      "battles": 11,
+      "captures": 21,
+      "methods": {
+        "assault": 4,
+        "event": 1,
+        "starvation": 9,
+        "invasion": 2,
+        "infiltrate": 1,
+        "scheme": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 21,
+      "battles": 17,
+      "captures": 19,
+      "methods": {
+        "assault": 5,
+        "starvation": 6,
+        "scheme": 6,
+        "invasion": 1,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 2,
+      "captures": 9,
+      "methods": {
+        "starvation": 7,
+        "event": 1,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 13,
+      "captures": 14,
+      "methods": {
+        "assault": 3,
+        "starvation": 7,
+        "invasion": 1,
+        "event": 1,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 3,
+      "captures": 12,
+      "methods": {
+        "starvation": 9,
+        "scheme": 1,
+        "infiltrate": 1,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 30,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 5,
+      "battles": 0,
+      "captures": 4,
+      "methods": {
+        "starvation": 2,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 25,
+        "silla": 33,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 38,
+      "battles": 27,
+      "captures": 37,
+      "methods": {
+        "starvation": 22,
+        "invasion": 2,
+        "scheme": 1,
+        "infiltrate": 2,
+        "assault": 10
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 25,
+        "silla": 34,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 49,
+      "battles": 30,
+      "captures": 47,
+      "methods": {
+        "encircle": 1,
+        "starvation": 23,
+        "scheme": 4,
+        "invasion": 3,
+        "assault": 15,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 35,
+        "silla": 23,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 50,
+      "battles": 36,
+      "captures": 49,
+      "methods": {
+        "starvation": 22,
+        "scheme": 9,
+        "infiltrate": 3,
+        "invasion": 2,
+        "assault": 13
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 31,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 41,
+      "battles": 33,
+      "captures": 39,
+      "methods": {
+        "starvation": 15,
+        "assault": 14,
+        "invasion": 2,
+        "scheme": 7,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 13,
+      "captures": 9,
+      "methods": {
+        "scheme": 1,
+        "assault": 3,
+        "starvation": 2,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 56,
+      "battles": 33,
+      "captures": 55,
+      "methods": {
+        "assault": 13,
+        "event": 1,
+        "starvation": 26,
+        "invasion": 2,
+        "scheme": 9,
+        "infiltrate": 3,
+        "encircle": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 28,
+      "battles": 30,
+      "captures": 26,
+      "methods": {
+        "starvation": 10,
+        "assault": 9,
+        "invasion": 3,
+        "infiltrate": 2,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 11,
+      "captures": 8,
+      "methods": {
+        "scheme": 1,
+        "assault": 2,
+        "invasion": 3,
+        "starvation": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 28,
+        "baekje": 20
+      },
+      "eliminated": [],
+      "flips": 32,
+      "battles": 17,
+      "captures": 31,
+      "methods": {
+        "event": 2,
+        "starvation": 16,
+        "assault": 6,
+        "scheme": 4,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 33,
+      "battles": 15,
+      "captures": 32,
+      "methods": {
+        "infiltrate": 4,
+        "starvation": 19,
+        "scheme": 3,
+        "invasion": 2,
+        "assault": 4
+      }
+    },
+    {
+      "outcome": "victory",
+      "winner": "silla",
+      "kind": "hegemony",
+      "leader": null,
+      "tie": false,
+      "endTurn": 96,
+      "endYear": 666,
+      "finalCastles": {
+        "goguryeo": 16,
+        "silla": 43,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 40,
+      "battles": 27,
+      "captures": 38,
+      "methods": {
+        "scheme": 8,
+        "assault": 8,
+        "infiltrate": 5,
+        "starvation": 14,
+        "invasion": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 19,
+      "battles": 8,
+      "captures": 17,
+      "methods": {
+        "starvation": 8,
+        "scheme": 3,
+        "assault": 2,
+        "invasion": 2,
+        "event": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 10,
+      "captures": 9,
+      "methods": {
+        "starvation": 4,
+        "assault": 2,
+        "scheme": 1,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 10,
+      "captures": 17,
+      "methods": {
+        "starvation": 8,
+        "scheme": 4,
+        "invasion": 2,
+        "infiltrate": 1,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 33,
+      "battles": 11,
+      "captures": 32,
+      "methods": {
+        "event": 1,
+        "starvation": 26,
+        "infiltrate": 2,
+        "invasion": 1,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 45,
+      "battles": 15,
+      "captures": 43,
+      "methods": {
+        "event": 1,
+        "assault": 8,
+        "starvation": 26,
+        "invasion": 2,
+        "scheme": 4,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 10,
+      "captures": 16,
+      "methods": {
+        "assault": 2,
+        "starvation": 8,
+        "scheme": 3,
+        "invasion": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 34,
+        "silla": 24,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 30,
+      "battles": 13,
+      "captures": 28,
+      "methods": {
+        "assault": 6,
+        "starvation": 15,
+        "infiltrate": 3,
+        "invasion": 1,
+        "event": 1,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 35,
+        "baekje": 14
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 5,
+      "captures": 9,
+      "methods": {
+        "invasion": 1,
+        "event": 1,
+        "scheme": 2,
+        "assault": 2,
+        "starvation": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 28,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 53,
+      "battles": 50,
+      "captures": 51,
+      "methods": {
+        "starvation": 26,
+        "invasion": 1,
+        "event": 1,
+        "assault": 10,
+        "scheme": 7,
+        "infiltrate": 6
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 19,
+      "battles": 9,
+      "captures": 18,
+      "methods": {
+        "event": 1,
+        "starvation": 8,
+        "assault": 4,
+        "invasion": 1,
+        "infiltrate": 3,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 20,
+      "captures": 16,
+      "methods": {
+        "infiltrate": 2,
+        "assault": 5,
+        "invasion": 3,
+        "starvation": 6
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 56,
+      "battles": 34,
+      "captures": 55,
+      "methods": {
+        "event": 1,
+        "starvation": 31,
+        "invasion": 2,
+        "scheme": 11,
+        "infiltrate": 2,
+        "assault": 8
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 14,
+      "captures": 12,
+      "methods": {
+        "infiltrate": 1,
+        "starvation": 6,
+        "invasion": 3,
+        "assault": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 43,
+      "battles": 26,
+      "captures": 42,
+      "methods": {
+        "event": 1,
+        "starvation": 22,
+        "assault": 9,
+        "scheme": 9,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 28,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 7,
+      "captures": 12,
+      "methods": {
+        "infiltrate": 1,
+        "starvation": 6,
+        "invasion": 1,
+        "event": 1,
+        "assault": 2,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 24,
+      "battles": 9,
+      "captures": 21,
+      "methods": {
+        "scheme": 4,
+        "starvation": 9,
+        "invasion": 2,
+        "event": 1,
+        "assault": 5
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 20,
+      "battles": 24,
+      "captures": 19,
+      "methods": {
+        "assault": 6,
+        "starvation": 7,
+        "invasion": 1,
+        "event": 1,
+        "infiltrate": 2,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 15,
+      "battles": 10,
+      "captures": 13,
+      "methods": {
+        "assault": 3,
+        "starvation": 4,
+        "scheme": 3,
+        "invasion": 2,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 29,
+        "baekje": 20
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 5,
+      "captures": 9,
+      "methods": {
+        "starvation": 5,
+        "invasion": 2,
+        "scheme": 1,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 29,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 8,
+      "captures": 15,
+      "methods": {
+        "starvation": 6,
+        "scheme": 4,
+        "infiltrate": 2,
+        "invasion": 1,
+        "event": 1,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 28,
+        "baekje": 21
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 15,
+      "captures": 23,
+      "methods": {
+        "starvation": 6,
+        "assault": 7,
+        "scheme": 3,
+        "invasion": 3,
+        "infiltrate": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 28,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 6,
+      "captures": 16,
+      "methods": {
+        "starvation": 10,
+        "assault": 3,
+        "scheme": 1,
+        "invasion": 1,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 26,
+      "captures": 17,
+      "methods": {
+        "scheme": 3,
+        "assault": 7,
+        "invasion": 1,
+        "starvation": 4,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 30,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 6,
+      "battles": 3,
+      "captures": 4,
+      "methods": {
+        "invasion": 1,
+        "event": 1,
+        "starvation": 1,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 28,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 21,
+      "battles": 19,
+      "captures": 20,
+      "methods": {
+        "infiltrate": 2,
+        "starvation": 6,
+        "invasion": 2,
+        "assault": 8,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 13,
+      "captures": 14,
+      "methods": {
+        "assault": 6,
+        "invasion": 2,
+        "infiltrate": 2,
+        "starvation": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 37,
+      "battles": 20,
+      "captures": 36,
+      "methods": {
+        "starvation": 16,
+        "encircle": 1,
+        "scheme": 6,
+        "assault": 10,
+        "invasion": 1,
+        "event": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 31,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 40,
+      "battles": 22,
+      "captures": 38,
+      "methods": {
+        "event": 1,
+        "assault": 10,
+        "starvation": 17,
+        "infiltrate": 4,
+        "scheme": 3,
+        "invasion": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 19,
+        "silla": 38,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 35,
+      "battles": 32,
+      "captures": 34,
+      "methods": {
+        "infiltrate": 2,
+        "assault": 11,
+        "starvation": 11,
+        "invasion": 2,
+        "scheme": 8
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 32,
+        "baekje": 15
+      },
+      "eliminated": [],
+      "flips": 39,
+      "battles": 33,
+      "captures": 37,
+      "methods": {
+        "starvation": 13,
+        "invasion": 2,
+        "event": 1,
+        "scheme": 4,
+        "infiltrate": 5,
+        "assault": 12
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 8,
+      "battles": 1,
+      "captures": 8,
+      "methods": {
+        "starvation": 7,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 34,
+        "baekje": 14
+      },
+      "eliminated": [],
+      "flips": 38,
+      "battles": 21,
+      "captures": 36,
+      "methods": {
+        "event": 1,
+        "starvation": 19,
+        "invasion": 2,
+        "infiltrate": 2,
+        "scheme": 4,
+        "assault": 8
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 32,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 31,
+      "captures": 13,
+      "methods": {
+        "starvation": 4,
+        "scheme": 3,
+        "invasion": 1,
+        "assault": 4,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 29,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 7,
+      "captures": 14,
+      "methods": {
+        "starvation": 6,
+        "invasion": 1,
+        "assault": 7
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 6,
+      "battles": 3,
+      "captures": 5,
+      "methods": {
+        "invasion": 1,
+        "starvation": 3,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 8,
+      "captures": 16,
+      "methods": {
+        "starvation": 9,
+        "invasion": 2,
+        "assault": 4,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 29,
+      "battles": 14,
+      "captures": 28,
+      "methods": {
+        "assault": 9,
+        "event": 1,
+        "starvation": 15,
+        "invasion": 1,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 25,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 5,
+      "captures": 12,
+      "methods": {
+        "assault": 4,
+        "starvation": 7,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 32,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 34,
+      "battles": 26,
+      "captures": 33,
+      "methods": {
+        "event": 2,
+        "assault": 4,
+        "starvation": 18,
+        "scheme": 7,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 32,
+      "battles": 15,
+      "captures": 30,
+      "methods": {
+        "assault": 5,
+        "event": 1,
+        "starvation": 17,
+        "invasion": 3,
+        "scheme": 3,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 1,
+      "captures": 12,
+      "methods": {
+        "starvation": 8,
+        "invasion": 3,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 4,
+      "captures": 10,
+      "methods": {
+        "scheme": 1,
+        "starvation": 6,
+        "invasion": 2,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 39,
+      "battles": 8,
+      "captures": 37,
+      "methods": {
+        "event": 2,
+        "starvation": 26,
+        "scheme": 3,
+        "invasion": 1,
+        "assault": 4,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 5,
+      "captures": 12,
+      "methods": {
+        "starvation": 5,
+        "invasion": 1,
+        "event": 1,
+        "scheme": 1,
+        "assault": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 19,
+        "silla": 40,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 46,
+      "battles": 34,
+      "captures": 43,
+      "methods": {
+        "starvation": 22,
+        "invasion": 2,
+        "event": 1,
+        "scheme": 7,
+        "assault": 9,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 23,
+      "battles": 19,
+      "captures": 21,
+      "methods": {
+        "assault": 11,
+        "starvation": 5,
+        "invasion": 3,
+        "scheme": 1,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 7,
+      "captures": 10,
+      "methods": {
+        "assault": 4,
+        "starvation": 4,
+        "invasion": 1,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": null,
+      "tie": true,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 29,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 23,
+      "captures": 13,
+      "methods": {
+        "scheme": 1,
+        "assault": 2,
+        "invasion": 1,
+        "event": 1,
+        "starvation": 6,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 34,
+        "silla": 25,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 21,
+      "captures": 24,
+      "methods": {
+        "starvation": 14,
+        "assault": 5,
+        "invasion": 1,
+        "scheme": 2,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 9,
+      "battles": 8,
+      "captures": 8,
+      "methods": {
+        "assault": 4,
+        "starvation": 1,
+        "invasion": 1,
+        "event": 1,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 31,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 8,
+      "battles": 6,
+      "captures": 7,
+      "methods": {
+        "starvation": 3,
+        "invasion": 2,
+        "scheme": 1,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 25,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 45,
+      "captures": 17,
+      "methods": {
+        "assault": 4,
+        "invasion": 1,
+        "event": 1,
+        "starvation": 10,
+        "no_defender": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 28,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 45,
+      "battles": 37,
+      "captures": 43,
+      "methods": {
+        "assault": 13,
+        "starvation": 17,
+        "scheme": 8,
+        "invasion": 1,
+        "event": 1,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 34,
+      "battles": 45,
+      "captures": 32,
+      "methods": {
+        "assault": 7,
+        "starvation": 18,
+        "invasion": 1,
+        "event": 1,
+        "infiltrate": 5
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 24,
+      "battles": 23,
+      "captures": 22,
+      "methods": {
+        "assault": 9,
+        "starvation": 8,
+        "invasion": 2,
+        "infiltrate": 1,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 27,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 23,
+      "battles": 18,
+      "captures": 22,
+      "methods": {
+        "infiltrate": 3,
+        "starvation": 11,
+        "invasion": 1,
+        "assault": 4,
+        "scheme": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 8,
+      "battles": 2,
+      "captures": 7,
+      "methods": {
+        "invasion": 2,
+        "starvation": 4,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 10,
+      "battles": 0,
+      "captures": 9,
+      "methods": {
+        "starvation": 7,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 24,
+      "battles": 15,
+      "captures": 23,
+      "methods": {
+        "event": 1,
+        "assault": 4,
+        "starvation": 14,
+        "invasion": 2,
+        "infiltrate": 1,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 36,
+        "baekje": 12
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 6,
+      "captures": 10,
+      "methods": {
+        "starvation": 4,
+        "invasion": 1,
+        "event": 1,
+        "assault": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 53,
+      "battles": 36,
+      "captures": 52,
+      "methods": {
+        "event": 1,
+        "assault": 13,
+        "starvation": 23,
+        "scheme": 11,
+        "invasion": 1,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 30,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 19,
+      "battles": 11,
+      "captures": 19,
+      "methods": {
+        "infiltrate": 1,
+        "starvation": 11,
+        "invasion": 1,
+        "assault": 5,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 34,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 25,
+      "battles": 16,
+      "captures": 24,
+      "methods": {
+        "starvation": 10,
+        "invasion": 2,
+        "assault": 7,
+        "scheme": 3,
+        "infiltrate": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 27,
+        "baekje": 15
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 12,
+      "captures": 14,
+      "methods": {
+        "assault": 4,
+        "starvation": 6,
+        "invasion": 1,
+        "infiltrate": 1,
+        "scheme": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 1,
+      "captures": 12,
+      "methods": {
+        "starvation": 9,
+        "scheme": 1,
+        "invasion": 2
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 2,
+      "captures": 11,
+      "methods": {
+        "assault": 1,
+        "starvation": 7,
+        "invasion": 2,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 27,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 12,
+      "battles": 4,
+      "captures": 10,
+      "methods": {
+        "assault": 1,
+        "starvation": 4,
+        "infiltrate": 1,
+        "invasion": 3,
+        "scheme": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 11,
+      "battles": 6,
+      "captures": 11,
+      "methods": {
+        "starvation": 8,
+        "assault": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 18,
+      "battles": 23,
+      "captures": 15,
+      "methods": {
+        "scheme": 1,
+        "assault": 3,
+        "starvation": 5,
+        "invasion": 2,
+        "event": 1,
+        "infiltrate": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 31,
+        "baekje": 18
+      },
+      "eliminated": [],
+      "flips": 2,
+      "battles": 3,
+      "captures": 2,
+      "methods": {
+        "scheme": 1,
+        "invasion": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 32,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 17,
+      "battles": 15,
+      "captures": 15,
+      "methods": {
+        "starvation": 7,
+        "scheme": 1,
+        "invasion": 3,
+        "assault": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 25,
+        "baekje": 19
+      },
+      "eliminated": [],
+      "flips": 14,
+      "battles": 9,
+      "captures": 12,
+      "methods": {
+        "starvation": 6,
+        "scheme": 2,
+        "assault": 1,
+        "invasion": 3
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 31,
+        "silla": 29,
+        "baekje": 16
+      },
+      "eliminated": [],
+      "flips": 33,
+      "battles": 19,
+      "captures": 31,
+      "methods": {
+        "starvation": 16,
+        "scheme": 2,
+        "assault": 7,
+        "infiltrate": 4,
+        "invasion": 1,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 55,
+      "battles": 22,
+      "captures": 54,
+      "methods": {
+        "event": 1,
+        "starvation": 36,
+        "assault": 7,
+        "invasion": 1,
+        "scheme": 8,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 26,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 18,
+      "captures": 12,
+      "methods": {
+        "assault": 5,
+        "starvation": 4,
+        "invasion": 2,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 19,
+        "silla": 39,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 46,
+      "battles": 30,
+      "captures": 45,
+      "methods": {
+        "starvation": 18,
+        "invasion": 2,
+        "assault": 16,
+        "scheme": 8,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 14
+      },
+      "eliminated": [],
+      "flips": 3,
+      "battles": 6,
+      "captures": 3,
+      "methods": {
+        "scheme": 1,
+        "infiltrate": 1,
+        "assault": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 42,
+      "battles": 32,
+      "captures": 42,
+      "methods": {
+        "starvation": 17,
+        "infiltrate": 3,
+        "assault": 9,
+        "scheme": 13
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 14,
+      "captures": 13,
+      "methods": {
+        "scheme": 3,
+        "assault": 2,
+        "starvation": 5,
+        "invasion": 2,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 34,
+        "baekje": 14
+      },
+      "eliminated": [],
+      "flips": 38,
+      "battles": 14,
+      "captures": 36,
+      "methods": {
+        "assault": 7,
+        "event": 2,
+        "starvation": 21,
+        "infiltrate": 1,
+        "invasion": 1,
+        "scheme": 4
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 30,
+        "silla": 29,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 13,
+      "battles": 5,
+      "captures": 12,
+      "methods": {
+        "starvation": 6,
+        "invasion": 1,
+        "assault": 5
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 32,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 5,
+      "captures": 13,
+      "methods": {
+        "starvation": 6,
+        "assault": 4,
+        "invasion": 2,
+        "event": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 28,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 53,
+      "battles": 33,
+      "captures": 50,
+      "methods": {
+        "event": 2,
+        "starvation": 21,
+        "assault": 10,
+        "infiltrate": 3,
+        "invasion": 2,
+        "scheme": 12
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "goguryeo",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 33,
+        "silla": 26,
+        "baekje": 17
+      },
+      "eliminated": [],
+      "flips": 16,
+      "battles": 17,
+      "captures": 14,
+      "methods": {
+        "invasion": 1,
+        "event": 1,
+        "starvation": 7,
+        "assault": 4,
+        "infiltrate": 1
+      }
+    },
+    {
+      "outcome": "timeout",
+      "winner": null,
+      "kind": "timeout",
+      "leader": "silla",
+      "tie": false,
+      "endTurn": 161,
+      "endYear": 682,
+      "finalCastles": {
+        "goguryeo": 27,
+        "silla": 35,
+        "baekje": 13
+      },
+      "eliminated": [],
+      "flips": 38,
+      "battles": 17,
+      "captures": 38,
+      "methods": {
+        "event": 1,
+        "starvation": 20,
+        "encircle": 1,
+        "invasion": 1,
+        "scheme": 5,
+        "assault": 9,
+        "infiltrate": 1
+      }
+    }
+  ]
+}

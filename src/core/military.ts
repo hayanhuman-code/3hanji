@@ -7,9 +7,12 @@
 
 import { castleDef, castleName, factionName, officerDef, officerName, unitDef } from './data';
 import { B, fieldUpkeep, hasSkill, stackPower, winterSeas, type CommanderLike } from './formulas';
+import { canSail } from './naval';
+import { TIER_POWER } from './field/balance';
 import { RngCursor } from './rng';
 import {
   addChronicle,
+  addEvent,
   addLog,
   armyTroops,
   atWar,
@@ -27,12 +30,14 @@ import type { FieldResult } from './field/types';
 import type {
   Army,
   BattleSummary,
+  CaptureMethod,
   CastleId,
   FactionId,
   GameState,
   MarchCommand,
   PendingBattle,
   Season,
+  Troop,
   UnitStack,
 } from './types';
 import { clamp, findPath, sum } from './util';
@@ -130,9 +135,13 @@ export function seaClosed(a: CastleId, b: CastleId, season: Season): boolean {
   return OPEN_SEA_PORTS.has(a) || OPEN_SEA_PORTS.has(b);
 }
 
-/** 부대에 수군이 섞여 있는가 — 적이 지키는 항구로 배를 댈 수 있는 조건 */
+/**
+ * 부대에 수군이 섞여 있는가 — 적이 지키는 항구로 배를 댈 수 있는 조건.
+ *
+ * 규칙 자체는 naval.ts 가 갖는다. 이동·편성·화면이 같은 답을 보게 하려는 것이다.
+ */
 export function hasNavy(units: readonly UnitStack[] | undefined): boolean {
-  return !!units?.some((u) => u.count > 0 && unitDef(u.unitType).class === 'navy');
+  return canSail(units);
 }
 
 /** 그 거점을 지날 수 있는가 (적이 쥐고 있지 않은가) */
@@ -290,7 +299,7 @@ export function resolveMovement(state: GameState, rng: RngCursor): void {
       if (hostileCastle || hostileArmy) break; // 적을 만나면 멈춘다
       if (!castle.owner) {
         // 무주공산은 그냥 접수한다.
-        transferCastle(state, next, army.faction);
+        transferCastle(state, next, army.faction, 'neutral');
         addLog(state, army.faction, 'military', `무주공산이던 ${castleName(next)}에 입성했다.`);
         break;
       }
@@ -447,6 +456,8 @@ function detectBattles(state: GameState, _rng: RngCursor): void {
 
 function shouldBeManual(state: GameState, a: FactionId, b: FactionId): boolean {
   if (state.options.autoBattle) return false;
+  // 관전자 실행에는 맡은 세력이 없다 — 어느 전투도 화면을 기다리지 않는다.
+  if (state.spectator) return false;
   return a === state.playerFaction || b === state.playerFaction;
 }
 
@@ -506,7 +517,7 @@ export function resolveSieges(state: GameState, rng: RngCursor): void {
         state,
         `${castleName(castle.id)}, 병량이 다해 ${factionName(besieger)}에게 항복하다.`
       );
-      captureCastle(state, castle.id, besieger, rng);
+      captureCastle(state, castle.id, besieger, rng, 'starvation');
     }
   }
 }
@@ -551,18 +562,81 @@ function toBattleOfficer(state: GameState, id: string): CommanderLike & { id: st
  */
 const CAPTURE_DEATH = 0.25;
 
-/** 전장에서 돌아온 병력을 그 군대의 편성에 비례해 되돌린다 */
-function scaleArmies(state: GameState, armyIds: string[], survived: Map<string, number>): void {
+/**
+ * 출처별 병력 장부.
+ *
+ * **장수 식별자로는 병력의 주인을 알 수 없다.** 지휘관 없는 수비대는 식별자가
+ * 빈 문자열이라 여럿이 서로 덮어썼고, 같은 성에서 나온 두 군대도 구분되지
+ * 않았다. 그래서 부대가 달고 나간 출처로 센다.
+ */
+function ledgerOf(result: FieldResult): {
+  survived: Map<string, number>;
+  fielded: Map<string, number>;
+} {
+  const key = (o: { kind: string; id: string } | null) => (o ? `${o.kind}:${o.id}` : '');
+  const survived = new Map<string, number>();
+  const fielded = new Map<string, number>();
+  for (const s of result.survivors) {
+    const k = key(s.origin);
+    survived.set(k, (survived.get(k) ?? 0) + s.troops);
+  }
+  for (const f of result.fielded) {
+    const k = key(f.origin);
+    fielded.set(k, (fielded.get(k) ?? 0) + f.troops);
+  }
+  return { survived, fielded };
+}
+
+/**
+ * 전장에서 돌아올 병력.
+ *
+ * `생존 + (원래 − 출전)` 이다. 편성은 병력 전부를 세우지 않는다 —
+ * 구성표의 작은 몫과 나머지는 성에 남아 있으므로, 그 병력까지 「전사」로
+ * 처리하면 싸우지도 않은 사람이 사라진다.
+ */
+function returning(before: number, survived: number, fielded: number): number {
+  const rear = Math.max(0, before - fielded);
+  return Math.max(0, Math.min(before, Math.round(survived + rear)));
+}
+
+/**
+ * 병종 편성을 주어진 총합에 맞춘다.
+ *
+ * 비율로 줄인 뒤 반올림 오차를 가장 큰 스택에 흡수시킨다 — 그러지 않으면
+ * `troops` 와 `composition` 의 합이 어긋나 검사에 걸린다.
+ */
+function fitComposition(units: UnitStack[], target: number): UnitStack[] {
+  const before = sum(units.map((u) => u.count));
+  if (target <= 0 || before <= 0) return [];
+  const k = target / before;
+  const out = units
+    .map((u) => ({ unitType: u.unitType, count: Math.round(u.count * k) }))
+    .filter((u) => u.count > 0);
+  if (out.length === 0) return [];
+  const diff = target - sum(out.map((u) => u.count));
+  if (diff !== 0) {
+    const biggest = out.reduce((a, b) => (b.count > a.count ? b : a));
+    biggest.count = Math.max(0, biggest.count + diff);
+  }
+  return out.filter((u) => u.count > 0);
+}
+
+/** 전장에서 돌아온 병력을 군대별로 되돌린다 */
+function scaleArmies(
+  state: GameState,
+  armyIds: string[],
+  survived: Map<string, number>,
+  fielded: Map<string, number>
+): void {
   for (const id of armyIds) {
     const army = state.armies[id];
     if (!army) continue;
     const before = armyTroops(army);
-    const after = army.officers.reduce((s, oid) => s + (survived.get(oid) ?? 0), 0);
-    const k = before > 0 ? Math.max(0, Math.min(1, after / before)) : 0;
-    army.units = army.units
-      .map((u) => ({ unitType: u.unitType, count: Math.round(u.count * k) }))
-      .filter((u) => u.count > 0);
+    const key = `army:${id}`;
+    const after = returning(before, survived.get(key) ?? 0, fielded.get(key) ?? 0);
+    army.units = fitComposition(army.units, after);
     // 살아 돌아온 군대의 사기는 얼마나 잃었는지를 따라간다
+    const k = before > 0 ? after / before : 0;
     army.morale = Math.round(Math.max(20, Math.min(90, 25 + k * 60)));
   }
   for (const id of [...armyIds]) {
@@ -575,8 +649,8 @@ function scaleArmies(state: GameState, armyIds: string[], survived: Map<string, 
  * 전장(戰場) 결과를 전략 상태에 반영한다 (전투 v2).
  *
  * 헥스 판의 applyBattleResult 를 대신한다. 다른 점 하나: 생존 병력이
- * 「병종 스택」이 아니라 **장수별 병력**으로 돌아온다. 그래서 어느 군대가
- * 얼마나 남았는지는 그 군대에 속한 장수들의 잔존 병력으로 정해진다.
+ * 「병종 스택」이 아니라 **부대별 병력**으로 돌아온다. 어느 군대·어느 성의
+ * 것이었는지는 부대가 달고 나간 출처가 말해 준다 — 장수 이름이 아니라.
  */
 export function applyFieldResult(
   state: GameState,
@@ -587,20 +661,18 @@ export function applyFieldResult(
   const castle = state.castles[pending.castle];
   const attackerWon = result.winner === 'attacker';
 
-  const survived = new Map<string, number>();
-  for (const s of result.survivors) survived.set(s.officer, s.troops);
+  const { survived, fielded } = ledgerOf(result);
 
-  scaleArmies(state, pending.attackerArmies, survived);
-  scaleArmies(state, pending.defenderArmies, survived);
+  scaleArmies(state, pending.attackerArmies, survived, fielded);
+  scaleArmies(state, pending.defenderArmies, survived, fielded);
 
-  // 공성이면 성에 남아 있던 병력도 줄어든 채로 남는다
+  // 공성이면 성에 남아 있던 병력도 줄어든 채로 남는다.
+  // 지휘관이 있든 없든 주둔군은 국가의 병력이므로 똑같이 셈에 든다 (§3.5).
   if (pending.siege && castle.owner === pending.defender) {
-    const left = castle.officers.reduce((s, oid) => s + (survived.get(oid) ?? 0), 0);
-    const k = castle.troops > 0 ? Math.max(0, Math.min(1, left / castle.troops)) : 0;
-    castle.troops = Math.round(castle.troops * k);
-    castle.composition = castle.composition
-      .map((u) => ({ unitType: u.unitType, count: Math.round(u.count * k) }))
-      .filter((u) => u.count > 0);
+    const key = `garrison:${pending.castle}`;
+    const after = returning(castle.troops, survived.get(key) ?? 0, fielded.get(key) ?? 0);
+    castle.composition = fitComposition(castle.composition, after);
+    castle.troops = after;
   }
 
   // --- 사로잡힌 인물 ---
@@ -624,24 +696,26 @@ export function applyFieldResult(
   // --- 성의 향방 ---
   let capturedCastle = false;
   if (pending.siege && attackerWon) {
-    captureCastle(state, pending.castle, pending.attacker, rng);
+    captureCastle(state, pending.castle, pending.attacker, rng, result.siegeMethod ?? 'assault');
     capturedCastle = true;
-  } else if (!attackerWon) {
-    for (const id of pending.attackerArmies) {
-      const army = state.armies[id];
-      if (!army) continue;
-      if (armyTroops(army) <= 0) disbandArmy(state, army, null);
-      else retreatArmy(state, army);
+  }
+  /*
+   * 진 쪽은 물러난다. 공성에서 진 공격군과 야전에서 진 쪽을 **한 번만** 처리한다 —
+   * 예전에는 두 갈래가 겹쳐 같은 군대에 후퇴를 두 번 걸었고, 바다에 막혀
+   * 물러나지 못한 군대는 사기를 두 번 깎였다.
+   */
+  const retreating = new Set<string>();
+  if (!attackerWon) for (const id of pending.attackerArmies) retreating.add(id);
+  if (!pending.siege) {
+    for (const id of attackerWon ? pending.defenderArmies : pending.attackerArmies) {
+      retreating.add(id);
     }
   }
-  if (!pending.siege) {
-    const losers = attackerWon ? pending.defenderArmies : pending.attackerArmies;
-    for (const id of losers) {
-      const army = state.armies[id];
-      if (!army) continue;
-      if (armyTroops(army) <= 0) disbandArmy(state, army, null);
-      else retreatArmy(state, army);
-    }
+  for (const id of retreating) {
+    const army = state.armies[id];
+    if (!army) continue;
+    if (armyTroops(army) <= 0) disbandArmy(state, army, null);
+    else retreatArmy(state, army);
   }
 
   const summary: BattleSummary = {
@@ -657,6 +731,19 @@ export function applyFieldResult(
     capturedOfficers: captured,
     siegeMethod: result.siegeMethod,
   };
+
+  addEvent(state, {
+    kind: 'battle',
+    castle: pending.castle,
+    attacker: pending.attacker,
+    defender: pending.defender,
+    winner: result.winner === null ? null : summary.winner,
+    siege: pending.siege,
+    attackerLoss: result.attackerLoss,
+    defenderLoss: result.defenderLoss,
+    captured: capturedCastle,
+    method: capturedCastle ? result.siegeMethod ?? 'assault' : null,
+  });
 
   const HOW: Record<string, string> = {
     assault: '강공',
@@ -802,9 +889,10 @@ export function captureCastle(
   state: GameState,
   castleId: CastleId,
   to: FactionId,
-  rng: RngCursor
+  rng: RngCursor,
+  method: CaptureMethod
 ): void {
-  const { captured } = transferCastle(state, castleId, to);
+  const { captured } = transferCastle(state, castleId, to, method);
   const castle = state.castles[castleId];
   castle.loyalty = B.conqueredLoyalty;
 
@@ -852,12 +940,57 @@ function reduceArmy(army: Army, lost: number): void {
  * AI·UI 공용 전력 평가
  * ------------------------------------------------------------------ */
 
+/**
+ * 병종 계열 → 국가 병종 단계의 계열.
+ *
+ * 전략의 병종(unitTypes.json)과 전장의 계열(步騎弓策)은 다른 표다. 전장이
+ * 수군에 보병 단계를 쓰므로(setup.ts) 여기서도 같게 둔다. 공성병기는
+ * 국가 단계와 무관하다.
+ */
+function tierTroopOf(unitClass: string): Troop | null {
+  switch (unitClass) {
+    case 'cavalry':
+      return 'cav';
+    case 'archer':
+      return 'arc';
+    case 'infantry':
+    case 'spear':
+    case 'navy':
+      return 'inf';
+    default:
+      return null; // siege
+  }
+}
+
+/**
+ * 국가 병종 단계를 전력 평가에 반영하는 계수.
+ *
+ * **이 게임에서 강해지는 것은 나라다.** 그런데 AI 의 판단은 병종 스택의
+ * 고정 수치만 보고 있어서, 기병을 4단계까지 올려도 「저 성을 칠 수 있는가」의
+ * 답이 한 톨도 달라지지 않았다 — 자기가 한 투자를 자기가 못 보는 셈이다.
+ *
+ * 세력 계수(FACTION_AFFINITY)는 곱하지 않는다. 1단계에서도 ±12% 라
+ * 공격 문턱(aiMinAttackRatio)을 흔들어 밸런스를 건드리게 된다. 단계 계수는
+ * 1단계가 1.0 이므로, 아무도 투자하지 않은 판에서는 예전과 같은 값이 나온다.
+ */
+function tierFactor(state: GameState, faction: FactionId | null, unitClass: string): number {
+  if (!faction) return 1;
+  const troop = tierTroopOf(unitClass);
+  if (!troop) return 1;
+  const tier = state.factions[faction]?.troopTiers?.[troop];
+  return tier ? TIER_POWER[tier] : 1;
+}
+
 export function armyPower(state: GameState, army: Army): number {
   const cmd = toBattleOfficer(state, army.commander);
-  return army.units.reduce(
-    (s, u) => s + stackPower(u.count, unitDef(u.unitType), army.morale, army.training, cmd),
-    0
-  );
+  return army.units.reduce((s, u) => {
+    const def = unitDef(u.unitType);
+    return (
+      s +
+      stackPower(u.count, def, army.morale, army.training, cmd) *
+        tierFactor(state, army.faction, def.class)
+    );
+  }, 0);
 }
 
 /**
@@ -869,13 +1002,17 @@ export function compositionPower(
   units: UnitStack[],
   morale: number,
   training: number,
-  commander?: string
+  commander?: string,
+  faction?: FactionId
 ): number {
   const cmd = commander ? toBattleOfficer(state, commander) : undefined;
-  return units.reduce(
-    (s, u) => s + stackPower(u.count, unitDef(u.unitType), morale, training, cmd),
-    0
-  );
+  const owner = faction ?? (commander ? state.officers[commander]?.faction ?? null : null);
+  return units.reduce((s, u) => {
+    const def = unitDef(u.unitType);
+    return (
+      s + stackPower(u.count, def, morale, training, cmd) * tierFactor(state, owner, def.class)
+    );
+  }, 0);
 }
 
 export function castleDefensePower(state: GameState, castleId: CastleId): number {
@@ -883,10 +1020,14 @@ export function castleDefensePower(state: GameState, castleId: CastleId): number
   const def = castleDef(castleId);
   if (!castle.owner) return 0;
   const best = castle.officers[0] ? toBattleOfficer(state, castle.officers[0]) : undefined;
-  const base = castle.composition.reduce(
-    (s, u) => s + stackPower(u.count, unitDef(u.unitType), 50 + castle.loyalty * 0.4, castle.training, best),
-    0
-  );
+  const base = castle.composition.reduce((s, u) => {
+    const unit = unitDef(u.unitType);
+    return (
+      s +
+      stackPower(u.count, unit, 50 + castle.loyalty * 0.4, castle.training, best) *
+        tierFactor(state, castle.owner, unit.class)
+    );
+  }, 0);
   let wallBonus = 1 + castle.dev.wall / 120;
   const terrainBonus = def.special === 'siege_defense_bonus' ? B.mountainFortressBonus : 1;
   const traits = factionTraits(state, castle.owner);

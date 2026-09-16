@@ -24,7 +24,9 @@ import type {
   CastleState,
   FactionId,
   FactionState,
+  GameEvent,
   GameOptions,
+  NewGameEvent,
   GameState,
   LogEntry,
   OfficerDef,
@@ -36,7 +38,13 @@ import type {
   UnitStack,
 } from './types';
 
-export const STATE_VERSION = 1;
+/**
+ * 세이브 형식 번호.
+ *
+ * 2 — 구조화 사건(`events`)과 관전자 플래그(`spectator`)가 들어왔다.
+ *     1 번 세이브는 save.ts 가 변환해서 읽는다.
+ */
+export const STATE_VERSION = 2;
 
 /** 세력별 기본 주둔군 편성 비율 */
 const DEFAULT_COMPOSITION: Record<FactionId, Array<[string, number]>> = {
@@ -87,6 +95,11 @@ export interface NewGameConfig {
   playerFaction: FactionId;
   options?: Partial<GameOptions>;
   seed?: number;
+  /**
+   * 관전자 실행 — 맡은 세력 없이 전 세력을 AI 로 돌린다.
+   * 자동 대전이 세 세력을 대칭으로 두기 위해 쓴다.
+   */
+  spectator?: boolean;
 }
 
 export function createGame(config: NewGameConfig): GameState {
@@ -139,7 +152,7 @@ export function createGame(config: NewGameConfig): GameState {
       autonomy: mod.autonomy ?? 80,
       alive: owns,
       flags: [],
-      isAI: def.id !== config.playerFaction,
+      isAI: config.spectator ? true : def.id !== config.playerFaction,
       // 모두 1단계에서 시작한다. 여기서부터 무엇을 키울지가 갈린다 (§2.1)
       troopTiers: { inf: 1, cav: 1, arc: 1, str: 1 },
     };
@@ -218,6 +231,7 @@ export function createGame(config: NewGameConfig): GameState {
     version: STATE_VERSION,
     scenarioId: scenario.id,
     playerFaction: config.playerFaction,
+    spectator: !!config.spectator,
     options,
     turn: 1,
     year,
@@ -235,6 +249,8 @@ export function createGame(config: NewGameConfig): GameState {
     pendingEvents: [],
     reports: [],
     log: [],
+    events: [],
+    nextEventId: 1,
     chronicle: [
       {
         year,
@@ -403,6 +419,23 @@ export function addLog(
   });
   // 로그가 무한히 자라지 않도록 최근분만 유지한다.
   if (state.log.length > 600) state.log.splice(0, state.log.length - 600);
+}
+
+/**
+ * 구조화 사건을 남긴다 — **집계는 이것만 본다.**
+ *
+ * `addLog` 가 화면용 글이라 600개에서 잘리는 것과 달리 여기는 자르지 않는다.
+ * 한 판(160턴)이 내는 사건은 수천 건 이하라 세이브에 실어도 부담이 없고,
+ * 잘라 버리면 자르는 순간부터 통계가 조용히 틀어진다.
+ */
+export function addEvent(state: GameState, e: NewGameEvent): void {
+  state.events.push({
+    ...e,
+    id: state.nextEventId++,
+    turn: state.turn,
+    year: state.year,
+    season: state.season,
+  } as GameEvent);
 }
 
 export function addChronicle(state: GameState, text: string): void {

@@ -465,6 +465,82 @@ export interface ChronicleEntry {
   text: string;
 }
 
+/* ------------------------------------------------------------------ *
+ * 구조화 사건 (統計의 단일 출처)
+ *
+ * `log` 는 화면에 보여 주는 글이고 최근 600개만 남는다. 통계를 그 글에서
+ * 정규식으로 읽으면 **잘려 나간 뒤로는 아무것도 세지 못한다** — 실제로
+ * 자동 대전의 전투·함락 집계가 그렇게 끊겨 있었다.
+ *
+ * 그래서 세는 대상은 따로 기록한다. 사건은 자르지 않고, 문구가 아니라
+ * 유형·행위자·대상·턴·고유 ID 를 갖는다.
+ * ------------------------------------------------------------------ */
+
+/**
+ * 성이 어떻게 넘어갔는가.
+ *
+ * 앞의 넷은 전장의 공성 수단(§6.3)이고, 나머지는 전장을 거치지 않은 경로다.
+ * 「포위 0%」처럼 한 수단이 사문서인지 보려면 이 둘을 갈라 세야 한다 —
+ * 굶겨 항복시킨 판은 전장 기록에 남지 않기 때문이다.
+ */
+export type CaptureMethod =
+  | 'assault' // 강공 — 성문을 깬다
+  | 'encircle' // 포위 — 전장에서 병량을 말린다
+  | 'scheme' // 계략 — 수공·화공·소성
+  | 'infiltrate' // 내응 — 안에서 문을 연다
+  | 'starvation' // 전략맵의 포위가 길어져 항복
+  | 'no_defender' // 맞설 장수가 없었다
+  | 'undefended' // 수비가 사라져 싸움 없이
+  | 'neutral' // 무주공산 입성
+  | 'event' // 이벤트 효과
+  | 'invasion'; // 외세 원정으로 초토화
+
+/** 유니온의 각 갈래에서 자동으로 채워지는 필드를 뺀 것 (addEvent 의 입력) */
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type NewGameEvent = DistributiveOmit<GameEvent, 'id' | 'turn' | 'year' | 'season'>;
+
+interface EventBase {
+  id: number;
+  turn: number;
+  year: number;
+  season: Season;
+}
+
+export type GameEvent =
+  | (EventBase & {
+      kind: 'battle';
+      castle: CastleId;
+      attacker: FactionId;
+      defender: FactionId;
+      /** 무승부면 null */
+      winner: FactionId | null;
+      siege: boolean;
+      attackerLoss: number;
+      defenderLoss: number;
+      captured: boolean;
+      method: CaptureMethod | null;
+    })
+  | (EventBase & {
+      kind: 'castle_captured';
+      castle: CastleId;
+      from: FactionId | null;
+      to: FactionId | null;
+      /** 빼앗은 쪽. 초토화처럼 임자가 없어지는 경우 null */
+      by: FactionId | null;
+      method: CaptureMethod;
+    })
+  | (EventBase & {
+      kind: 'faction_eliminated';
+      faction: FactionId;
+      /** 마지막 거점을 가져간 쪽 */
+      by: FactionId | null;
+    })
+  | (EventBase & {
+      kind: 'game_over';
+      winner: FactionId;
+      result: string;
+    });
+
 /** 턴 결산 리포트 (⑦ 결산 화면) */
 export interface TurnReport {
   turn: number;
@@ -538,6 +614,14 @@ export interface GameState {
   version: number;
   scenarioId: string;
   playerFaction: FactionId;
+  /**
+   * 관전자 실행 — 맡은 세력 없이 전 세력을 AI 로 돌린다.
+   *
+   * `playerFaction` 은 시나리오 조회의 기준값으로 남지만, 이 값이 켜져 있으면
+   * 그 세력이 멸망해도 판이 끝나지 않고 이벤트 선택·수동 전투도 AI 경로를 탄다.
+   * 자동 대전에서 세 세력을 대칭으로 두기 위한 것이다.
+   */
+  spectator: boolean;
   options: GameOptions;
 
   turn: number;
@@ -563,6 +647,9 @@ export interface GameState {
 
   log: LogEntry[];
   chronicle: ChronicleEntry[];
+  /** 통계의 단일 출처. log 와 달리 자르지 않는다. */
+  events: GameEvent[];
+  nextEventId: number;
 
   result: null | { winner: FactionId; kind: string; year: number };
 }

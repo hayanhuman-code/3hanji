@@ -86,12 +86,18 @@ function buildSide(
       const def = e.officer ? officerDef(e.officer) : null;
       const navy = !!e.navy && (def?.naval ?? true);
       /*
+       * 수군을 맡은 장수는 **수군 적성으로** 판정한다 (§3.4 — "수군 편성 시
+       * 본래 계열 대신 수군 병종을 지휘"). 예전에는 육상 계열로 따져,
+       * 수군 전문가인 궁병계 장수가 배를 몰면 타 계열 지휘로 몰려
+       * 무력이 절반만 실렸다.
+       */
+      /*
        * **계열은 출진 부대만 장수를 따른다** (§3.5).
        * 주둔 수비대는 거점 구성표가 정한 계열로 오고, 그 계열이 아닌 장수가
        * 맡으면 온전히 못 이끈다 — 그것이 offClass 다.
        */
       const troop = e.troop ?? def?.troop ?? 'inf';
-      const offClass = !!def && !!e.troop && def.troop !== e.troop;
+      const offClass = navy ? !!def && !def.naval : !!def && !!e.troop && def.troop !== e.troop;
       const tier = tiers[troop];
       // 옆으로 벌리기 — 가운데를 기준으로 좌우 대칭
       const lateral = (i - (list.length - 1) / 2) * F.separation * 1.15;
@@ -105,9 +111,10 @@ function buildSide(
       const at = nudgeToPassable(f, bx, by, navy);
 
       units.push({
-        id: `${side}-${e.officer || `garrison${i}-${row}`}`,
+        id: e.id ?? `${side}-${e.officer || `garrison${i}-${row}-${kind}`}`,
         side,
         officer: e.officer,
+        origin: e.origin ?? null,
         name: e.name ?? def?.name ?? '城兵',
         troop,
         navy,

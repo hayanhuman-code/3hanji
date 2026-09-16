@@ -29,7 +29,13 @@ const ROBE: Record<string, string> = {
   gaya: T.gaya,
 };
 
-/** FNV-1a. 같은 id 면 언제나 같은 값 — 초상이 새로고침마다 바뀌면 안 된다. */
+/**
+ * FNV-1a. 같은 id 면 언제나 같은 값 — 초상이 새로고침마다 바뀌면 안 된다.
+ *
+ * 돌려준 값은 부호 없는 32비트다. 꺼내 쓸 때도 반드시 `>>>` 로 밀어야 한다.
+ * `>>` 로 밀면 최상위 비트가 선 절반(310명 중 170명)이 음수가 되고, 음수 % n
+ * 이 음수로 나와 갈래가 한쪽으로 쏠린다.
+ */
 function hash(s: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) {
@@ -181,12 +187,12 @@ export const Portrait = memo(function Portrait({ def, size = 44, dim }: Props) {
 
   // 얼굴 폭과 어깨 너비는 사람마다 조금씩 다르다. 무력이 높으면 어깨가 넓다 —
   // 능력치를 그림이 말하게 하는 유일한 자리다.
-  const faceW = 8.6 + ((h >> 3) % 5) * 0.34;
+  const faceW = 8.6 + ((h >>> 3) % 5) * 0.34;
   const build = 0.86 + Math.min(1, def.stats.war / 100) * 0.28;
   const sx = 24 - 22 * build; // 어깨 바깥선
   // 나이가 있으면 긴 수염 쪽으로 기운다. 승려는 수염을 두지 않는다.
   const old = (def.age ?? 40) >= 45;
-  const beardKind = def.role === 'monk' ? 0 : ((h >> 7) % 4) + (old ? 1 : 0);
+  const beardKind = def.role === 'monk' ? 0 : ((h >>> 7) % 4) + (old ? 1 : 0);
 
   return (
     <svg
@@ -227,7 +233,7 @@ export const Portrait = memo(function Portrait({ def, size = 44, dim }: Props) {
         strokeLinecap="butt"
       />
       {beard(beardKind)}
-      {headgear(def.role, def.ruler, h >> 11)}
+      {headgear(def.role, def.ruler, h >>> 11)}
 
       {/* 테두리 — 문서 §7, 직각에 오프셋만. 안쪽 한 겹을 더 둘러 액자로 읽히게 한다 */}
       <rect x={0.75} y={0.75} width={46.5} height={54.5} fill="none" stroke={T.meok} strokeWidth={1.5} />

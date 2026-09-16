@@ -1041,6 +1041,12 @@ select.btn {
     min-height: 40px;
     padding: 6px 13px;
   }
+  /* 국력 바의 「턴 종료」는 데스크톱에서 34px 로 눌러 담았다(.bar-b .btn.primary).
+     그 규칙이 위 .btn 보다 뒤에 오고 더 구체적이라 손가락 화면에서도 34px 로
+     내려앉는다 — 36px 아래는 못 누른다. 여기서 다시 올린다. */
+  .bar-b .btn.primary {
+    min-height: 40px;
+  }
   .btn.small {
     min-height: 36px;
     padding: 5px 11px;

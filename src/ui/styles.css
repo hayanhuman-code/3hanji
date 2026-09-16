@@ -315,44 +315,88 @@ select.btn {
 }
 
 .topbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(420px, 1fr) auto;
   align-items: center;
-  gap: 12px;
-  padding: calc(6px + var(--safe-t)) calc(12px + var(--safe-r)) 6px calc(12px + var(--safe-l));
-  background: var(--ji);
+  gap: 10px 18px;
+  padding: calc(7px + var(--safe-t)) calc(12px + var(--safe-r)) 7px calc(12px + var(--safe-l));
+  background: rgba(221, 208, 178, 0.98);
   border-bottom: var(--edge);
-  flex-wrap: wrap;
   z-index: 10;
+  box-shadow: 0 3px 0 rgba(36, 31, 26, 0.12);
 }
 /*
- * 국력 바의 「행」. 데스크톱에서는 레이아웃에서 사라져(display: contents)
- * 지금까지처럼 자식들이 .topbar 의 flex 항목으로 직접 늘어선다.
- * 폰에서만 진짜 행이 되어 격자에 앉는다 — GameScreen.tsx 의 주석 참조.
+ * 국력 바의 양 끝. 데스크톱에서는 날짜·세력과 관리 명령을 각각 한 묶음으로
+ * 잡아 가운데 자원 띠와 시각적 위계를 가른다. 폰에서는 아래 미디어 쿼리가
+ * 같은 두 묶음을 1행 좌우 칸에 놓는다.
  */
 .bar-row {
-  display: contents;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.bar-a {
+  padding-right: 16px;
+  border-right: 1px solid var(--meok-thin);
+}
+.bar-b {
+  justify-content: flex-end;
+}
+.bar-b .btn.small {
+  border-color: transparent;
+  color: var(--meok-mid);
+  padding-inline: 7px;
+}
+.bar-b .btn.small:hover,
+.bar-b .btn.small.on {
+  border-color: var(--meok);
+}
+.bar-b .btn.primary {
+  min-width: 82px;
+  min-height: 34px;
+  margin-left: 4px;
+  border: 1.5px solid var(--meok);
+  font-weight: 900;
+  letter-spacing: 0.14em;
 }
 .topbar .date {
   font-family: var(--font-num);
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: 600;
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
 .res {
   display: flex;
-  gap: 14px;
-  /* 줄바꿈이 없으면 자원 7개가 min-content 로 버티며 문서를 가로로 넘긴다.
-     전면 지도 레이아웃에서 가로 스크롤은 가장 나쁜 증상이다. */
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(9px, 1.2vw, 18px);
+  /* 자원은 한 줄을 지킨다. 공간이 부족하면 이 영역 안에서만 가로로 흐르고
+     전체 지도 뷰포트의 폭은 늘리지 않는다. */
+  flex-wrap: nowrap;
   min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.res::-webkit-scrollbar {
+  display: none;
 }
 .res-item {
   display: flex;
   align-items: baseline;
   gap: 4px;
+  flex: none;
+  white-space: nowrap;
   /* 좁은 화면에서 한글 라벨을 접을 때 position:absolute 를 쓴다.
      여기 기준점이 없으면 라벨이 문서 전체를 기준으로 떠서 가로 폭을 늘린다. */
   position: relative;
+  padding-right: clamp(5px, 0.7vw, 11px);
+  border-right: 1px solid rgba(138, 126, 108, 0.42);
+}
+.res-item:last-child {
+  padding-right: 0;
+  border-right: 0;
 }
 /* 한자 한 글자. 자간을 넓게 벌려 고지도의 여유를 낸다 (문서 §2.2) */
 .res-item .mark {
@@ -369,6 +413,7 @@ select.btn {
 }
 .res-item em {
   font-size: 13.5px;
+  font-weight: 600;
   color: var(--meok);
 }
 .spacer {
@@ -1698,16 +1743,17 @@ table.grid td.n {
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
-  background: var(--hae);
+  background: var(--ji-deep);
 }
 .field-head {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  padding: 8px 14px;
+  padding: 7px 14px;
   border-bottom: var(--edge);
-  background: var(--ji);
+  background: rgba(221, 208, 178, 0.98);
+  box-shadow: 0 3px 0 rgba(36, 31, 26, 0.12);
   font-size: 12px;
 }
 .field-info,
@@ -1715,6 +1761,58 @@ table.grid td.n {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+.field-info {
+  flex: 1 1 620px;
+  min-width: 0;
+}
+.field-info > b,
+.field-info > .tag {
+  flex: none;
+  white-space: nowrap;
+}
+.field-matchup {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+  align-items: center;
+  min-width: 390px;
+  flex: 1 1 390px;
+  border: 1px solid var(--meok-thin);
+  background: rgba(207, 192, 156, 0.46);
+}
+.field-force {
+  display: grid;
+  grid-template-columns: 10px auto 1fr;
+  align-items: center;
+  gap: 5px 7px;
+  padding: 3px 9px;
+}
+.field-force strong {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.field-force .num {
+  justify-self: end;
+  font-size: 13px;
+}
+.field-force small {
+  grid-column: 2 / -1;
+  color: var(--meok-cap);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.field-versus {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  border-inline: 1px solid var(--meok-thin);
+  background: var(--meok);
+  color: var(--on-dark);
+  font-size: 11px;
+}
+.field-ctl {
+  flex: none;
 }
 .field-body {
   min-height: 0;
@@ -1730,16 +1828,44 @@ table.grid td.n {
   min-height: 0;
   cursor: crosshair;
   touch-action: none;
+  background: var(--ji-deep);
+  filter: sepia(0.24) saturate(0.58) contrast(0.96) brightness(1.04);
 }
 .field-side {
   border-left: var(--edge);
-  background: var(--ji);
-  padding: 10px 12px calc(12px + var(--safe-b));
+  background:
+    repeating-linear-gradient(0deg, rgba(85, 76, 64, 0.025) 0 1px, transparent 1px 5px),
+    var(--ji);
+  padding: 10px 14px calc(12px + var(--safe-b));
   overflow-y: auto;
   min-height: 0;
 }
 .field-side .section-label {
-  margin: 16px 0 6px;
+  margin: 18px 0 7px;
+  color: var(--meok);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+}
+
+.battle-order-grid {
+  display: grid;
+  gap: 5px;
+  margin-top: 7px;
+}
+.battle-order-grid .btn {
+  min-height: 31px;
+  padding: 4px 7px;
+  background: rgba(221, 208, 178, 0.76);
+  text-align: center;
+}
+.battle-order-grid .btn.on {
+  background: var(--meok);
+}
+.siege-orders,
+.stance-orders,
+.scheme-orders,
+.pursuit-orders {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 /* 폰에서는 지도가 위, 손잡이가 아래 — 지도를 가리지 않는다 */
@@ -1800,7 +1926,7 @@ table.grid td.n {
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 3px 6px;
+  padding: 5px 7px;
   background: transparent;
   border: 1px solid transparent;
   font-family: var(--font);
@@ -1810,11 +1936,13 @@ table.grid td.n {
   cursor: pointer;
 }
 .unit-row:hover {
-  border-color: var(--meok-thin);
+  border-color: var(--meok);
+  background: rgba(207, 192, 156, 0.45);
 }
 .unit-row.sel {
-  border: var(--edge);
+  border: 1.5px solid var(--jinsa);
   background: var(--ji-deep);
+  box-shadow: 2px 2px 0 rgba(36, 31, 26, 0.12);
 }
 .unit-row.reserve {
   opacity: 0.6;
@@ -1927,3 +2055,4 @@ table.grid td.n {
     display: inline;
   }
 }
+

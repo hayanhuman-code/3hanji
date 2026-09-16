@@ -1,0 +1,2 @@
+# 줄바꿈은 LF 로 고정한다. 도구가 CRLF 로 바꿔 쓰면 diff 전체가 노이즈가 된다.
+* text=auto eol=lf

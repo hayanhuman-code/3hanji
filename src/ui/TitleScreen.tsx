@@ -3,6 +3,7 @@
  */
 
 import { useState } from 'react';
+import { AudioOptions } from './AudioControls';
 import { PLAYABLE_FACTIONS, SCENARIOS, castleName, factionDef } from '../core/data';
 import { hasSave } from '../core/save';
 import { readSaveFile } from '../core/save';
@@ -119,6 +120,7 @@ export function TitleScreen() {
             통일 — 전 거점 점령
           </label>
         </div>
+        <AudioOptions />
 
         <div className="row" style={{ marginTop: 28, flexWrap: 'wrap' }}>
           <button

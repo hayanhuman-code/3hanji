@@ -22,6 +22,8 @@ import {
   InstitutionPanel,
   OfficerPanel,
 } from './panels';
+import { SoundToggle } from './AudioControls';
+import { play } from './audio';
 import { StrategyMap } from './StrategyMap';
 import { Window } from './Window';
 import { usePhone } from './useMediaQuery';
@@ -205,6 +207,7 @@ export function GameScreen() {
           ))}
       </div>
       <div className="etc-btns">
+        <SoundToggle className="btn" />
         <button
           className="btn"
           onClick={() => {
@@ -263,18 +266,28 @@ export function GameScreen() {
 
           <span className="cap">대기 인물 {pending}</span>
           {/* 폰에서는 이 다섯이 시트 「기타」 탭으로 간다. 지도 위에 남는 것은 턴 종료 하나. */}
+          {/* 창을 여닫는 것은 누르는 것이 아니라 미는 것이다 — 종이 소리를 준다 */}
           <button
             className={`btn small only-wide${openPanel ? ' on' : ''}`}
-            onClick={() => setOpenPanel((v) => !v)}
+            data-sfx="off"
+            onClick={() => {
+              play(openPanel ? 'close' : 'open');
+              setOpenPanel((v) => !v);
+            }}
           >
             거점창
           </button>
           <button
             className={`btn small only-wide${openLog ? ' on' : ''}`}
-            onClick={() => setOpenLog((v) => !v)}
+            data-sfx="off"
+            onClick={() => {
+              play(openLog ? 'close' : 'open');
+              setOpenLog((v) => !v);
+            }}
           >
             사초
           </button>
+          <SoundToggle className="btn small only-wide" />
           <button
             className="btn small only-wide"
             onClick={() => {

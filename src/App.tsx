@@ -3,6 +3,7 @@ import { GameScreen } from './ui/GameScreen';
 import { TitleScreen } from './ui/TitleScreen';
 import { FieldBattle } from './ui/field/FieldBattle';
 import { FieldSim } from './ui/field/FieldSim';
+import { AudioBoot } from './ui/AudioBoot';
 import { useGame } from './ui/store';
 
 export default function App() {
@@ -20,6 +21,8 @@ export default function App() {
 
   return (
     <>
+      {/* 아무것도 그리지 않는다 — 소리를 깨우고 화면에 맞는 배경음을 건다 */}
+      <AudioBoot />
       {screen === 'field' ? (
         <FieldSim />
       ) : screen === 'game' && field ? (

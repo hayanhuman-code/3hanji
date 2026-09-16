@@ -95,7 +95,7 @@ npm run smoke:browser -- http://127.0.0.1:5173/ /tmp/shots phone    # 폰 390×8
 
 이벤트 100종, 시나리오 1·2·4·IF, 천도, 일기토·설전, 왜의 백강 파병,
 **그린 초상화**(310명 전원이 프로그래밍 생성 초상을 갖는다 — 이름 첫 글자
-자리표시자는 없어졌다), 이벤트 컷 일러스트, BGM.
+자리표시자는 없어졌다), 이벤트 컷 일러스트.
 자세한 목록과 우선순위는 [백로그](docs/backlog.md)에 있다.
 
 기능마다 「기획 의도 · 구현 · 검증 · 남은 문제」를 가른 표는
@@ -139,6 +139,12 @@ src/
       pathfind.ts setup.ts    길찾기 · 편성을 판으로
       sim.ts orders.ts        틱 시뮬레이션 · 개입 명령과 계략
       bridge.ts               전략맵과의 통역 (여기만 GameState 를 안다)
+  ui/
+    audio/              소리 — 음원 파일이 없다. 악기도 잔향도 코드로 짓는다
+      scale.ts          음계(평조·계면조)와 가락 짓기. Web Audio 를 몰라 시험할 수 있다
+      voices.ts         대금·가야금·아쟁·편경·북·징
+      engine.ts         AudioContext·설정·잔향
+      bgm.ts            배경음 예약기 (세력마다 다른 악기와 장단)
   data/                 ★ 밸런싱·콘텐츠 작업 영역. 전부 JSON
     mapdata.json        지도 원본 — 실제 경위도에서 뽑은 해안선·하천·산맥·길 (파이프라인 산물)
     castles.json        ↑ 에서 build-castles.ts 가 생성. 손으로 고치지 말 것

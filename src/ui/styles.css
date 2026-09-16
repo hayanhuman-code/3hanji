@@ -316,6 +316,21 @@ select.btn {
 .opt-row input {
   accent-color: var(--jinsa);
 }
+/* 소리 설정 — 음량 손잡이가 체크박스 줄과 같은 높이에 앉는다 */
+.audio-opts {
+  margin-top: 8px;
+}
+.audio-opts .vol {
+  gap: 10px;
+}
+.audio-opts .vol input[type='range'] {
+  width: 132px;
+}
+.audio-opts .vol em {
+  min-width: 2.2em;
+  text-align: right;
+  color: var(--meok-cap);
+}
 
 /* ------------------------------------------------------------------ *
  * 게임 레이아웃 — 지도가 화면 전체를 쓰고 UI 는 그 위에 뜬다 (문서 §4)

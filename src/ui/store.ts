@@ -19,6 +19,7 @@ import { createGame, type NewGameConfig } from '../core/state';
 import { loadFromStorage, saveToStorage } from '../core/save';
 import { beginNextTurn, completeBattle, completeEvent, resolveTurn } from '../core/turn';
 import type { EventDef, Command, GameState, PendingEvent, CastleId } from '../core/types';
+import { play } from './audio';
 
 export type Screen = 'title' | 'game' | 'field';
 export type SidePanel = 'castle' | 'officers' | 'diplomacy' | 'institutions' | 'chronicle';
@@ -69,6 +70,32 @@ export const useGame = create<Store>((set, get) => {
   /** 코어를 건드린 뒤 구독자에게 알린다. */
   const touch = () => set((s) => ({ revision: s.revision + 1 }));
 
+  /**
+   * 소리를 낼 사건을 고른다.
+   *
+   * 로그 글이 아니라 구조화 사건(`state.events`, R03)을 본다 — 글은 600개에서
+   * 잘리고 문구가 바뀌면 같이 깨진다. 마지막으로 본 사건 id 를 들고 있다가
+   * 그 뒤에 생긴 것만 훑는다.
+   *
+   * **내 나라가 얽힌 것만 운다.** 76 거점 판에서 남의 성이 넘어갈 때마다 징이
+   * 울리면 그냥 소음이다.
+   */
+  let seenEventId = 0;
+  const soundNewEvents = (state: GameState) => {
+    let loudest: 'capture' | 'victory' | 'defeat' | null = null;
+    for (const e of state.events) {
+      if (e.id <= seenEventId) continue;
+      seenEventId = e.id;
+      if (e.kind === 'game_over') {
+        loudest = e.winner === state.playerFaction ? 'victory' : 'defeat';
+      } else if (e.kind === 'castle_captured' && loudest !== 'victory' && loudest !== 'defeat') {
+        const mine = e.from === state.playerFaction || e.to === state.playerFaction;
+        if (mine) loudest = 'capture';
+      }
+    }
+    if (loudest) play(loudest);
+  };
+
   /** 턴 처리를 진행하다 UI 가 필요한 지점에서 멈춘다. */
   const drive = () => {
     const state = get().state;
@@ -76,11 +103,13 @@ export const useGame = create<Store>((set, get) => {
     for (;;) {
       const step = resolveTurn(state);
       if (step.kind === 'battle') {
+        play('battle');
         set({ field: createField(step.setup), busy: false });
         touch();
         return;
       }
       if (step.kind === 'event') {
+        play('event');
         set({ event: { pending: step.pending, def: step.def }, busy: false });
         touch();
         return;
@@ -88,6 +117,7 @@ export const useGame = create<Store>((set, get) => {
       break;
     }
     saveToStorage(state, 'auto');
+    soundNewEvents(state);
     set({ showReport: state.phase === 'report', busy: false });
     touch();
   };
@@ -108,6 +138,7 @@ export const useGame = create<Store>((set, get) => {
 
     newGame: (config) => {
       const state = createGame(config);
+      seenEventId = 0;
       const first = Object.values(state.castles).find((c) => c.owner === config.playerFaction);
       set({
         state,
@@ -131,6 +162,8 @@ export const useGame = create<Store>((set, get) => {
     },
 
     adoptState: (state) => {
+      // 불러온 판의 지난 사건은 이미 벌어진 일이다. 커서를 끝에 놓아 울리지 않게 한다.
+      seenEventId = state.events[state.events.length - 1]?.id ?? 0;
       const first = Object.values(state.castles).find((c) => c.owner === state.playerFaction);
       set({
         state,
@@ -144,7 +177,11 @@ export const useGame = create<Store>((set, get) => {
       touch();
     },
 
-    select: (id) => set({ selected: id, panel: 'castle' }),
+    select: (id) => {
+      // 지도의 거점은 <button> 이 아니라 SVG 라 위임 클릭이 닿지 않는다.
+      play('select');
+      set({ selected: id, panel: 'castle' });
+    },
     setPanel: (panel) => set({ panel }),
     notify: (message) => set({ message }),
 
@@ -152,6 +189,7 @@ export const useGame = create<Store>((set, get) => {
       const state = get().state;
       if (!state) return false;
       if (state.phase !== 'command') {
+        play('deny');
         set({ message: '지금은 명령을 내릴 수 없습니다.' });
         return false;
       }
@@ -173,10 +211,13 @@ export const useGame = create<Store>((set, get) => {
 
       state.rng = rng.seed;
       if (error) {
+        play('deny');
         set({ message: error });
         touch();
         return false;
       }
+      // 출진은 명령 가운데 유일하게 판을 움직인다. 소리도 따로 준다.
+      play(cmd.kind === 'march' ? 'march' : 'confirm');
       if (text) {
         state.log.push({
           turn: state.turn,
@@ -195,6 +236,7 @@ export const useGame = create<Store>((set, get) => {
     endTurn: () => {
       const state = get().state;
       if (!state || state.phase !== 'command') return;
+      play('turn');
       set({ busy: true, message: null });
       // 화면이 "처리 중"을 그릴 틈을 준다.
       setTimeout(drive, 10);

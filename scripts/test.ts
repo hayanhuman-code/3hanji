@@ -55,6 +55,7 @@ import {
 } from '../src/core/military';
 import { atWar } from '../src/core/state';
 import { T, contrast, textOn } from '../src/ui/tokens';
+import { JANGDAN, MODES, degreeToSemitone, hz, makePhrase } from '../src/ui/audio/scale';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -1987,6 +1988,81 @@ test('알 수 없는 버전과 깨진 세이브는 거절한다', () => {
     threw = true;
   }
   assertEqual(threw, true, '내용이 빠진 세이브를 받았습니다');
+});
+
+section('소리 — 음계와 가락');
+
+/*
+ * 소리를 내는 부분은 Web Audio 라 node 에서 한 줄도 돌지 않는다. 그래서
+ * 「무엇을 연주하는가」만 scale.ts 로 떼어 두었고, 검사할 수 있는 것은 그것뿐이다.
+ * 여기서 잡으려는 것은 하나다 — **음계를 벗어난 음이 나오는가.**
+ */
+
+test('5음 음계를 벗어나지 않는다', () => {
+  for (const mode of ['pyeongjo', 'gyemyeonjo'] as const) {
+    const allowed = new Set<number>(MODES[mode]);
+    for (let d = -12; d <= 12; d++) {
+      const semi = degreeToSemitone(mode, d);
+      // 옥타브를 접어 내리면 반드시 그 조의 다섯 음 가운데 하나여야 한다
+      const folded = ((semi % 12) + 12) % 12;
+      assert(allowed.has(folded), `${mode} ${d}도가 음계 밖입니다 (반음 ${semi})`);
+    }
+  }
+});
+
+test('도가 오르면 음도 오른다', () => {
+  for (const mode of ['pyeongjo', 'gyemyeonjo'] as const) {
+    for (let d = -8; d < 8; d++) {
+      assert(
+        degreeToSemitone(mode, d) < degreeToSemitone(mode, d + 1),
+        `${mode} ${d}도와 ${d + 1}도의 높낮이가 뒤집혔습니다`
+      );
+    }
+  }
+});
+
+test('한 옥타브는 정확히 두 배', () => {
+  const base = 261.63;
+  assertEqual(Math.round(hz(base, 12) * 100) / 100, Math.round(base * 2 * 100) / 100);
+  assertEqual(Math.round(hz(base, 0) * 100) / 100, Math.round(base * 100) / 100);
+});
+
+test('같은 씨앗은 같은 악구', () => {
+  const shape = { beats: 12, range: [-3, 6] as [number, number], rest: 0.4, step: 1 };
+  const a = makePhrase(4242, shape);
+  const b = makePhrase(4242, shape);
+  const c = makePhrase(4243, shape);
+  assertEqual(JSON.stringify(a), JSON.stringify(b), '같은 씨앗에서 다른 가락이 나왔습니다');
+  assert(JSON.stringify(a) !== JSON.stringify(c), '씨앗이 달라도 가락이 같습니다');
+});
+
+test('악구가 범위와 길이를 지키고 마침음으로 앉는다', () => {
+  const shape = { beats: 12, range: [-3, 6] as [number, number], rest: 0.35, step: 1 };
+  for (let seed = 1; seed <= 200; seed++) {
+    const notes = makePhrase(seed, shape);
+    assert(notes.length > 0, `씨앗 ${seed}: 빈 악구`);
+    for (const n of notes) {
+      assert(n.degree >= -3 && n.degree <= 6, `씨앗 ${seed}: ${n.degree}도가 범위 밖`);
+      assert(n.len > 0, `씨앗 ${seed}: 길이가 0 이하인 음`);
+      assert(n.velocity > 0 && n.velocity <= 1, `씨앗 ${seed}: 셈여림이 0~1 밖`);
+      assert(n.at >= 0 && n.at < shape.beats, `씨앗 ${seed}: 악구 밖에 놓인 음`);
+    }
+    // 마침음 — 으뜸음이나 5도로 앉아야 악구가 끝난 것으로 들린다
+    const last = notes[notes.length - 1]!;
+    assert(last.degree === 0 || last.degree === 3, `씨앗 ${seed}: 마침음이 ${last.degree}도`);
+  }
+});
+
+test('장단은 주기 안에서만 친다', () => {
+  for (const [name, jd] of Object.entries(JANGDAN)) {
+    assert(jd.hits.length > 0, `${name}: 북이 한 번도 안 친다`);
+    for (const [at, strength] of jd.hits) {
+      assert(at >= 0 && at < jd.beats, `${name}: ${at}박이 주기(${jd.beats}) 밖입니다`);
+      assert(strength > 0 && strength <= 1, `${name}: 세기가 0~1 밖입니다`);
+    }
+    // 첫 박은 센 가락(合)이다. 없으면 장단의 머리가 사라진다.
+    assertEqual(jd.hits[0]![0], 0, `${name}: 첫 박에 북이 없습니다`);
+  }
 });
 
 /* ================================================================== *
